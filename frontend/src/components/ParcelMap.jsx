@@ -171,10 +171,10 @@ export default function ParcelMap({
   }
 
   return (
-    <div className="relative w-full h-full overflow-hidden border border-[var(--rule-strong)] bg-[var(--surface-subtle)]">
+    <div className="relative isolate z-0 w-full h-full overflow-hidden border border-[var(--rule-strong)] bg-[var(--surface-subtle)]">
       <div ref={mapContainerRef} className="w-full h-full z-0" />
 
-      {/* Selector de Cartografía Libre de API Keys */}
+      {/* Selector de Cartografía Libre de API Keys (aislado dentro del contexto z-0 del mapa) */}
       <div className="absolute top-3 left-3 right-3 z-[400] flex flex-wrap items-center justify-between gap-2 pointer-events-none">
         <div className="pointer-events-auto inline-flex bg-[var(--surface-panel)] border border-[var(--rule-strong)] divide-x divide-[var(--rule-strong)]">
           {Object.entries(TILE_LAYERS).map(([key, cfg]) => (
