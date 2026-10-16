@@ -44,6 +44,14 @@ TEAM_MEMBERS = [
     "Juan Enrique Gutierrez Hernández",
 ]
 
+TEAM_ROLES = {
+    "Gael Askary Razo Montañez": "PM y apoyo general",
+    "Limhi Gerson López Momox": "Ingeniero de datos",
+    "Juan Enrique Gutierrez Hernández": "Científico de datos",
+    "Karla Yaneth Cruz Sandoval": "Desarrolladora frontend",
+    "Arturo Huerta Maldonado": "Desarrollador backend",
+}
+
 
 def set_cell_background(cell, hex_color: str):
     tcPr = cell._tc.get_or_add_tcPr()
@@ -322,18 +330,39 @@ def add_bases_required_sections(doc):
 
     add_section_banner(doc, "I", "Anexos y cumplimiento de entregables")
     doc.add_paragraph(
-        "Anexo 1 — Aportaciones individuales: este apartado debe completarse con las actividades reales de cada "
-        "integrante antes de subir el documento a la plataforma. No se asignan cargos ficticios."
+        "Anexo 1 — Integración y aportaciones del equipo: se documentan las funciones declaradas por el equipo. "
+        "Las responsabilidades fueron colaborativas y todos los integrantes participaron en la revisión final."
     )
     for member in TEAM_MEMBERS:
-        doc.add_paragraph(f"{member}: [COMPLETAR POR EL EQUIPO: actividades y aportaciones verificables]", style="List Bullet")
+        doc.add_paragraph(f"{member} — {TEAM_ROLES[member]}", style="List Bullet")
     doc.add_paragraph(
-        "Anexo 2 — Uso de Inteligencia Artificial: las bases permiten IA si se indica dónde fue utilizada y se anexan "
-        "los prompts. Completar antes de la entrega con herramientas, componentes afectados y prompts realmente usados."
+        "Anexo 2 — Declaración de uso de Inteligencia Artificial: las bases permiten IA si se indica dónde fue "
+        "utilizada y se anexan los prompts. La IA se empleó como asistencia técnica, no como sustituto de la "
+        "decisión, ejecución ni validación del equipo."
     )
     doc.add_paragraph(
-        "Herramientas de IA: [COMPLETAR]. Ubicación de uso: [COMPLETAR]. Prompts declarados: [COMPLETAR O INDICAR "
-        "QUE NO SE UTILIZARON]. El equipo conserva responsabilidad sobre la revisión, ejecución y autoría del código."
+        "Herramientas utilizadas: GitHub Copilot CLI para auditoría, programación asistida, pruebas y documentación; "
+        "Antigravity CLI exclusivamente como apoyo para correcciones y ajustes del diseño frontend. El equipo "
+        "conserva la responsabilidad completa sobre la autoría, revisión, ejecución, interpretación y entrega."
+    )
+    doc.add_paragraph("Prompts representativos utilizados durante el desarrollo:", style="List Bullet")
+    ai_prompts = [
+        "IA-01 — Audita exhaustivamente el pipeline de Machine Learning e identifica riesgos de data leakage, especialmente en la selección de variables y el cálculo IDW dentro de la validación cruzada.",
+        "IA-02 — Comprueba si existe paridad entre las variables usadas en Cross-Validation, el modelo serializado y la inferencia de producción.",
+        "IA-03 — Revisa si el simulador evalúa escenarios combinados directamente con el modelo o si suma efectos marginales de forma incorrecta.",
+        "IA-04 — Revisa la API FastAPI, sus validaciones, sus advertencias deprecatorias y la cobertura de las pruebas automatizadas.",
+        "IA-05 — Revisa que el simulador y la curva fenológica reaccionen coherentemente a NDVI, precipitación y temperatura.",
+        "IA-06 — Compara las métricas del dashboard, README, artefactos y documento técnico para detectar números o afirmaciones inconsistentes.",
+        "IA-07 — Compara el reporte técnico del proyecto contra las bases oficiales del Reto AgroCebada FIRA 2026 e identifica entregables faltantes.",
+        "IA-08 — Prepara una guía de defensa oral con preguntas difíciles sobre fuga de datos, tamaño de muestra, causalidad, conformal e incertidumbre.",
+    ]
+    for prompt in ai_prompts:
+        doc.add_paragraph(prompt, style="List Bullet 2")
+    doc.add_paragraph(
+        "Los prompts anteriores son representativos de las instrucciones utilizadas durante el proceso; algunas "
+        "consultas fueron iterativas. Las recomendaciones fueron revisadas por el equipo, y los cambios incorporados "
+        "se ejecutaron y verificaron mediante pruebas, compilación o inspección directa de los artefactos. Las métricas "
+        "reportadas fueron generadas por la ejecución del pipeline y no fueron inventadas por una herramienta de IA."
     )
     doc.add_paragraph(
         "Anexo 3 — Prototipo y video: dashboard funcional: https://galektato.github.io/Agrotec-Amanteca/. "

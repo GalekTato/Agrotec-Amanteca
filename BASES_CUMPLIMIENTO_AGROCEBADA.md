@@ -20,19 +20,17 @@ El modelo, el código fuente y el dashboard cumplen el objetivo técnico del ret
 | Conclusiones (400 palabras) | Sección G agregada al Word | Verificar conteo final |
 | Bibliografía | Sección H agregada al Word | Cumplido como base; revisar estilo final |
 | Anexos de máximo dos cuartillas | Sección I con aportaciones, IA y entregables | Ajustar paginación final |
-| Aportaciones de cada integrante | Campos individuales en Anexo 1 | **Pendiente del equipo** |
-| Declaración de IA y prompts | Anexo 2 | **Pendiente del equipo** |
+| Aportaciones de cada integrante | Anexo 1: PM/apoyo general, datos, ciencia de datos, frontend y backend | Cumplido |
+| Declaración de IA y prompts | Anexo 2: GitHub Copilot CLI, Antigravity CLI y 8 prompts representativos | Cumplido |
 | Video demostrativo máximo 5 minutos | Enlace externo requerido por la plataforma | **Pendiente de subir o pegar enlace** |
 | Presentación de máximo 15 minutos para finalistas | `GUIA_DEFENSA_ORAL_AGROTEC.md` contiene guion y preguntas | Preparado |
 
 ## Acciones antes de entregar
 
-1. Completar las aportaciones reales de Gael, Limhi, Karla, Arturo y Juan.
-2. Declarar las herramientas de IA realmente usadas, dónde se usaron y los prompts solicitados por las bases.
-3. Grabar el video de máximo cinco minutos y pegar el enlace en el Anexo 3 y en la plataforma oficial.
-4. Abrir el DOCX en Word o LibreOffice y comprobar que el anexo no exceda dos cuartillas.
-5. Confirmar en la plataforma oficial el formato, tamaño máximo y campos adicionales de carga.
-6. Mantener el enlace de GitHub Pages y el repositorio público disponibles durante la evaluación.
+1. Grabar el video de máximo cinco minutos y pegar el enlace en el Anexo 3 y en la plataforma oficial.
+2. Abrir el DOCX en Word o LibreOffice y comprobar que el anexo no exceda dos cuartillas.
+3. Confirmar en la plataforma oficial el formato, tamaño máximo y campos adicionales de carga.
+4. Mantener el enlace de GitHub Pages y el repositorio público disponibles durante la evaluación.
 
 ## Guion mínimo del video de cinco minutos
 
