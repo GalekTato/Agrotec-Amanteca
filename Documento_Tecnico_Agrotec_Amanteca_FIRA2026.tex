@@ -1,0 +1,272 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.0cm,headheight=15pt]{geometry}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{caption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+
+\definecolor{agroorange}{HTML}{F05A28}
+\definecolor{agrogreen}{HTML}{168A52}
+\definecolor{agroblack}{HTML}{18181B}
+\definecolor{agrolight}{HTML}{F7F7F5}
+\definecolor{agrogray}{HTML}{52525B}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=agrogreen,
+  urlcolor=agroorange,
+  citecolor=agrogreen,
+  pdftitle={Agrotec-Amanteca | Reto AgroCebada FIRA 2026},
+  pdfauthor={Equipo Agrotec-Amanteca}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\color{agrogray}\small Agrotec-Amanteca}
+\rhead{\color{agrogray}\small Reto AgroCebada FIRA 2026}
+\cfoot{\color{agrogray}\small Página \thepage\ de \pageref{LastPage}}
+
+\titleformat{\section}{\Large\bfseries\color{agroblack}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{agrogreen}}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{2.0ex plus .5ex minus .2ex}{1.0ex}
+\titlespacing*{\subsection}{0pt}{1.4ex plus .3ex minus .2ex}{.6ex}
+
+\setlist[itemize]{leftmargin=1.6em,itemsep=2pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=1.8em,itemsep=2pt,topsep=3pt}
+\captionsetup{font=small,labelfont=bf,textfont=it}
+
+\newcommand{\metric}[2]{\textbf{#1}: #2}
+\newcommand{\code}[1]{\texttt{\small #1}}
+\newcommand{\sectionrule}{\vspace{-.4em}\noindent\color{agroorange}\rule{\textwidth}{1.2pt}\vspace{.6em}}
+
+\begin{document}
+
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{center}
+\vspace*{0.6cm}
+\IfFileExists{frontend/public/logo_agrotec_amanteca.jpg}
+  {\includegraphics[width=3.6cm]{frontend/public/logo_agrotec_amanteca.jpg}}
+  {\fbox{\parbox[c][3.6cm][c]{3.6cm}{\centering AGROTEC}}}
+
+\vspace{0.8cm}
+{\color{agroorange}\Large\bfseries RETO AGROCEBADA FIRA 2026\par}
+\vspace{0.35cm}
+{\color{agroblack}\Huge\bfseries Sistema geoespacial e inteligencia artificial\par}
+\vspace{0.12cm}
+{\color{agroblack}\Huge\bfseries para la predicción del rendimiento de cebada\par}
+\vspace{0.5cm}
+{\color{agrogray}\Large Documento técnico, metodológico y de resultados\par}
+
+\vfill
+\begin{tcolorbox}[colback=agrolight,colframe=agroblack,boxrule=.7pt,width=.92\textwidth]
+\centering
+\textbf{Equipo Agrotec-Amanteca}\\[3pt]
+197 parcelas analizadas \quad|\quad 138 entrenamiento \quad|\quad 59 predicción ciega\\[3pt]
+Modelo: Ensemble Smart-Pearson + IDW\\[3pt]
+\metric{MAE 5-Fold}{0.3562 $\pm$ 0.0662 t/ha}
+\quad
+\metric{RMSE 5-Fold}{0.4968 $\pm$ 0.1085 t/ha}
+\end{tcolorbox}
+
+\vfill
+\begin{tabular}{ll}
+\textbf{Dashboard:} & \url{https://galektato.github.io/Agrotec-Amanteca/}\\
+\textbf{Repositorio:} & \url{https://github.com/GalekTato/Agrotec-Amanteca}\\
+\textbf{Entrega:} & Octubre de 2026
+\end{tabular}
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section*{Resumen ejecutivo}
+\addcontentsline{toc}{section}{Resumen ejecutivo}
+Agrotec-Amanteca presenta un sistema de apoyo a la decisión para estimar el rendimiento de parcelas de cebada en el contexto del Reto AgroCebada FIRA 2026. El sistema integra variables satelitales NDVI/EVI, precipitación CHIRPS, temperatura, topografía, superficie y contexto espacial. El conjunto oficial contiene 197 parcelas: 138 con rendimiento observado y 59 reservadas para predicción ciega.
+
+El pipeline calcula índices agronómicos deterministas, selecciona 22 predictores mediante Smart-Pearson dentro de cada pliegue y agrega una variable IDW espacial calculada en UTM 14N. El modelo final es un ensamble ponderado de Extra Trees (40\%), Random Forest (25\%), SVR (20\%) y Gradient Boosting (15\%). La validación reporta MAE de 0.3562 t/ha, RMSE de 0.4968 t/ha y $R^2$ de 0.6124 en 5-Fold CV; en 5$\times$5 Repeated CV el RMSE fue 0.5073 t/ha. La cobertura empírica OOF del intervalo nominal de 80\% fue 81.2\%.
+
+\begin{tcolorbox}[colback=agrogreen!7,colframe=agrogreen,title=\textbf{Interpretación responsable}]
+Las métricas describen desempeño predictivo observado en las parcelas disponibles. El simulador representa sensibilidad del modelo ante entradas modificadas; no constituye un experimento causal ni una garantía universal para otras campañas o regiones.
+\end{tcolorbox}
+
+\section{Introducción}
+El Reto AgroCebada FIRA 2026 solicita una solución analítica capaz de estimar el rendimiento de parcelas de cebada en Hidalgo, Tlaxcala y Puebla y convertirlo en una herramienta funcional de consulta. Agrotec-Amanteca responde a ese objetivo mediante un sistema que integra información satelital, climática, topográfica y geoespacial para producir una estimación por parcela. El problema es relevante porque el rendimiento agrícola depende de condiciones que cambian entre localidades y ciclos, mientras que las decisiones productivas y financieras requieren información espacialmente detallada y disponible antes de la cosecha.
+
+El dataset oficial contiene 197 parcelas georreferenciadas: 138 con rendimiento observado, utilizadas para entrenar y validar, y 59 cuyo rendimiento fue reservado para evaluación. Por tanto, el proyecto no intenta reemplazar la medición de campo; construye una estimación reproducible para apoyar la priorización de parcelas, la interpretación de escenarios y la comunicación de riesgo. La solución combina un pipeline de ingeniería de datos con un ensamble de Extra Trees, Random Forest, SVR y Gradient Boosting.
+
+Antes del entrenamiento se calculan índices agronómicos derivados de las series mensuales de NDVI/EVI, precipitación, temperatura, elevación, pendiente y superficie. La selección de variables se realiza dentro de los pliegues de validación para evitar que las etiquetas de validación influyan en el entrenamiento. El componente espacial IDW se calcula en coordenadas métricas UTM 14N y utiliza únicamente referencias permitidas en cada fold.
+
+El resultado se publica como artefactos auditables, API FastAPI y dashboard web responsive disponible en GitHub Pages. La aplicación permite consultar el mapa, revisar predicciones, explorar incertidumbre y ejecutar escenarios de vigor satelital, precipitación y temperatura. La contribución principal es un flujo de extremo a extremo que conecta datos con una interfaz usable, manteniendo una interpretación honesta: las métricas son predictivas y observacionales, no una prueba de causalidad agronómica.
+
+\section{Justificación}
+Una predicción por parcela puede complementar la información de campo al identificar diferencias espaciales y comunicar el nivel de incertidumbre asociado. El proyecto se justifica porque combina variables que representan vigor vegetal, disponibilidad hídrica, régimen térmico y contexto físico con una aplicación consultable por personas no especialistas.
+
+La selección y validación controladas reducen el riesgo de sobreajuste, mientras que la comparación contra un estimador nulo y un baseline permite medir si la complejidad añadida aporta valor real. La herramienta se plantea como apoyo a la decisión, no como sustituto de la experiencia del productor ni como garantía de rendimiento.
+
+\section{Objetivos}
+\textbf{Objetivo general.} Desarrollar y documentar un modelo analítico y una aplicación web funcional para estimar el rendimiento de cebada por parcela en el conjunto oficial del Reto AgroCebada FIRA 2026.
+
+\textbf{Objetivos específicos.}
+\begin{enumerate}
+\item Integrar las variables oficiales y su referencia geoespacial.
+\item Construir índices agronómicos deterministas.
+\item Seleccionar predictores reduciendo redundancia y evitando fuga de información.
+\item Comparar el ensamble con un baseline Random Forest y un DummyRegressor.
+\item Cuantificar error mediante MAE, RMSE y $R^2$ con CV de cinco pliegues y repetición 5$\times$5.
+\item Calibrar una banda de incertidumbre con cobertura empírica fuera de muestra.
+\item Exportar predicciones para las 59 parcelas ciegas y ofrecer consulta cartográfica, simulación y descarga.
+\item Explicar limitaciones para un uso responsable en contextos agrícolas y financieros.
+\end{enumerate}
+
+\section{Metodología}
+\subsection{Datos e ingeniería geoespacial}
+El universo se compone de 197 polígonos georreferenciados, con 138 etiquetas de rendimiento disponibles y 59 reservadas para predicción. Los polígonos se visualizan en WGS84 y sus centroides se calculan temporalmente en UTM Zona 14N (EPSG:32614), evitando medir distancias en grados. Las variables ambientales incluyen índices NDVI/EVI, precipitación CHIRPS, temperaturas máxima y mínima, elevación, pendiente y superficie. La extracción zonal documentada utiliza \code{all\_touched=True} para no descartar parcelas pequeñas.
+
+\subsection{Variables y selección sin fuga}
+A partir de las columnas originales se calculan cinco índices: área bajo la curva de NDVI, tasa vegetativa, caída de madurez, índice hidrotérmico y retención topográfica. El transformador \code{LeakFreeSmartPearsonIDW} ordena variables por correlación absoluta con el objetivo únicamente dentro del entrenamiento de cada fold, elimina redundancia con umbral 0.88 y conserva 22 variables; después agrega \code{spatial\_idw\_yield}.
+
+El IDW usa las siete referencias más cercanas, potencia 1.5 y solo rendimientos del fold de entrenamiento, excluyendo coincidencias exactas. Así se evita que la etiqueta de una parcela de validación se incorpore directa o indirectamente a su predictor espacial.
+
+\subsection{Modelado y evaluación}
+El modelo final es un \textit{VotingRegressor} con Extra Trees 40\%, Random Forest 25\%, SVR 20\% y Gradient Boosting 15\%. Se comparan 11 configuraciones con KFold de cinco pliegues y RepeatedKFold 5$\times$5, usando MAE, RMSE y $R^2$. Las predicciones OOF se calculan para que cada parcela sea evaluada por un modelo que no vio su etiqueta.
+
+La incertidumbre se calibra usando residuos OOF y una escala de dispersión del ensamble; la cobertura reportada es empírica. Finalmente, se ajusta el modelo con las etiquetas disponibles, se serializa en \code{joblib} y se sincronizan JSON, CSV, GeoJSON, dashboard y documento Word. El simulador modifica entradas, recalcula índices y evalúa escenarios combinados directamente con el modelo.
+
+\section{Resultados y discusión}
+\begin{table}[H]
+\centering
+\caption{Resultados auditados del ensamble y sus referencias.}
+\small
+\begin{tabularx}{\textwidth}{l>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\toprule
+\textbf{Indicador} & \textbf{Referencia} & \textbf{Ensemble Agrotec}\\
+\midrule
+MAE 5-Fold (t/ha) & Media: 0.7585 & \textbf{0.3562 $\pm$ 0.0662}\\
+RMSE 5-Fold (t/ha) & Media: 0.8545 & \textbf{0.4968 $\pm$ 0.1085}\\
+RMSE 5$\times$5 (t/ha) & --- & \textbf{0.5073 $\pm$ 0.1180}\\
+$R^2$ 5-Fold & Media: -0.0870 & \textbf{0.6124 $\pm$ 0.1804}\\
+Error OOF $\leq$ 0.50 t/ha & --- & \textbf{72.5\%}\\
+Cobertura nominal 80\% & --- & \textbf{81.2\% empírica OOF}\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+El baseline Random Forest con 39 variables obtuvo MAE 0.3742 y RMSE 0.5139 t/ha, mientras que el DummyRegressor obtuvo MAE 0.7585 y RMSE 0.8545 t/ha. La comparación demuestra una mejora medida frente a ambos referentes, aunque la diferencia frente al baseline es moderada y debe interpretarse junto con las desviaciones estándar.
+
+El 72.5\% de las predicciones OOF tuvo error absoluto menor o igual a 0.50 t/ha. La banda nominal de 80\% alcanzó 81.2\% de cobertura empírica OOF con semiancho medio de 0.584 t/ha. Estos resultados respaldan una herramienta predictiva inicial, pero no garantizan el mismo desempeño en otra región, año o distribución de clima.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.82\textwidth]{data/processed/figures/fig1_oof_validation.png}
+\caption{Validación Out-Of-Fold de las 138 parcelas de entrenamiento.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.82\textwidth]{data/processed/figures/fig4_models_comparison.png}
+\caption{Comparación experimental de arquitecturas mediante MAE y RMSE.}
+\end{figure}
+
+El modelo usa 23 predictores y los artefactos comprueban la paridad entre selección, entrenamiento e inferencia. El simulador responde de forma conjunta y no suma efectos marginales, respetando la posible no linealidad del ensamble. El dashboard permite observar la distribución espacial y consultar las 59 predicciones ciegas con intervalos. La principal limitación es el tamaño muestral: 138 etiquetas son suficientes para una primera solución tabular, pero generan variabilidad entre particiones. La siguiente validación recomendada es temporal y espacial, con datos de una campaña o localidad no utilizada para ajustar decisiones.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.82\textwidth]{data/processed/figures/fig2_feature_importance.png}
+\caption{Importancia relativa de las variables activas en el ensamble.}
+\end{figure}
+
+\section{Uso de la ciencia de datos en la inclusión financiera del sector agro}
+La inclusión financiera requiere que productores y organizaciones puedan presentar información comprensible para planear inversiones, seguros, crédito y asistencia técnica. Un rendimiento estimado por parcela no constituye por sí mismo una autorización de crédito ni sustituye la evaluación financiera; sin embargo, puede servir como insumo operativo para ordenar visitas, comparar escenarios y discutir riesgos productivos con mayor evidencia.
+
+El dashboard traduce variables técnicas a una consulta visual y exportable: cada parcela tiene una estimación, producción calculada según su superficie e intervalo de incertidumbre. Esto puede ayudar a que instituciones y técnicos identifiquen dónde hace falta información adicional antes de tomar una decisión, evitando tratar una predicción puntual como certeza.
+
+El simulador permite explorar escenarios de clima y vigor, siempre con la advertencia de que son sensibilidades observacionales y no efectos causales. En una etapa posterior, el sistema podría integrarse con registros de manejo, costos, ingresos y siniestralidad para construir indicadores financieros más completos, con consentimiento y protección de datos. La propuesta contribuye a la inclusión financiera como herramienta de información y priorización, no como mecanismo automático de aprobación o rechazo de productores.
+
+\section{Conclusiones}
+Agrotec-Amanteca cumplió el objetivo de construir una solución funcional para estimar el rendimiento de cebada por parcela y consultar sus resultados en una interfaz web. La integración de datos satelitales, climáticos, topográficos y espaciales produjo un conjunto de 23 predictores consistente entre validación e inferencia. El ensamble superó al baseline y a la referencia nula bajo métricas medidas, y la validación OOF permitió reportar tanto error como cobertura empírica de incertidumbre.
+
+La aplicación aporta valor porque conecta el resultado estadístico con un mapa, una tabla exportable y un simulador trazable. La conclusión no es que el modelo sea universal ni causal: su confiabilidad está condicionada por las 138 parcelas etiquetadas, la representatividad del dataset y la similitud entre futuras observaciones y el dominio de entrenamiento.
+
+Para fortalecerlo se requieren nuevas parcelas independientes, campañas agrícolas adicionales y validaciones por localidad y tiempo. También debe mantenerse la separación entre predicción, simulación y decisión financiera. Bajo esas condiciones, el sistema es una base estable, lógica y auditable para apoyo a decisiones agrícolas, y cuenta con una ruta clara de mejora sin depender de añadir complejidad innecesaria.
+
+\section{Bibliografía}
+\begin{enumerate}[label={[\arabic*]}]
+\item FIRA. (2026). \textit{Bases de participación: Reto AgroCebada FIRA 2026}. Documento oficial proporcionado por el comité organizador.
+\item FIRA. (2025). \textit{Reglas de Operación para apoyos a los sectores agropecuario, forestal, pesquero, alimentario y rural}. Diario Oficial de la Federación.
+\item Breiman, L. (2001). Random Forests. \textit{Machine Learning}, 45, 5--32.
+\item EPSG.io. (s. f.). EPSG:4326 WGS 84 y EPSG:32614 WGS 84 / UTM zone 14N.
+\item Scikit-learn developers. (s. f.). \textit{Scikit-learn User Guide}. \url{https://scikit-learn.org/}
+\item FastAPI developers. (s. f.). \textit{FastAPI documentation}. \url{https://fastapi.tiangolo.com/}
+\item Climate Hazards Center. (s. f.). \textit{CHIRPS: Climate Hazards InfraRed Precipitation with Station data}.
+\end{enumerate}
+
+\section{Anexos}
+\subsection{A. Integración y aportaciones del equipo}
+\begin{tabularx}{\textwidth}{>{\bfseries}l X}
+\toprule
+Integrante & Función declarada\\
+\midrule
+Gael Askary Razo Montañez & PM y apoyo general\\
+Limhi Gerson López Momox & Ingeniero de datos\\
+Juan Enrique Gutierrez Hernández & Científico de datos\\
+Karla Yaneth Cruz Sandoval & Desarrolladora frontend\\
+Arturo Huerta Maldonado & Desarrollador backend\\
+\bottomrule
+\end{tabularx}
+
+\subsection{B. Declaración de uso de Inteligencia Artificial}
+Durante el desarrollo se utilizaron herramientas de IA generativa como asistencia técnica para auditoría, programación asistida, pruebas, documentación y defensa oral. Se utilizó GitHub Copilot CLI para auditoría del pipeline, programación asistida, pruebas y documentación; Antigravity CLI se utilizó exclusivamente para correcciones y ajustes del diseño frontend. El equipo conserva la responsabilidad sobre la autoría, revisión, ejecución, interpretación y entrega.
+
+\textbf{Prompts representativos utilizados:}
+\begin{enumerate}[label=\textbf{IA-\arabic*:},leftmargin=2.4em]
+\item Audita exhaustivamente el pipeline de Machine Learning e identifica riesgos de data leakage, especialmente en la selección de variables y el cálculo IDW dentro de la validación cruzada.
+\item Comprueba si existe paridad entre las variables usadas en Cross-Validation, el modelo serializado y la inferencia de producción.
+\item Revisa si el simulador evalúa escenarios combinados directamente con el modelo o si suma efectos marginales de forma incorrecta.
+\item Revisa la API FastAPI, sus validaciones, sus advertencias deprecatorias y la cobertura de las pruebas automatizadas.
+\item Revisa que el simulador y la curva fenológica reaccionen coherentemente a NDVI, precipitación y temperatura.
+\item Compara las métricas del dashboard, README, artefactos y documento técnico para detectar números o afirmaciones inconsistentes.
+\item Compara el reporte técnico del proyecto contra las bases oficiales del Reto AgroCebada FIRA 2026 e identifica entregables faltantes.
+\item Prepara una guía de defensa oral con preguntas difíciles sobre fuga de datos, tamaño de muestra, causalidad, conformal e incertidumbre.
+\end{enumerate}
+
+Los prompts son representativos de instrucciones iterativas utilizadas durante el proceso. Las recomendaciones fueron revisadas por el equipo y los cambios se verificaron mediante pruebas, compilación o inspección directa. Las métricas fueron generadas por la ejecución del pipeline.
+
+\subsection{C. Prototipo y video}
+\textbf{Dashboard funcional:} \url{https://galektato.github.io/Agrotec-Amanteca/}\\
+\textbf{Código fuente:} \url{https://github.com/GalekTato/Agrotec-Amanteca}\\
+\textbf{Video demostrativo (máximo 5 minutos):} pendiente de subir a la plataforma oficial o completar con el enlace definitivo.
+
+\begin{tcolorbox}[colback=agroorange!8,colframe=agroorange,title=\textbf{Checklist final de entrega}]
+\begin{itemize}
+\item Reporte técnico DOCX y PDF.
+\item Código fuente y documentación de ejecución.
+\item Dashboard consultable.
+\item Video de máximo cinco minutos.
+\item Confirmación de que el anexo cumple el límite de dos cuartillas solicitado.
+\end{itemize}
+\end{tcolorbox}
+
+\end{document}
