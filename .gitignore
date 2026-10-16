@@ -25,6 +25,13 @@ __pycache__/
 *$py.class
 .ipynb_checkpoints/
 
+# Archivos auxiliares generados por LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
 # Dependencias de Node.js
 node_modules/
 frontend/dist/

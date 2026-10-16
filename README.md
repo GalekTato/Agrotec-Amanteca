@@ -17,6 +17,7 @@
 - **Guía de defensa oral del equipo**: [`GUIA_DEFENSA_ORAL_AGROTEC.md`](GUIA_DEFENSA_ORAL_AGROTEC.md)
 - **Matriz de cumplimiento de las bases**: [`BASES_CUMPLIMIENTO_AGROCEBADA.md`](BASES_CUMPLIMIENTO_AGROCEBADA.md)
 - **Reporte LaTeX/PDF profesional**: [`Documento_Tecnico_Agrotec_Amanteca_FIRA2026.pdf`](Documento_Tecnico_Agrotec_Amanteca_FIRA2026.pdf) · [`fuente .tex`](Documento_Tecnico_Agrotec_Amanteca_FIRA2026.tex)
+- **Guía de entrega y compilación**: [`GUIA_ENTREGA_Y_COMPILACION.md`](GUIA_ENTREGA_Y_COMPILACION.md)
 
 ---
 
@@ -29,6 +30,14 @@
 | **03** | **Karla Yaneth Cruz Sandoval** |
 | **04** | **Arturo Huerta Maldonado** |
 | **05** | **Juan Enrique Gutierrez Hernández** |
+
+| Integrante | Rol declarado |
+| :--- | :--- |
+| Gael Askary Razo Montañez | PM y apoyo general |
+| Limhi Gerson López Momox | Ingeniero de datos |
+| Juan Enrique Gutierrez Hernández | Científico de datos |
+| Karla Yaneth Cruz Sandoval | Desarrolladora frontend |
+| Arturo Huerta Maldonado | Desarrollador backend |
 
 ---
 
@@ -131,12 +140,16 @@ Agrotec-Amanteca/
 
 ## 🚀 Ejecución Rápida y Verificación Automatizada
 
-### 1. Entrenar el Pipeline y Regenerar Artefactos + Documento Word
+### 1. Entrenar el Pipeline y Regenerar Artefactos
 ```bash
 pip install -r backend/requirements.txt geopandas matplotlib python-docx pyarrow
 python ml_pipeline/models/02_train_and_export_artifacts.py
-python ml_pipeline/models/generate_word_report.py
 ```
+
+El DOCX, PDF y fuente LaTeX publicados son entregables listos para revisión.
+`generate_word_report.py` se conserva únicamente como trazabilidad histórica y
+no es necesario para compilar ni presentar el proyecto. Para compilar el PDF,
+consulta [`GUIA_ENTREGA_Y_COMPILACION.md`](GUIA_ENTREGA_Y_COMPILACION.md).
 
 ### 2. Ejecutar la Suite de Pruebas Automatizadas (`pytest` con 0 Warnings)
 ```bash
