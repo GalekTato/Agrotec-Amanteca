@@ -14,10 +14,7 @@
 ## 🌐 Demo Interactiva en Vivo
 
 - **Dashboard Cartográfico y Simulador Agronómico**: [https://galektato.github.io/Agrotec-Amanteca/](https://galektato.github.io/Agrotec-Amanteca/)
-- **Guía de defensa oral del equipo**: [`GUIA_DEFENSA_ORAL_AGROTEC.md`](GUIA_DEFENSA_ORAL_AGROTEC.md)
 - **Matriz de cumplimiento de las bases**: [`BASES_CUMPLIMIENTO_AGROCEBADA.md`](BASES_CUMPLIMIENTO_AGROCEBADA.md)
-- **Reporte LaTeX/PDF profesional**: [`Documento_Tecnico_Agrotec_Amanteca_FIRA2026.pdf`](Documento_Tecnico_Agrotec_Amanteca_FIRA2026.pdf) · [`fuente .tex`](Documento_Tecnico_Agrotec_Amanteca_FIRA2026.tex)
-- **Guía de entrega y compilación**: [`GUIA_ENTREGA_Y_COMPILACION.md`](GUIA_ENTREGA_Y_COMPILACION.md)
 
 ---
 
@@ -93,7 +90,7 @@ flowchart LR
     A["Fuentes Geoespaciales<br/>Shapefiles + CHIRPS + INEGI + NDVI/EVI"] --> B["Núcleo Compartido agro_core.py<br/>Smart-Pearson |r|<0.88 + IDW k=7"]
     B --> C["Ensemble Agrotec (23 Predictores)<br/>ExtraTrees · RF · SVR · GBR + Conformal 80%"]
     C --> D["Backend API FastAPI + Pytest<br/>/api/parcelas · /api/simular · /api/sensibilidad"]
-    C --> E["Artefactos Auditados<br/>GeoJSON · sensibilidad_simulador.json · Word (.docx)"]
+    C --> E["Artefactos Auditados<br/>GeoJSON · sensibilidad_simulador.json"]
     D --> F["Dashboard Cartográfico Swiss/Industrial<br/>React 18 · Vite 6 · Tailwind · Leaflet · Recharts"]
     E --> F
 ```
@@ -102,7 +99,6 @@ flowchart LR
 - **Ingeniería Geoespacial**: `GeoPandas 1.2.0`, `Shapely`, `Rasterio` (`all_touched=True`), proyección métrica `EPSG:32614` (UTM 14N) y visualización `EPSG:4326`.
 - **Backend & Suite de Pruebas**: `FastAPI`, `Pydantic V2`, `Uvicorn ASGI`, `Pytest` + `HTTPX` (`sin advertencias deprecatorias`).
 - **Frontend & Visualización**: `React 18`, `Vite 6`, `Tailwind CSS`, `LeafletJS` + Cartografía `Esri ArcGIS Online` (libres de API Key), `Recharts`.
-- **Reporteo Automático**: Generación programática del informe técnico editable `Documento_Tecnico_Agrotec_Amanteca_FIRA2026.docx` con `python-docx` y figuras a `300 DPI` con `Matplotlib`.
 
 ---
 
@@ -132,8 +128,7 @@ Agrotec-Amanteca/
 │   └── models/
 │       ├── 01_baseline_rf.py               # Script Baseline RandomForest
 │       ├── 02_train_and_export_artifacts.py # Pipeline V4 Smart-Pearson + IDW + Conformal 80% + Simulador
-│       └── generate_word_report.py         # Generador del Documento Técnico Word (.docx)
-└── Documento_Tecnico_Agrotec_Amanteca_FIRA2026.docx
+└── backend/artifacts/                      # Artefactos auditados para API y dashboard
 ```
 
 ---
@@ -145,11 +140,6 @@ Agrotec-Amanteca/
 pip install -r backend/requirements.txt geopandas matplotlib python-docx pyarrow
 python ml_pipeline/models/02_train_and_export_artifacts.py
 ```
-
-El DOCX, PDF y fuente LaTeX publicados son entregables listos para revisión.
-`generate_word_report.py` se conserva únicamente como trazabilidad histórica y
-no es necesario para compilar ni presentar el proyecto. Para compilar el PDF,
-consulta [`GUIA_ENTREGA_Y_COMPILACION.md`](GUIA_ENTREGA_Y_COMPILACION.md).
 
 ### 2. Ejecutar la Suite de Pruebas Automatizadas (`pytest` con 0 Warnings)
 ```bash

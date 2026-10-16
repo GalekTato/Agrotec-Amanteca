@@ -31,6 +31,9 @@ __pycache__/
 *.out
 *.toc
 *.synctex.gz
+~$*
+*.ppwritelock
+Documento_Tecnico_Agrotec_Amanteca_FIRA2026.pdf
 
 # Dependencias de Node.js
 node_modules/

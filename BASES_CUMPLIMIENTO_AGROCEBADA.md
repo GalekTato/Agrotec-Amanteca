@@ -11,20 +11,11 @@ El modelo, el código fuente y el dashboard cumplen el objetivo técnico del ret
 | Modelo con métricas objetivas | MAE, RMSE, R², OOF y CV 5×5 en `metrics_summary.json` | Cumplido |
 | Aplicación o dashboard funcional | GitHub Pages: https://galektato.github.io/Agrotec-Amanteca/ | Cumplido |
 | Código fuente y documentación de ejecución | Repositorio GitHub, `README.md`, `backend/`, `frontend/`, `ml_pipeline/` | Cumplido |
-| Reporte con Introducción (400–550 palabras) | Sección A agregada al Word por `generate_word_report.py` | Verificar conteo final |
-| Reporte con Justificación (100–200 palabras) | Sección B agregada al Word | Verificar conteo final |
-| Reporte con Objetivos (200 palabras) | Sección C agregada al Word | Verificar conteo final |
-| Reporte con Metodología (600–700 palabras) | Sección D agregada al Word | Verificar conteo final |
-| Reporte con Resultados y discusión (800 palabras) | Sección E agregada al Word | Verificar conteo final |
-| Ciencia de datos e inclusión financiera (300 palabras) | Sección F agregada al Word | Verificar conteo final |
-| Conclusiones (400 palabras) | Sección G agregada al Word | Verificar conteo final |
-| Bibliografía | Sección H agregada al Word | Cumplido como base; revisar estilo final |
-| Anexos de máximo dos cuartillas | Sección I con aportaciones, IA y entregables | Ajustar paginación final |
 | Aportaciones de cada integrante | Anexo 1: PM/apoyo general, datos, ciencia de datos, frontend y backend | Cumplido |
 | Declaración de IA y prompts | Anexo 2: GitHub Copilot CLI, Antigravity CLI y 8 prompts representativos | Cumplido |
 | Video demostrativo máximo 5 minutos | Enlace externo requerido por la plataforma | **Pendiente de subir o pegar enlace** |
-| Presentación de máximo 15 minutos para finalistas | `GUIA_DEFENSA_ORAL_AGROTEC.md` contiene guion y preguntas | Preparado |
-| Preguntas guía para bonus | Respuestas explícitas en la sección H/I del reporte: IDW, variable climática y combinación ganadora | Cumplido |
+| Presentación de máximo 15 minutos para finalistas | Preparación oral a cargo del equipo; no se incluye una guía en el repositorio | Pendiente del equipo |
+| Preguntas guía para bonus | Respuestas preparadas por el equipo durante la presentación | Pendiente del equipo |
 
 ## Acciones antes de entregar
 

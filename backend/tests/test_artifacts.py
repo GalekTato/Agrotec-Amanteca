@@ -101,7 +101,6 @@ def test_no_unverified_or_legacy_numbers_in_codebase_and_docs():
         ROOT_DIR / "README.md",
         ROOT_DIR / "frontend" / "src" / "App.jsx",
         ROOT_DIR / "backend" / "main.py",
-        ROOT_DIR / "ml_pipeline" / "models" / "generate_word_report.py",
     ]
     for fpath in checked_files:
         content = fpath.read_text(encoding="utf-8")
