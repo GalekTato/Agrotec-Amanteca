@@ -180,6 +180,168 @@ def add_section_banner(doc, number_str: str, title_str: str):
     return h
 
 
+def add_bases_required_sections(doc):
+    """Add the report structure required by the official challenge rules."""
+    sections = [
+        (
+            "A. Introducción",
+            "El Reto AgroCebada FIRA 2026 solicita una solución analítica capaz de estimar el rendimiento "
+            "de parcelas de cebada en Hidalgo, Tlaxcala y Puebla y convertirlo en una herramienta funcional "
+            "de consulta. Agrotec-Amanteca responde a ese objetivo mediante un sistema que integra información "
+            "satelital, climática, topográfica y geoespacial para producir una estimación por parcela. El problema "
+            "es relevante porque el rendimiento agrícola depende de condiciones que cambian entre localidades y "
+            "ciclos, mientras que las decisiones productivas y financieras requieren información espacialmente "
+            "detallada y disponible antes de la cosecha. El dataset oficial contiene 197 parcelas georreferenciadas: "
+            "138 con rendimiento observado, utilizadas para entrenar y validar, y 59 cuyo rendimiento fue reservado "
+            "para evaluación. Por tanto, el proyecto no intenta reemplazar la medición de campo; construye una "
+            "estimación reproducible para apoyar la priorización de parcelas, la interpretación de escenarios y la "
+            "comunicación de riesgo. La solución combina un pipeline de ingeniería de datos con un ensamble de "
+            "Extra Trees, Random Forest, SVR y Gradient Boosting. Antes del entrenamiento se calculan índices "
+            "agronómicos derivados de las series mensuales de NDVI/EVI, precipitación, temperatura, elevación, "
+            "pendiente y superficie. La selección de variables se realiza dentro de los pliegues de validación "
+            "para evitar que las etiquetas de validación influyan en el entrenamiento. El componente espacial IDW "
+            "se calcula en coordenadas métricas UTM 14N y utiliza únicamente referencias permitidas en cada fold. "
+            "El resultado se publica como artefactos auditables, API FastAPI y dashboard web responsive disponible "
+            "en GitHub Pages. La aplicación permite consultar el mapa, revisar predicciones, explorar incertidumbre "
+            "y ejecutar escenarios de vigor satelital, precipitación y temperatura. La contribución principal es "
+            "un flujo de extremo a extremo que conecta datos con una interfaz usable, manteniendo una interpretación "
+            "honesta: las métricas son predictivas y observacionales, no una prueba de causalidad agronómica."
+        ),
+        (
+            "B. Justificación",
+            "Una predicción por parcela puede complementar la información de campo al identificar diferencias "
+            "espaciales y comunicar el nivel de incertidumbre asociado. El proyecto se justifica porque combina "
+            "variables que representan vigor vegetal, disponibilidad hídrica, régimen térmico y contexto físico "
+            "con una aplicación consultable por personas no especialistas. La selección y validación controladas "
+            "reducen el riesgo de sobreajuste, mientras que la comparación contra un estimador nulo y un baseline "
+            "permite medir si la complejidad añadida aporta valor real. La herramienta se plantea como apoyo a la "
+            "decisión, no como sustituto de la experiencia del productor ni como garantía de rendimiento."
+        ),
+        (
+            "C. Objetivos",
+            "Objetivo general: desarrollar y documentar un modelo analítico y una aplicación web funcional para "
+            "estimar el rendimiento de cebada por parcela en el conjunto oficial del Reto AgroCebada FIRA 2026. "
+            "Objetivos específicos: integrar las variables oficiales y su referencia geoespacial; construir índices "
+            "agronómicos deterministas; seleccionar predictores reduciendo redundancia y evitando fuga de información; "
+            "comparar un ensamble con un baseline Random Forest y un DummyRegressor; cuantificar error mediante MAE, "
+            "RMSE y R² con validación cruzada de cinco pliegues y repetición 5×5; calibrar una banda de incertidumbre "
+            "con cobertura empírica fuera de muestra; exportar predicciones para las 59 parcelas ciegas; ofrecer "
+            "consulta cartográfica, simulación de escenarios y descarga de resultados; y explicar las limitaciones "
+            "para que la herramienta se use responsablemente en contextos agrícolas y financieros."
+        ),
+        (
+            "D. Metodología",
+            "El universo se compone de 197 polígonos georreferenciados, con 138 etiquetas de rendimiento disponibles "
+            "y 59 reservadas para predicción. Los polígonos se visualizan en WGS84 y sus centroides se calculan "
+            "temporalmente en UTM Zona 14N (EPSG:32614), evitando medir distancias en grados. Las variables ambientales "
+            "incluyen índices NDVI/EVI, precipitación CHIRPS, temperaturas máxima y mínima, elevación, pendiente y "
+            "superficie. La extracción zonal documentada utiliza all_touched=True para no descartar parcelas pequeñas. "
+            "A partir de las columnas originales se calculan cinco índices: área bajo la curva de NDVI, tasa vegetativa, "
+            "caída de madurez, índice hidrotérmico y retención topográfica. El transformador LeakFreeSmartPearsonIDW "
+            "ordena variables por correlación absoluta con el objetivo únicamente dentro del entrenamiento de cada fold, "
+            "elimina redundancia con umbral 0.88 y conserva 22 variables; después agrega spatial_idw_yield. El IDW usa "
+            "las siete referencias más cercanas, potencia 1.5 y solo rendimientos del fold de entrenamiento, excluyendo "
+            "coincidencias exactas. El modelo final es un VotingRegressor con Extra Trees 40%, Random Forest 25%, SVR "
+            "20% y Gradient Boosting 15%. Se comparan 11 configuraciones con KFold de cinco pliegues y RepeatedKFold "
+            "5×5, usando MAE, RMSE y R². Las predicciones OOF se calculan para que cada parcela sea evaluada por un "
+            "modelo que no vio su etiqueta. La incertidumbre se calibra usando residuos OOF y una escala de dispersión "
+            "del ensamble; la cobertura reportada es empírica. Finalmente, se ajusta el modelo con las etiquetas "
+            "disponibles, se serializa en joblib y se sincronizan JSON, CSV, GeoJSON, dashboard y documento Word. "
+            "El simulador modifica entradas, recalcula índices y evalúa escenarios combinados directamente con el modelo."
+        ),
+        (
+            "E. Resultados y discusión",
+            "El ensamble seleccionado obtuvo MAE 5-Fold de 0.3562 ± 0.0662 t/ha, RMSE de 0.4968 ± 0.1084 t/ha, "
+            "RMSE 5×5 de 0.5073 ± 0.1183 t/ha y R² de 0.6124 ± 0.1804. El baseline Random Forest con 39 variables "
+            "obtuvo MAE 0.3742 y RMSE 0.5139 t/ha, mientras que el DummyRegressor obtuvo MAE 0.7585 y RMSE 0.8545 "
+            "t/ha. La comparación demuestra una mejora medida frente a ambos referentes, aunque la diferencia frente "
+            "al baseline es moderada y debe interpretarse junto con las desviaciones estándar. El 72.5% de las "
+            "predicciones OOF tuvo error absoluto menor o igual a 0.50 t/ha. La banda nominal de 80% alcanzó 81.2% "
+            "de cobertura empírica OOF con semiancho medio de 0.584 t/ha. Estos resultados respaldan una herramienta "
+            "predictiva inicial, pero no garantizan el mismo desempeño en otra región, año o distribución de clima. "
+            "El modelo usa 23 predictores y los artefactos comprueban la paridad entre selección, entrenamiento e "
+            "inferencia. El simulador responde de forma conjunta y no suma efectos marginales, respetando la posible "
+            "no linealidad del ensamble. El dashboard permite observar la distribución espacial y consultar las 59 "
+            "predicciones ciegas con intervalos. La principal limitación es el tamaño muestral: 138 etiquetas son "
+            "suficientes para una primera solución tabular, pero generan variabilidad entre particiones. La siguiente "
+            "validación recomendada es temporal y espacial, con datos de una campaña o localidad no utilizada para "
+            "ajustar decisiones. También se recomienda monitorear fuera de dominio y separar calibración conformal "
+            "de evaluación externa cuando existan más observaciones."
+        ),
+        (
+            "F. Uso de la ciencia de datos en la inclusión financiera del sector agro",
+            "La inclusión financiera requiere que productores y organizaciones puedan presentar información comprensible "
+            "para planear inversiones, seguros, crédito y asistencia técnica. Un rendimiento estimado por parcela no "
+            "constituye por sí mismo una autorización de crédito ni sustituye la evaluación financiera; sin embargo, "
+            "puede servir como insumo operativo para ordenar visitas, comparar escenarios y discutir riesgos productivos "
+            "con mayor evidencia. El dashboard traduce variables técnicas a una consulta visual y exportable: cada "
+            "parcela tiene una estimación, producción calculada según su superficie e intervalo de incertidumbre. Esto "
+            "puede ayudar a que instituciones y técnicos identifiquen dónde hace falta información adicional antes de "
+            "tomar una decisión, evitando tratar una predicción puntual como certeza. El simulador permite explorar "
+            "escenarios de clima y vigor, siempre con la advertencia de que son sensibilidades observacionales y no "
+            "efectos causales. En una etapa posterior, el sistema podría integrarse con registros de manejo, costos, "
+            "ingresos y siniestralidad para construir indicadores financieros más completos, con consentimiento y "
+            "protección de datos. La aplicación de ciencia de datos es responsable cuando hace explícitos sus supuestos, "
+            "mide su error, señala incertidumbre y permite auditoría. Por ello, la propuesta contribuye a la inclusión "
+            "financiera como herramienta de información y priorización, no como mecanismo automático de aprobación o "
+            "rechazo de productores."
+        ),
+        (
+            "G. Conclusiones",
+            "Agrotec-Amanteca cumplió el objetivo de construir una solución funcional para estimar el rendimiento de "
+            "cebada por parcela y consultar sus resultados en una interfaz web. La integración de datos satelitales, "
+            "climáticos, topográficos y espaciales produjo un conjunto de 23 predictores consistente entre validación "
+            "e inferencia. El ensamble superó al baseline y a la referencia nula bajo métricas medidas, y la validación "
+            "OOF permitió reportar tanto error como cobertura empírica de incertidumbre. La aplicación aporta valor "
+            "porque conecta el resultado estadístico con un mapa, una tabla exportable y un simulador trazable. "
+            "La conclusión no es que el modelo sea universal ni causal: su confiabilidad está condicionada por las "
+            "138 parcelas etiquetadas, la representatividad del dataset y la similitud entre futuras observaciones y "
+            "el dominio de entrenamiento. Para fortalecerlo se requieren nuevas parcelas independientes, campañas "
+            "agrícolas adicionales y validaciones por localidad y tiempo. También debe mantenerse la separación entre "
+            "predicción, simulación y decisión financiera. Bajo esas condiciones, el sistema es una base estable, "
+            "lógica y auditable para apoyo a decisiones agrícolas, y cuenta con una ruta clara de mejora sin depender "
+            "de añadir complejidad innecesaria."
+        ),
+    ]
+    for title, body in sections:
+        add_section_banner(doc, title.split(".")[0], title.split(". ", 1)[1])
+        doc.add_paragraph(body)
+
+    add_section_banner(doc, "H", "Bibliografía")
+    references = [
+        "FIRA. (2026). Bases de participación: Reto AgroCebada FIRA 2026. Documento oficial proporcionado por el comité organizador.",
+        "FIRA. (2025). Reglas de Operación para apoyos a los sectores agropecuario, forestal, pesquero, alimentario y rural. Diario Oficial de la Federación.",
+        "Breiman, L. (2001). Random Forests. Machine Learning, 45, 5–32.",
+        "Geodetic Survey / EPSG.io. (s. f.). EPSG:4326 WGS 84 y EPSG:32614 WGS 84 / UTM zone 14N.",
+        "Scikit-learn developers. (s. f.). Scikit-learn User Guide: model selection, ensembles, pipelines and metrics. https://scikit-learn.org/",
+        "FastAPI developers. (s. f.). FastAPI documentation. https://fastapi.tiangolo.com/",
+        "CHIRPS Climate Hazards Center. (s. f.). Climate Hazards InfraRed Precipitation with Station data.",
+    ]
+    for reference in references:
+        doc.add_paragraph(reference, style="List Bullet")
+
+    add_section_banner(doc, "I", "Anexos y cumplimiento de entregables")
+    doc.add_paragraph(
+        "Anexo 1 — Aportaciones individuales: este apartado debe completarse con las actividades reales de cada "
+        "integrante antes de subir el documento a la plataforma. No se asignan cargos ficticios."
+    )
+    for member in TEAM_MEMBERS:
+        doc.add_paragraph(f"{member}: [COMPLETAR POR EL EQUIPO: actividades y aportaciones verificables]", style="List Bullet")
+    doc.add_paragraph(
+        "Anexo 2 — Uso de Inteligencia Artificial: las bases permiten IA si se indica dónde fue utilizada y se anexan "
+        "los prompts. Completar antes de la entrega con herramientas, componentes afectados y prompts realmente usados."
+    )
+    doc.add_paragraph(
+        "Herramientas de IA: [COMPLETAR]. Ubicación de uso: [COMPLETAR]. Prompts declarados: [COMPLETAR O INDICAR "
+        "QUE NO SE UTILIZARON]. El equipo conserva responsabilidad sobre la revisión, ejecución y autoría del código."
+    )
+    doc.add_paragraph(
+        "Anexo 3 — Prototipo y video: dashboard funcional: https://galektato.github.io/Agrotec-Amanteca/. "
+        "Código fuente: https://github.com/GalekTato/Agrotec-Amanteca. Video demostrativo de máximo cinco minutos: "
+        "[PENDIENTE DE SUBIR A LA PLATAFORMA O COMPLETAR CON EL ENLACE DEFINITIVO]."
+    )
+
+
 def build_word_document():
     summary = json.loads(SUMMARY_PATH.read_text(encoding="utf-8"))
     pred_df = pd.read_csv(PRED_CSV_PATH)
@@ -300,6 +462,9 @@ def build_word_document():
         set_cell_margins(row_cells[0], top=50, bottom=50)
         set_cell_margins(row_cells[1], top=50, bottom=50)
 
+    doc.add_page_break()
+
+    add_bases_required_sections(doc)
     doc.add_page_break()
 
     # =========================================================================

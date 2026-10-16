@@ -15,6 +15,7 @@
 
 - **Dashboard Cartográfico y Simulador Agronómico**: [https://galektato.github.io/Agrotec-Amanteca/](https://galektato.github.io/Agrotec-Amanteca/)
 - **Guía de defensa oral del equipo**: [`GUIA_DEFENSA_ORAL_AGROTEC.md`](GUIA_DEFENSA_ORAL_AGROTEC.md)
+- **Matriz de cumplimiento de las bases**: [`BASES_CUMPLIMIENTO_AGROCEBADA.md`](BASES_CUMPLIMIENTO_AGROCEBADA.md)
 
 ---
 
