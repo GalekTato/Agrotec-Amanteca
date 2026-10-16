@@ -362,14 +362,22 @@ export default function App() {
   const hasActiveSimulation = ndviDelta !== 0 || precDelta !== 0 || tmaxDelta !== 0
 
   // La curva fenológica de NDVI refleja directamente el escalamiento porcentual del slider de NDVI
+  // La curva fenológica responde dinámicamente tanto a NDVI como a lluvia CHIRPS y régimen térmico Tmax
   const ndviChartData = useMemo(() => {
     if (!selectedParcel || !summary?.ndvi_benchmarks) return []
     return summary.ndvi_benchmarks.map((b) => {
       const baseVal = Number(selectedParcel[b.feature] || 0)
-      const simVal =
-        ndviDelta !== 0
-          ? Math.min(0.95, Math.max(0.05, +(baseVal * (1 + ndviDelta / 100)).toFixed(4)))
-          : baseVal
+      // Mayor sensibilidad en meses del ciclo agrícola activo de cebada (mayo a octubre: meses 5 a 10)
+      const isReproductiveMonth = b.month >= 5 && b.month <= 10
+      const seasonalWeight = isReproductiveMonth ? 1.0 : 0.45
+      const combinedCanopyFactor =
+        (ndviDelta / 100) +
+        (precDelta / 100) * 0.40 * seasonalWeight -
+        (tmaxDelta * 0.028) * seasonalWeight
+
+      const simVal = hasActiveSimulation
+        ? Math.min(0.95, Math.max(0.05, +(baseVal * (1 + combinedCanopyFactor)).toFixed(4)))
+        : baseVal
 
       return {
         month: b.month_name,
@@ -379,7 +387,7 @@ export default function App() {
         bajoRendimiento: +Number(b.mean_low_yield).toFixed(3),
       }
     })
-  }, [selectedParcel, summary, ndviDelta])
+  }, [selectedParcel, summary, ndviDelta, precDelta, tmaxDelta, hasActiveSimulation])
 
   const localDrivers = useMemo(() => {
     if (!selectedParcel?.top_drivers) return []
@@ -880,7 +888,7 @@ export default function App() {
                       Curva Fenológica Satelital (NDVI Mensual · Meses 1 a 11)
                     </h3>
                     <p className="text-xs text-[var(--ink-secondary)]">
-                      Comparativa de {selectedParcel.ID_POLIGONO} frente al umbral élite (&ge;4.35 t/ha) y variación directa de NDVI satelital
+                      Comparativa de {selectedParcel.ID_POLIGONO} frente al umbral élite (&ge;4.35 t/ha) y respuesta dinámica ante los controles de simulación
                     </p>
                   </div>
 
@@ -918,11 +926,11 @@ export default function App() {
                           fillOpacity={0.12}
                           strokeWidth={2.5}
                         />
-                        {ndviDelta !== 0 && (
+                        {hasActiveSimulation && (
                           <Area
                             type="monotone"
                             dataKey="simulado"
-                            name="NDVI Escalado Simulador"
+                            name="Respuesta Fenológica Simulada"
                             stroke="#FF4F00"
                             fill="#FF4F00"
                             fillOpacity={0.14}
@@ -1407,7 +1415,7 @@ export default function App() {
         {/* SECCIÓN 04: CALIDAD DEL DATASET, CIFRAS DEMOSTRATIVAS Y RESUMEN DE TECNOLOGÍAS */}
         {activeTab === 'deploy' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 border border-[var(--rule-strong)] bg-[var(--surface-panel)] divide-y lg:divide-y-0 lg:divide-x divide-[var(--rule-strong)]">
-            <div className="lg:col-span-4 p-6 flex flex-col items-start justify-between bg-[var(--surface-subtle)]">
+            <div className="lg:col-span-4 p-5 sm:p-6 flex flex-col justify-between gap-5 bg-[var(--surface-subtle)]">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF4F00]">
                   Identidad del Equipo
@@ -1420,14 +1428,23 @@ export default function App() {
                 </p>
               </div>
 
-              <img
-                src="./logo_agrotec_amanteca.jpg"
-                alt="Emblema Agrotec-Amanteca"
-                className="w-52 h-52 object-cover border border-[var(--rule-strong)] my-5"
-                onError={(e) => {
-                  e.currentTarget.src = './logo_agrotec_amanteca.svg'
-                }}
-              />
+              {/* Marco de Emblema Oficial que aprovecha armónicamente el espacio disponible */}
+              <div className="w-full flex flex-col items-center justify-center my-2">
+                <div className="w-full max-w-[340px] bg-[var(--surface-panel)] border border-[var(--rule-strong)] p-3 sm:p-4 shadow-sm flex flex-col items-center">
+                  <img
+                    src="./logo_agrotec_amanteca.jpg"
+                    alt="Emblema Oficial Agrotec-Amanteca"
+                    className="w-full aspect-square object-cover border border-[var(--rule-strong)] bg-[#111111]"
+                    onError={(e) => {
+                      e.currentTarget.src = './logo_agrotec_amanteca.svg'
+                    }}
+                  />
+                  <div className="w-full mt-2.5 pt-2 border-t border-[var(--rule-hairline)] flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[var(--ink-secondary)]">
+                    <span>Emblema Oficial</span>
+                    <span className="text-[#FF4F00]">FIRA 2026</span>
+                  </div>
+                </div>
+              </div>
 
               {/* Integrantes Oficiales del Equipo */}
               <div className="w-full border-t border-[var(--rule-strong)] pt-3 text-xs">
