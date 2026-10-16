@@ -1,50 +1,36 @@
-# Datos y Modelos Pesados (ignorar todo en /data excepto la estructura)
-data/*
-!data/.keep
-!data/raw/.keep
-!data/interim/.keep
-!data/processed/.keep
-
-# Formatos de datos grandes
-*.csv
+# Ignorar datos crudos pesados (Shapefiles, Rasters TIF, CSVs masivos)
+data/raw/
+data/interim/
+data/processed/*.parquet
+*.tif
 *.shp
 *.shx
 *.dbf
 *.prj
-*.tif
-*.tiff
-*.nc
-*.parquet
-*.geojson
+*.zip
 
-# Modelos
-*.pkl
-*.joblib
-*.onnx
-*.h5
+# Permitir explícitamente los artefactos ligeros (<5MB) necesarios para Railway y Vercel/Cloudflare
+!backend/artifacts/
+!backend/artifacts/**
+!frontend/public/data/
+!frontend/public/data/**
+!data/processed/predicciones_59_parcelas.csv
 
-# Python
+# Entornos virtuales de Python
+venv/
+.venv/
+env/
 __pycache__/
 *.py[cod]
 *$py.class
-.env
-.venv/
-venv/
-env/
-
-# Jupyter Notebooks
 .ipynb_checkpoints/
 
-# Node.js / Frontend
+# Dependencias de Node.js
 node_modules/
-dist/
-build/
-.npm
-.eslintcache
+frontend/dist/
+.env
 .env.local
 
-# IDEs y OS
-.vscode/
-.idea/
+# Archivos del Sistema Operativo
 .DS_Store
 Thumbs.db
