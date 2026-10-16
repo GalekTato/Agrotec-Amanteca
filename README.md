@@ -9,7 +9,6 @@
   [![FastAPI](https://img.shields.io/badge/FastAPI-Pydantic_V2-16A34A?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
   [![React](https://img.shields.io/badge/React_18-Vite_6-111111?style=flat-square&logo=react)](https://react.dev/)
 </div>
-
 ---
 
 ## 🌐 Demo Interactiva en Vivo
@@ -38,13 +37,13 @@ Tanto la validación cruzada (`5-Fold CV` y `5×5 Repeated CV`) como el modelo f
 
 | Indicador Auditado | Referencia (`Predecir la Media`) | Modelo Baseline (`RandomForest 39 base`) | **Ensemble Agrotec (`23 Smart-Pearson + IDW`)** | Comparativa Medida |
 | :--- | :---: | :---: | :---: | :--- |
-| **MAE (`5-Fold CV`, $N=138$)** | `0.7585 ± 0.089 t/ha` | `0.3742 ± 0.0592 t/ha` | **`0.3576 ± 0.0662 t/ha`** | **$-4.4\%$ vs. Baseline · $-52.9\%$ vs. Media** |
-| **RMSE (`5-Fold CV`, $N=138$)** | `0.8545 ± 0.093 t/ha` | `0.5139 ± 0.0923 t/ha` | **`0.4984 ± 0.1084 t/ha`** | **$-3.0\%$ vs. Baseline (`< 0.50 t/ha`)** |
-| **RMSE (`5×5 Repeated CV`, 25 corridas)** | `0.8507 ± 0.074 t/ha` | `0.5175 ± 0.1107 t/ha` | **`0.5076 ± 0.1183 t/ha`** | **Menor RMSE en 25 particiones** |
-| **$R^2$ (`5-Fold CV`)** | `-0.0870` | `0.5859` ($58.6\%$) | **`0.6098 ± 0.1804` ($61.0\%$)** | **$+2.39\text{ pts}$ de $R^2$ vs. Baseline** |
+| **MAE (`5-Fold CV`, $N=138$)** | `0.7585 ± 0.089 t/ha` | `0.3742 ± 0.0592 t/ha` | **`0.3562 ± 0.0662 t/ha`** | **$-4.4\%$ vs. Baseline · $-52.9\%$ vs. Media** |
+| **RMSE (`5-Fold CV`, $N=138$)** | `0.8545 ± 0.093 t/ha` | `0.5139 ± 0.0923 t/ha` | **`0.4968 ± 0.1084 t/ha`** | **$-3.0\%$ vs. Baseline (`< 0.50 t/ha`)** |
+| **RMSE (`5×5 Repeated CV`, 25 corridas)** | `0.8507 ± 0.074 t/ha` | `0.5175 ± 0.1107 t/ha` | **`0.5073 ± 0.1183 t/ha`** | **Menor RMSE en 25 particiones** |
+| **$R^2$ (`5-Fold CV`)** | `-0.0870` | `0.5859` ($58.6\%$) | **`0.6124 ± 0.1804` ($61.0\%$)** | **$+2.39\text{ pts}$ de $R^2$ vs. Baseline** |
 | **Exactitud Media OOF ($100 - \text{MAPE}$)** | — | `89.35%` (`MAPE 10.65%`) | **`89.82%` (`MAPE 10.18%`)** | **Medido sobre las 138 predicciones OOF** |
-| **Parcelas con error OOF $\le 0.50\text{ t/ha}$** | — | `71.7%` | **`73.2%`** | **$+1.5\text{ pts}$ de acierto dentro de banda** |
-| **Cobertura Intervalo Conformal 80% OOF** | — | — | **`81.2%` (`±0.564 t/ha` medio)** | **Calibrado fuera de muestra ($\alpha = 0.20$)** |
+| **Parcelas con error OOF $\le 0.50\text{ t/ha}$** | — | `71.7%` | **`72.5%`** | **$+1.5\text{ pts}$ de acierto dentro de banda** |
+| **Cobertura Intervalo Conformal 80% OOF** | — | — | **`81.2%` (`±0.584 t/ha` medio)** | **Calibrado fuera de muestra ($\alpha = 0.20$)** |
 | **Dimensionalidad y Colinealidad** | `1 constante` | `175 → 39` (Secuencial) | **`175 → 23` (`Smart-Pearson + IDW`)** | **$-86.9\%$ variables, $0\%$ valores nulos** |
 | **Latencia de Inferencia (197 parcelas)** | `< 1 ms` | `52.34 ms` | **`91.36 ms` (`0.46 ms`/parcela)** | **Evalúa 4 familias algorítmicas en paralelo** |
 | **Peso del Artefacto `.joblib` (compress=3)** | — | `423.2 KB` (1 bosque) | **`1,433.7 KB` (4 sub-modelos)** | **Incluye ET + RF + SVR + GBR calibrados** |
@@ -57,7 +56,7 @@ Se evaluaron 11 configuraciones bajo **Validación Cruzada de 5 Pliegues (`5-Fol
 
 1. **🥇 Ensemble Agrotec (`VotingRegressor` Heterogéneo + `LeakFreeSmartPearsonIDW`) — MODELO SELECCIONADO**:
    - **¿En qué consiste?**: Combina cuatro familias algorítmicas complementarias (`Extra Trees 40%` + `Random Forest Podado 25%` + `SVR Kernel RBF con RobustScaler 20%` + `Gradient Boosting 15%`), operando exactamente sobre las **23 variables** seleccionadas por `LeakFreeSmartPearsonIDW` ($|r| < 0.88$, `top_k=22` + `spatial_idw_yield` con $k=7$).
-   - **¿Por qué fue seleccionado?**: Obtiene el menor error tanto en `5-Fold CV` (`MAE = 0.3576 t/ha`, `RMSE = 0.4984 t/ha`) como en `5×5 Repeated CV` (`RMSE = 0.5076 t/ha`), además de permitir cuantificar la dispersión entre sub-modelos para construir intervalos de predicción conformales al 80% con cobertura empírica verificada del `81.2%`.
+   - **¿Por qué fue seleccionado?**: Obtiene el menor error tanto en `5-Fold CV` (`MAE = 0.3562 t/ha`, `RMSE = 0.4968 t/ha`) como en `5×5 Repeated CV` (`RMSE = 0.5073 t/ha`), además de permitir cuantificar la dispersión entre sub-modelos para construir intervalos de predicción conformales al 80% con cobertura empírica verificada del `81.2%`.
 2. **🥈 Extra Trees Regressor (`Smart-Pearson + IDW`)**:
    - **¿En qué consiste?**: Bosque de árboles extremadamente aleatorizados (`max_depth=8`, `n_estimators=220`) que reduce la varianza en muestras de $N=138$ (`5-Fold RMSE = 0.5077 t/ha`, `5×5 RMSE = 0.5124 t/ha`). Aporta el $40\%$ del peso del ensamble ganador.
 3. **🥉 Stacking Meta-Ensemble (`RidgeCV`)**:
@@ -89,7 +88,7 @@ flowchart LR
 
 - **Ciencia de Datos y Machine Learning**: `Python 3.14.7`, `Scikit-Learn 1.9.1`, `LightGBM 4.7.0`, `SciPy Spatial 1.18.1 (cdist IDW)`, `NumPy 2.5.3`, `Pandas 3.0.6`, `Joblib 1.6.0`.
 - **Ingeniería Geoespacial**: `GeoPandas 1.2.0`, `Shapely`, `Rasterio` (`all_touched=True`), proyección métrica `EPSG:32614` (UTM 14N) y visualización `EPSG:4326`.
-- **Backend & Suite de Pruebas**: `FastAPI`, `Pydantic V2`, `Uvicorn ASGI`, `Pytest` + `HTTPX` (`0 DeprecationWarnings`).
+- **Backend & Suite de Pruebas**: `FastAPI`, `Pydantic V2`, `Uvicorn ASGI`, `Pytest` + `HTTPX` (`sin advertencias deprecatorias`).
 - **Frontend & Visualización**: `React 18`, `Vite 6`, `Tailwind CSS`, `LeafletJS` + Cartografía `Esri ArcGIS Online` (libres de API Key), `Recharts`.
 - **Reporteo Automático**: Generación programática del informe técnico editable `Documento_Tecnico_Agrotec_Amanteca_FIRA2026.docx` con `python-docx` y figuras a `300 DPI` con `Matplotlib`.
 
@@ -103,7 +102,7 @@ Agrotec-Amanteca/
 │   ├── artifacts/                  # Modelo best_model.joblib (23 vars), GeoJSON, sensibilidad y métricas
 │   ├── tests/                      # Suite automatizada pytest (test_artifacts.py y test_api.py)
 │   ├── agro_core.py                # Módulo compartido entre entrenamiento ML e inferencia FastAPI
-│   ├── main.py                     # API FastAPI V4 (0 DeprecationWarnings)
+│   ├── main.py                     # API FastAPI V4 (sin advertencias deprecatorias)
 │   ├── Dockerfile                  # Contenedor de producción
 │   └── requirements.txt
 ├── data/

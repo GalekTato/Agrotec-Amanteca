@@ -30,26 +30,26 @@
     "train_yield_std": 0.851,
     "train_yield_min": 2.0,
     "train_yield_max": 5.59,
-    "pred_yield_mean": 3.948,
-    "pred_yield_std": 0.693,
-    "pred_yield_min": 2.71,
-    "pred_yield_max": 5.0,
-    "total_production_ton": 5066.44,
-    "pred_production_ton": 1542.68
+    "pred_yield_mean": 3.94,
+    "pred_yield_std": 0.692,
+    "pred_yield_min": 2.7,
+    "pred_yield_max": 4.99,
+    "total_production_ton": 5064.14,
+    "pred_production_ton": 1540.38
   },
   "efficiency_metrics": {
-    "train_time_ms": 733.41,
-    "inference_197_ms": 91.362,
-    "inference_per_parcel_ms": 0.4638,
-    "total_pipeline_ms": 165940.5,
-    "model_bundle_size_kb": 1433.7,
-    "oof_within_050_t_ha_pct": 73.2,
+    "train_time_ms": 754.63,
+    "inference_197_ms": 89.504,
+    "inference_per_parcel_ms": 0.4543,
+    "total_pipeline_ms": 482035.4,
+    "model_bundle_size_kb": 1436.8,
+    "oof_within_050_t_ha_pct": 72.5,
     "oof_within_035_t_ha_pct": 57.2,
-    "mape_oof_pct": 10.18,
-    "accuracy_oof_pct": 89.82,
+    "mape_oof_pct": 10.15,
+    "accuracy_oof_pct": 89.85,
     "conformal_80_coverage_oof_pct": 81.2,
-    "conformal_80_mean_half_width_t_ha": 0.564,
-    "conformal_q80_factor": 3.5155
+    "conformal_80_mean_half_width_t_ha": 0.584,
+    "conformal_q80_factor": 3.6257
   },
   "baseline_metrics": {
     "model": "Random Forest (Baseline 39 base)",
@@ -65,8 +65,8 @@
     "accuracy_oof_pct": 89.35,
     "oof_within_050_t_ha_pct": 71.7,
     "oof_within_035_t_ha_pct": 53.6,
-    "train_time_ms": 234.23,
-    "inference_197_ms": 52.335,
+    "train_time_ms": 232.04,
+    "inference_197_ms": 54.496,
     "model_bundle_size_kb": 423.2
   },
   "dummy_metrics": {
@@ -106,75 +106,38 @@
     {
       "model": "Ensemble Agrotec (Smart-Pearson + IDW)",
       "feature_set": "23 Smart-Pearson+IDW",
-      "mae_cv": 0.3576,
+      "mae_cv": 0.3562,
       "mae_std": 0.0662,
-      "rmse_cv": 0.4984,
-      "rmse_std": 0.1084,
-      "r2_cv": 0.6098,
-      "r2_std": 0.1804,
-      "mae_repeated_cv": 0.3724,
-      "mae_repeated_std": 0.0623,
-      "rmse_repeated_cv": 0.5076,
-      "rmse_repeated_std": 0.1183,
-      "r2_repeated_cv": 0.6177,
-      "cv_time_ms": 4156.9,
+      "rmse_cv": 0.4968,
+      "rmse_std": 0.1085,
+      "r2_cv": 0.6124,
+      "r2_std": 0.1795,
+      "mae_repeated_cv": 0.372,
+      "mae_repeated_std": 0.0624,
+      "rmse_repeated_cv": 0.5073,
+      "rmse_repeated_std": 0.118,
+      "r2_repeated_cv": 0.6183,
+      "cv_time_ms": 3022.6,
       "folds_mae": [
-        0.3902,
-        0.2797,
-        0.3378,
-        0.4686,
-        0.3119
+        0.3881,
+        0.281,
+        0.3299,
+        0.4688,
+        0.3133
       ],
       "folds_rmse": [
-        0.5909,
-        0.4074,
-        0.4218,
-        0.665,
-        0.407
+        0.5891,
+        0.4093,
+        0.4135,
+        0.6639,
+        0.4084
       ],
       "folds_r2": [
-        0.2743,
-        0.7681,
-        0.7182,
-        0.5697,
-        0.7187
-      ]
-    },
-    {
-      "model": "Extra Trees (Smart-Pearson + IDW)",
-      "feature_set": "23 Smart-Pearson+IDW",
-      "mae_cv": 0.3682,
-      "mae_std": 0.0615,
-      "rmse_cv": 0.5077,
-      "rmse_std": 0.095,
-      "r2_cv": 0.5947,
-      "r2_std": 0.1809,
-      "mae_repeated_cv": 0.3776,
-      "mae_repeated_std": 0.0578,
-      "rmse_repeated_cv": 0.5124,
-      "rmse_repeated_std": 0.111,
-      "r2_repeated_cv": 0.6108,
-      "cv_time_ms": 1235.0,
-      "folds_mae": [
-        0.4102,
-        0.2904,
-        0.3494,
-        0.4636,
-        0.3277
-      ],
-      "folds_rmse": [
-        0.6023,
-        0.4253,
-        0.4455,
-        0.643,
-        0.4225
-      ],
-      "folds_r2": [
-        0.2461,
-        0.7473,
-        0.6857,
-        0.5978,
-        0.6969
+        0.2787,
+        0.7659,
+        0.7292,
+        0.5712,
+        0.7168
       ]
     },
     {
@@ -191,7 +154,7 @@
       "rmse_repeated_cv": 0.5129,
       "rmse_repeated_std": 0.112,
       "r2_repeated_cv": 0.6109,
-      "cv_time_ms": 2680.2,
+      "cv_time_ms": 2781.6,
       "folds_mae": [
         0.4139,
         0.3008,
@@ -215,6 +178,43 @@
       ]
     },
     {
+      "model": "Extra Trees (Smart-Pearson + IDW)",
+      "feature_set": "23 Smart-Pearson+IDW",
+      "mae_cv": 0.3662,
+      "mae_std": 0.0615,
+      "rmse_cv": 0.5061,
+      "rmse_std": 0.0949,
+      "r2_cv": 0.5974,
+      "r2_std": 0.1802,
+      "mae_repeated_cv": 0.3774,
+      "mae_repeated_std": 0.0588,
+      "rmse_repeated_cv": 0.5131,
+      "rmse_repeated_std": 0.1107,
+      "r2_repeated_cv": 0.6098,
+      "cv_time_ms": 1301.4,
+      "folds_mae": [
+        0.4061,
+        0.291,
+        0.3432,
+        0.4639,
+        0.3268
+      ],
+      "folds_rmse": [
+        0.601,
+        0.4295,
+        0.4356,
+        0.6413,
+        0.4231
+      ],
+      "folds_r2": [
+        0.2492,
+        0.7423,
+        0.6996,
+        0.5999,
+        0.6961
+      ]
+    },
+    {
       "model": "Gradient Boosting Regressor",
       "feature_set": "39 base",
       "mae_cv": 0.3841,
@@ -228,7 +228,7 @@
       "rmse_repeated_cv": 0.5152,
       "rmse_repeated_std": 0.1124,
       "r2_repeated_cv": 0.6083,
-      "cv_time_ms": 344.9,
+      "cv_time_ms": 361.4,
       "folds_mae": [
         0.418,
         0.3188,
@@ -265,7 +265,7 @@
       "rmse_repeated_cv": 0.5175,
       "rmse_repeated_std": 0.1111,
       "r2_repeated_cv": 0.6032,
-      "cv_time_ms": 1667.6,
+      "cv_time_ms": 1734.7,
       "folds_mae": [
         0.4241,
         0.2972,
@@ -289,43 +289,6 @@
       ]
     },
     {
-      "model": "Stacking Meta-Ensemble (Smart-Pearson + IDW)",
-      "feature_set": "23 Smart-Pearson+IDW",
-      "mae_cv": 0.3606,
-      "mae_std": 0.0661,
-      "rmse_cv": 0.5006,
-      "rmse_std": 0.1068,
-      "r2_cv": 0.6095,
-      "r2_std": 0.1702,
-      "mae_repeated_cv": 0.3792,
-      "mae_repeated_std": 0.0655,
-      "rmse_repeated_cv": 0.5186,
-      "rmse_repeated_std": 0.1175,
-      "r2_repeated_cv": 0.6021,
-      "cv_time_ms": 14697.0,
-      "folds_mae": [
-        0.3813,
-        0.2929,
-        0.3434,
-        0.4778,
-        0.3078
-      ],
-      "folds_rmse": [
-        0.5821,
-        0.4242,
-        0.4314,
-        0.67,
-        0.3953
-      ],
-      "folds_r2": [
-        0.2956,
-        0.7486,
-        0.7053,
-        0.5632,
-        0.7346
-      ]
-    },
-    {
       "model": "RidgeCV Lineal Regularizado",
       "feature_set": "39 base",
       "mae_cv": 0.3819,
@@ -339,7 +302,7 @@
       "rmse_repeated_cv": 0.5201,
       "rmse_repeated_std": 0.1051,
       "r2_repeated_cv": 0.6003,
-      "cv_time_ms": 64.9,
+      "cv_time_ms": 66.1,
       "folds_mae": [
         0.4113,
         0.3104,
@@ -363,6 +326,43 @@
       ]
     },
     {
+      "model": "Stacking Meta-Ensemble (Smart-Pearson + IDW)",
+      "feature_set": "23 Smart-Pearson+IDW",
+      "mae_cv": 0.3617,
+      "mae_std": 0.0666,
+      "rmse_cv": 0.5047,
+      "rmse_std": 0.1051,
+      "r2_cv": 0.6031,
+      "r2_std": 0.1709,
+      "mae_repeated_cv": 0.3811,
+      "mae_repeated_std": 0.0644,
+      "rmse_repeated_cv": 0.5219,
+      "rmse_repeated_std": 0.1156,
+      "r2_repeated_cv": 0.5966,
+      "cv_time_ms": 15413.2,
+      "folds_mae": [
+        0.3866,
+        0.293,
+        0.339,
+        0.4789,
+        0.3108
+      ],
+      "folds_rmse": [
+        0.5858,
+        0.4243,
+        0.4445,
+        0.6701,
+        0.3988
+      ],
+      "folds_r2": [
+        0.2867,
+        0.7485,
+        0.6871,
+        0.5631,
+        0.73
+      ]
+    },
+    {
       "model": "Extra Trees Regressor (39 base)",
       "feature_set": "39 base",
       "mae_cv": 0.3731,
@@ -376,7 +376,7 @@
       "rmse_repeated_cv": 0.522,
       "rmse_repeated_std": 0.1096,
       "r2_repeated_cv": 0.5969,
-      "cv_time_ms": 991.9,
+      "cv_time_ms": 1041.5,
       "folds_mae": [
         0.4352,
         0.3181,
@@ -413,7 +413,7 @@
       "rmse_repeated_cv": 0.531,
       "rmse_repeated_std": 0.1183,
       "r2_repeated_cv": 0.5814,
-      "cv_time_ms": 56.5,
+      "cv_time_ms": 61.4,
       "folds_mae": [
         0.4129,
         0.2937,
@@ -450,7 +450,7 @@
       "rmse_repeated_cv": 0.5426,
       "rmse_repeated_std": 0.1019,
       "r2_repeated_cv": 0.567,
-      "cv_time_ms": 124.6,
+      "cv_time_ms": 105.6,
       "folds_mae": [
         0.4407,
         0.3143,
@@ -487,7 +487,7 @@
       "rmse_repeated_cv": 0.8507,
       "rmse_repeated_std": 0.0739,
       "r2_repeated_cv": -0.0464,
-      "cv_time_ms": 21.7,
+      "cv_time_ms": 16.4,
       "folds_mae": [
         0.675,
         0.7386,
@@ -516,24 +516,24 @@
       "feature": "spatial_idw_yield",
       "label": "Potencial Microclimático Vecinal (IDW k=7)",
       "category": "Autocorrelación Geoespacial (IDW)",
-      "importance": 0.27262,
-      "importance_pct": 27.26,
-      "perm_importance_rmse": 0.18973,
-      "tree_importance_pct": 28.29,
-      "corr_with_target": 0.8037,
-      "mean_train": 3.961,
+      "importance": 0.26804,
+      "importance_pct": 26.8,
+      "perm_importance_rmse": 0.18508,
+      "tree_importance_pct": 28.14,
+      "corr_with_target": 0.8027,
+      "mean_train": 3.959,
       "std_train": 0.738,
-      "min_val": 2.631,
-      "max_val": 5.263
+      "min_val": 2.627,
+      "max_val": 5.261
     },
     {
       "feature": "indice_hidrotermico",
       "label": "Índice Hidrotérmico de Aridez (Prec/Tmax)",
       "category": "Índices Agronómicos Sintéticos",
-      "importance": 0.10716,
-      "importance_pct": 10.72,
-      "perm_importance_rmse": 0.0634,
-      "tree_importance_pct": 12.67,
+      "importance": 0.10698,
+      "importance_pct": 10.7,
+      "perm_importance_rmse": 0.06353,
+      "tree_importance_pct": 12.65,
       "corr_with_target": -0.6731,
       "mean_train": 6.048,
       "std_train": 1.835,
@@ -544,10 +544,10 @@
       "feature": "tmax_2023_02",
       "label": "Temp. Máxima 2023-02 (°C)",
       "category": "Régimen Térmico (Tmax / Tmin)",
-      "importance": 0.07677,
-      "importance_pct": 7.68,
-      "perm_importance_rmse": 0.03714,
-      "tree_importance_pct": 10.22,
+      "importance": 0.07699,
+      "importance_pct": 7.7,
+      "perm_importance_rmse": 0.0382,
+      "tree_importance_pct": 10.14,
       "corr_with_target": -0.7193,
       "mean_train": 23.698,
       "std_train": 0.238,
@@ -558,10 +558,10 @@
       "feature": "prec_2025_02",
       "label": "Precipitación 2025-02 (mm)",
       "category": "Precipitación (CHIRPS)",
-      "importance": 0.06668,
-      "importance_pct": 6.67,
-      "perm_importance_rmse": 0.03154,
-      "tree_importance_pct": 8.98,
+      "importance": 0.06857,
+      "importance_pct": 6.86,
+      "perm_importance_rmse": 0.03324,
+      "tree_importance_pct": 9.14,
       "corr_with_target": -0.6517,
       "mean_train": 35.714,
       "std_train": 8.334,
@@ -572,10 +572,10 @@
       "feature": "evi_promedio_mes_5",
       "label": "EVI Mayo (Vigor Temprano)",
       "category": "Vigor Satelital (NDVI / EVI)",
-      "importance": 0.03861,
-      "importance_pct": 3.86,
-      "perm_importance_rmse": 0.03299,
-      "tree_importance_pct": 3.16,
+      "importance": 0.03885,
+      "importance_pct": 3.89,
+      "perm_importance_rmse": 0.03364,
+      "tree_importance_pct": 3.14,
       "corr_with_target": 0.592,
       "mean_train": 0.117,
       "std_train": 0.018,
@@ -586,10 +586,10 @@
       "feature": "ndvi_promedio_mes_6",
       "label": "NDVI Junio (Amacollamiento)",
       "category": "Vigor Satelital (NDVI / EVI)",
-      "importance": 0.03688,
-      "importance_pct": 3.69,
-      "perm_importance_rmse": 0.03745,
-      "tree_importance_pct": 2.2,
+      "importance": 0.03701,
+      "importance_pct": 3.7,
+      "perm_importance_rmse": 0.03755,
+      "tree_importance_pct": 2.23,
       "corr_with_target": 0.5245,
       "mean_train": 0.188,
       "std_train": 0.043,
@@ -600,10 +600,10 @@
       "feature": "evi_promedio_mes_4",
       "label": "EVI Abril (Inicio de Ciclo)",
       "category": "Vigor Satelital (NDVI / EVI)",
-      "importance": 0.03596,
-      "importance_pct": 3.6,
-      "perm_importance_rmse": 0.03552,
-      "tree_importance_pct": 2.28,
+      "importance": 0.03696,
+      "importance_pct": 3.7,
+      "perm_importance_rmse": 0.03667,
+      "tree_importance_pct": 2.35,
       "corr_with_target": 0.5647,
       "mean_train": 0.107,
       "std_train": 0.014,
@@ -611,27 +611,13 @@
       "max_val": 0.161
     },
     {
-      "feature": "ndvi_tasa_vegetativa",
-      "label": "Tasa Desarrollo Vegetativo (Ago–May)",
-      "category": "Índices Agronómicos Sintéticos",
-      "importance": 0.03484,
-      "importance_pct": 3.48,
-      "perm_importance_rmse": 0.03527,
-      "tree_importance_pct": 2.09,
-      "corr_with_target": -0.4026,
-      "mean_train": 0.405,
-      "std_train": 0.074,
-      "min_val": 0.194,
-      "max_val": 0.546
-    },
-    {
       "feature": "prec_2025_06",
       "label": "Precipitación 2025-06 (mm)",
       "category": "Precipitación (CHIRPS)",
-      "importance": 0.03456,
-      "importance_pct": 3.46,
-      "perm_importance_rmse": 0.02911,
-      "tree_importance_pct": 2.89,
+      "importance": 0.03495,
+      "importance_pct": 3.49,
+      "perm_importance_rmse": 0.02966,
+      "tree_importance_pct": 2.91,
       "corr_with_target": -0.5091,
       "mean_train": 243.897,
       "std_train": 51.79,
@@ -639,13 +625,27 @@
       "max_val": 366.063
     },
     {
+      "feature": "ndvi_tasa_vegetativa",
+      "label": "Tasa Desarrollo Vegetativo (Ago–May)",
+      "category": "Índices Agronómicos Sintéticos",
+      "importance": 0.03485,
+      "importance_pct": 3.48,
+      "perm_importance_rmse": 0.03551,
+      "tree_importance_pct": 2.08,
+      "corr_with_target": -0.4026,
+      "mean_train": 0.405,
+      "std_train": 0.074,
+      "min_val": 0.194,
+      "max_val": 0.546
+    },
+    {
       "feature": "ndvi_promedio_mes_3",
       "label": "NDVI Marzo (Preparación de suelo)",
       "category": "Vigor Satelital (NDVI / EVI)",
-      "importance": 0.03444,
-      "importance_pct": 3.44,
-      "perm_importance_rmse": 0.03422,
-      "tree_importance_pct": 2.16,
+      "importance": 0.03464,
+      "importance_pct": 3.46,
+      "perm_importance_rmse": 0.03447,
+      "tree_importance_pct": 2.18,
       "corr_with_target": 0.4408,
       "mean_train": 0.144,
       "std_train": 0.022,
@@ -656,10 +656,10 @@
       "feature": "retencion_topografica",
       "label": "Índice Retención Hídrica por Pendiente",
       "category": "Índices Agronómicos Sintéticos",
-      "importance": 0.03342,
-      "importance_pct": 3.34,
-      "perm_importance_rmse": 0.02956,
-      "tree_importance_pct": 2.6,
+      "importance": 0.0337,
+      "importance_pct": 3.37,
+      "perm_importance_rmse": 0.03017,
+      "tree_importance_pct": 2.59,
       "corr_with_target": -0.4436,
       "mean_train": 73.715,
       "std_train": 40.675,
@@ -670,10 +670,10 @@
       "feature": "ndvi_promedio_mes_9",
       "label": "NDVI Septiembre (Llenado de grano)",
       "category": "Vigor Satelital (NDVI / EVI)",
-      "importance": 0.03218,
-      "importance_pct": 3.22,
-      "perm_importance_rmse": 0.03191,
-      "tree_importance_pct": 2.02,
+      "importance": 0.03247,
+      "importance_pct": 3.25,
+      "perm_importance_rmse": 0.03225,
+      "tree_importance_pct": 2.06,
       "corr_with_target": -0.4165,
       "mean_train": 0.466,
       "std_train": 0.057,
@@ -684,10 +684,10 @@
       "feature": "evi_promedio_mes_2",
       "label": "EVI Febrero (Pre-siembra)",
       "category": "Vigor Satelital (NDVI / EVI)",
-      "importance": 0.03024,
-      "importance_pct": 3.02,
-      "perm_importance_rmse": 0.02848,
-      "tree_importance_pct": 2.11,
+      "importance": 0.03005,
+      "importance_pct": 3.0,
+      "perm_importance_rmse": 0.02837,
+      "tree_importance_pct": 2.1,
       "corr_with_target": 0.4441,
       "mean_train": 0.107,
       "std_train": 0.016,
@@ -698,10 +698,10 @@
       "feature": "prec_2022_01",
       "label": "Precipitación 2022-01 (mm)",
       "category": "Precipitación (CHIRPS)",
-      "importance": 0.0297,
-      "importance_pct": 2.97,
-      "perm_importance_rmse": 0.0119,
-      "tree_importance_pct": 4.29,
+      "importance": 0.02946,
+      "importance_pct": 2.95,
+      "perm_importance_rmse": 0.01203,
+      "tree_importance_pct": 4.24,
       "corr_with_target": 0.5455,
       "mean_train": 18.4,
       "std_train": 4.212,
@@ -712,10 +712,10 @@
       "feature": "evi_promedio_mes_11",
       "label": "EVI Noviembre (Senescencia)",
       "category": "Vigor Satelital (NDVI / EVI)",
-      "importance": 0.02658,
-      "importance_pct": 2.66,
-      "perm_importance_rmse": 0.02597,
-      "tree_importance_pct": 1.73,
+      "importance": 0.02705,
+      "importance_pct": 2.71,
+      "perm_importance_rmse": 0.02661,
+      "tree_importance_pct": 1.75,
       "corr_with_target": 0.5041,
       "mean_train": 0.199,
       "std_train": 0.04,
@@ -726,10 +726,10 @@
       "feature": "tmin_2025_10",
       "label": "Temp. Mínima 2025-10 (°C)",
       "category": "Régimen Térmico (Tmax / Tmin)",
-      "importance": 0.02043,
-      "importance_pct": 2.04,
-      "perm_importance_rmse": 0.0085,
-      "tree_importance_pct": 2.91,
+      "importance": 0.02058,
+      "importance_pct": 2.06,
+      "perm_importance_rmse": 0.0088,
+      "tree_importance_pct": 2.9,
       "corr_with_target": 0.5993,
       "mean_train": 10.891,
       "std_train": 0.539,
@@ -740,10 +740,10 @@
       "feature": "prec_2023_09",
       "label": "Precipitación 2023-09 (mm)",
       "category": "Precipitación (CHIRPS)",
-      "importance": 0.01713,
-      "importance_pct": 1.71,
-      "perm_importance_rmse": 0.01514,
-      "tree_importance_pct": 1.33,
+      "importance": 0.01679,
+      "importance_pct": 1.68,
+      "perm_importance_rmse": 0.01504,
+      "tree_importance_pct": 1.29,
       "corr_with_target": -0.4364,
       "mean_train": 49.824,
       "std_train": 15.544,
@@ -754,10 +754,10 @@
       "feature": "prec_2023_10",
       "label": "Precipitación 2023-10 (mm)",
       "category": "Precipitación (CHIRPS)",
-      "importance": 0.01568,
-      "importance_pct": 1.57,
-      "perm_importance_rmse": 0.00657,
-      "tree_importance_pct": 2.23,
+      "importance": 0.01549,
+      "importance_pct": 1.55,
+      "perm_importance_rmse": 0.00644,
+      "tree_importance_pct": 2.21,
       "corr_with_target": 0.5015,
       "mean_train": 101.861,
       "std_train": 20.608,
@@ -768,10 +768,10 @@
       "feature": "tmax_2025_11",
       "label": "Temp. Máxima 2025-11 (°C)",
       "category": "Régimen Térmico (Tmax / Tmin)",
-      "importance": 0.01482,
-      "importance_pct": 1.48,
-      "perm_importance_rmse": 0.01091,
-      "tree_importance_pct": 1.46,
+      "importance": 0.01506,
+      "importance_pct": 1.51,
+      "perm_importance_rmse": 0.01111,
+      "tree_importance_pct": 1.48,
       "corr_with_target": -0.5528,
       "mean_train": 21.95,
       "std_train": 0.216,
@@ -782,10 +782,10 @@
       "feature": "prec_2025_01",
       "label": "Precipitación 2025-01 (mm)",
       "category": "Precipitación (CHIRPS)",
-      "importance": 0.01307,
-      "importance_pct": 1.31,
-      "perm_importance_rmse": 0.0093,
-      "tree_importance_pct": 1.33,
+      "importance": 0.01328,
+      "importance_pct": 1.33,
+      "perm_importance_rmse": 0.00947,
+      "tree_importance_pct": 1.35,
       "corr_with_target": -0.4366,
       "mean_train": 17.203,
       "std_train": 3.674,
@@ -796,10 +796,10 @@
       "feature": "tmax_2024_03",
       "label": "Temp. Máxima 2024-03 (°C)",
       "category": "Régimen Térmico (Tmax / Tmin)",
-      "importance": 0.01191,
-      "importance_pct": 1.19,
-      "perm_importance_rmse": 0.00669,
-      "tree_importance_pct": 1.46,
+      "importance": 0.01184,
+      "importance_pct": 1.18,
+      "perm_importance_rmse": 0.00668,
+      "tree_importance_pct": 1.45,
       "corr_with_target": -0.5627,
       "mean_train": 27.055,
       "std_train": 0.113,
@@ -810,10 +810,10 @@
       "feature": "prec_2024_10",
       "label": "Precipitación 2024-10 (mm)",
       "category": "Precipitación (CHIRPS)",
-      "importance": 0.00992,
-      "importance_pct": 0.99,
-      "perm_importance_rmse": 0.00607,
-      "tree_importance_pct": 1.15,
+      "importance": 0.01014,
+      "importance_pct": 1.01,
+      "perm_importance_rmse": 0.00633,
+      "tree_importance_pct": 1.16,
       "corr_with_target": 0.4041,
       "mean_train": 58.374,
       "std_train": 7.998,
@@ -824,9 +824,9 @@
       "feature": "tmax_2024_01",
       "label": "Temp. Máxima 2024-01 (°C)",
       "category": "Régimen Térmico (Tmax / Tmin)",
-      "importance": 0.0064,
-      "importance_pct": 0.64,
-      "perm_importance_rmse": 0.00597,
+      "importance": 0.00627,
+      "importance_pct": 0.63,
+      "perm_importance_rmse": 0.00582,
       "tree_importance_pct": 0.45,
       "corr_with_target": 0.4058,
       "mean_train": 22.26,
@@ -906,249 +906,249 @@
       "id": "AGC_001",
       "area_ha": 7.61,
       "actual": 3.5,
-      "predicted_oof": 3.131,
-      "error": -0.369,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.121,
+      "error": -0.379,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_002",
       "area_ha": 2.31,
       "actual": 4.63,
-      "predicted_oof": 4.285,
-      "error": -0.345,
-      "interval_80_half": 0.553
+      "predicted_oof": 4.289,
+      "error": -0.341,
+      "interval_80_half": 0.554
     },
     {
       "id": "AGC_004",
       "area_ha": 8.0,
       "actual": 3.0,
-      "predicted_oof": 2.957,
-      "error": -0.043,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.963,
+      "error": -0.037,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_005",
       "area_ha": 2.27,
       "actual": 5.16,
-      "predicted_oof": 4.801,
-      "error": -0.359,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.786,
+      "error": -0.374,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_006",
       "area_ha": 3.84,
       "actual": 4.49,
-      "predicted_oof": 4.346,
-      "error": -0.144,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.347,
+      "error": -0.143,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_007",
       "area_ha": 2.87,
       "actual": 3.5,
-      "predicted_oof": 3.139,
-      "error": -0.361,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.134,
+      "error": -0.366,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_008",
       "area_ha": 10.77,
       "actual": 4.55,
-      "predicted_oof": 4.486,
-      "error": -0.064,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.484,
+      "error": -0.066,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_009",
       "area_ha": 0.38,
       "actual": 4.79,
-      "predicted_oof": 4.565,
-      "error": -0.225,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.576,
+      "error": -0.214,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_010",
       "area_ha": 7.27,
       "actual": 4.1,
-      "predicted_oof": 4.282,
-      "error": 0.182,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.28,
+      "error": 0.18,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_012",
       "area_ha": 4.08,
       "actual": 4.69,
-      "predicted_oof": 4.647,
-      "error": -0.043,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.654,
+      "error": -0.037,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_013",
       "area_ha": 5.6,
       "actual": 4.01,
-      "predicted_oof": 4.448,
-      "error": 0.438,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.438,
+      "error": 0.428,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_014",
       "area_ha": 7.44,
       "actual": 4.83,
-      "predicted_oof": 4.181,
-      "error": -0.649,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.184,
+      "error": -0.646,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_015",
       "area_ha": 1.97,
       "actual": 2.64,
-      "predicted_oof": 4.979,
-      "error": 2.339,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.973,
+      "error": 2.333,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_017",
       "area_ha": 1.6,
       "actual": 4.98,
-      "predicted_oof": 4.641,
-      "error": -0.339,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.639,
+      "error": -0.341,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_018",
       "area_ha": 1.67,
       "actual": 4.49,
-      "predicted_oof": 4.458,
-      "error": -0.032,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.446,
+      "error": -0.045,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_019",
       "area_ha": 5.65,
       "actual": 3.0,
-      "predicted_oof": 3.073,
-      "error": 0.073,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.068,
+      "error": 0.068,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_020",
       "area_ha": 8.34,
       "actual": 3.5,
-      "predicted_oof": 3.312,
-      "error": -0.188,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.317,
+      "error": -0.183,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_021",
       "area_ha": 2.86,
       "actual": 4.94,
-      "predicted_oof": 4.49,
-      "error": -0.45,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.484,
+      "error": -0.456,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_022",
       "area_ha": 11.99,
       "actual": 4.55,
-      "predicted_oof": 4.484,
-      "error": -0.066,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.478,
+      "error": -0.072,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_023",
       "area_ha": 7.72,
       "actual": 3.0,
-      "predicted_oof": 3.064,
-      "error": 0.064,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.069,
+      "error": 0.069,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_024",
       "area_ha": 11.53,
       "actual": 3.03,
-      "predicted_oof": 4.118,
-      "error": 1.088,
-      "interval_80_half": 0.812
+      "predicted_oof": 4.113,
+      "error": 1.083,
+      "interval_80_half": 0.823
     },
     {
       "id": "AGC_026",
       "area_ha": 5.49,
       "actual": 3.55,
-      "predicted_oof": 4.25,
-      "error": 0.7,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.256,
+      "error": 0.706,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_032",
       "area_ha": 1.44,
       "actual": 4.03,
-      "predicted_oof": 4.537,
-      "error": 0.507,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.54,
+      "error": 0.51,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_033",
       "area_ha": 21.04,
       "actual": 4.47,
-      "predicted_oof": 4.705,
-      "error": 0.235,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.706,
+      "error": 0.236,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_034",
       "area_ha": 8.09,
       "actual": 2.0,
-      "predicted_oof": 3.316,
-      "error": 1.316,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.308,
+      "error": 1.308,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_035",
       "area_ha": 23.8,
       "actual": 4.68,
-      "predicted_oof": 4.098,
-      "error": -0.582,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.102,
+      "error": -0.578,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_037",
       "area_ha": 2.66,
       "actual": 3.5,
-      "predicted_oof": 3.051,
-      "error": -0.449,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.058,
+      "error": -0.442,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_038",
       "area_ha": 3.28,
       "actual": 3.3,
-      "predicted_oof": 3.109,
-      "error": -0.191,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.115,
+      "error": -0.185,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_040",
       "area_ha": 5.46,
       "actual": 3.0,
-      "predicted_oof": 3.066,
-      "error": 0.066,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.072,
+      "error": 0.072,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_041",
       "area_ha": 25.13,
       "actual": 2.5,
-      "predicted_oof": 2.947,
-      "error": 0.447,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.94,
+      "error": 0.44,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_044",
       "area_ha": 0.68,
       "actual": 3.5,
-      "predicted_oof": 3.281,
-      "error": -0.219,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.284,
+      "error": -0.216,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_045",
@@ -1156,7 +1156,7 @@
       "actual": 4.1,
       "predicted_oof": 4.617,
       "error": 0.517,
-      "interval_80_half": 0.527
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_046",
@@ -1164,207 +1164,207 @@
       "actual": 3.0,
       "predicted_oof": 2.881,
       "error": -0.119,
-      "interval_80_half": 0.527
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_047",
       "area_ha": 64.3,
       "actual": 4.45,
-      "predicted_oof": 3.89,
-      "error": -0.56,
-      "interval_80_half": 0.811
+      "predicted_oof": 3.939,
+      "error": -0.511,
+      "interval_80_half": 0.879
     },
     {
       "id": "AGC_048",
       "area_ha": 8.29,
       "actual": 2.5,
-      "predicted_oof": 2.889,
-      "error": 0.389,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.879,
+      "error": 0.379,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_049",
       "area_ha": 0.87,
       "actual": 5.53,
-      "predicted_oof": 4.691,
-      "error": -0.839,
-      "interval_80_half": 0.608
+      "predicted_oof": 4.677,
+      "error": -0.853,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_051",
       "area_ha": 11.12,
       "actual": 4.45,
-      "predicted_oof": 4.239,
-      "error": -0.211,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.247,
+      "error": -0.203,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_053",
       "area_ha": 8.54,
       "actual": 3.5,
-      "predicted_oof": 2.947,
-      "error": -0.553,
-      "interval_80_half": 0.535
+      "predicted_oof": 2.943,
+      "error": -0.557,
+      "interval_80_half": 0.559
     },
     {
       "id": "AGC_054",
       "area_ha": 2.01,
       "actual": 2.5,
-      "predicted_oof": 2.93,
-      "error": 0.43,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.925,
+      "error": 0.425,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_055",
       "area_ha": 1.37,
       "actual": 5.45,
-      "predicted_oof": 4.652,
-      "error": -0.798,
-      "interval_80_half": 0.62
+      "predicted_oof": 4.623,
+      "error": -0.827,
+      "interval_80_half": 0.675
     },
     {
       "id": "AGC_056",
       "area_ha": 3.65,
       "actual": 5.07,
-      "predicted_oof": 4.458,
-      "error": -0.612,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.447,
+      "error": -0.623,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_057",
       "area_ha": 0.63,
       "actual": 4.55,
-      "predicted_oof": 4.817,
-      "error": 0.267,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.806,
+      "error": 0.256,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_058",
       "area_ha": 7.7,
       "actual": 2.5,
-      "predicted_oof": 3.008,
-      "error": 0.508,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.015,
+      "error": 0.515,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_059",
       "area_ha": 19.53,
       "actual": 4.41,
-      "predicted_oof": 4.398,
-      "error": -0.012,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.392,
+      "error": -0.018,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_060",
       "area_ha": 2.34,
       "actual": 4.52,
-      "predicted_oof": 4.63,
-      "error": 0.11,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.638,
+      "error": 0.118,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_062",
       "area_ha": 2.0,
       "actual": 3.81,
-      "predicted_oof": 4.322,
-      "error": 0.512,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.319,
+      "error": 0.509,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_064",
       "area_ha": 2.45,
       "actual": 4.51,
-      "predicted_oof": 4.467,
-      "error": -0.043,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.46,
+      "error": -0.05,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_066",
       "area_ha": 7.15,
       "actual": 3.0,
-      "predicted_oof": 2.982,
-      "error": -0.018,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.979,
+      "error": -0.021,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_067",
       "area_ha": 1.53,
       "actual": 3.0,
-      "predicted_oof": 3.43,
-      "error": 0.43,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.424,
+      "error": 0.424,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_068",
       "area_ha": 3.1,
       "actual": 2.5,
-      "predicted_oof": 3.107,
-      "error": 0.607,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.119,
+      "error": 0.619,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_069",
       "area_ha": 0.38,
       "actual": 5.46,
-      "predicted_oof": 4.697,
-      "error": -0.763,
-      "interval_80_half": 0.888
+      "predicted_oof": 4.699,
+      "error": -0.761,
+      "interval_80_half": 0.918
     },
     {
       "id": "AGC_070",
       "area_ha": 20.83,
       "actual": 3.3,
-      "predicted_oof": 3.381,
-      "error": 0.081,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.38,
+      "error": 0.08,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_072",
       "area_ha": 4.38,
       "actual": 4.55,
-      "predicted_oof": 4.391,
-      "error": -0.159,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.398,
+      "error": -0.152,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_073",
       "area_ha": 2.05,
       "actual": 4.3,
-      "predicted_oof": 4.331,
-      "error": 0.031,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.316,
+      "error": 0.016,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_074",
       "area_ha": 8.54,
       "actual": 2.5,
-      "predicted_oof": 3.413,
-      "error": 0.913,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.412,
+      "error": 0.912,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_077",
       "area_ha": 6.08,
       "actual": 4.76,
-      "predicted_oof": 4.343,
-      "error": -0.417,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.345,
+      "error": -0.415,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_078",
       "area_ha": 2.3,
       "actual": 3.0,
-      "predicted_oof": 3.077,
-      "error": 0.077,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.068,
+      "error": 0.068,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_079",
       "area_ha": 18.87,
       "actual": 3.3,
-      "predicted_oof": 2.91,
-      "error": -0.39,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.905,
+      "error": -0.395,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_080",
@@ -1372,223 +1372,223 @@
       "actual": 3.5,
       "predicted_oof": 2.981,
       "error": -0.519,
-      "interval_80_half": 0.527
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_081",
       "area_ha": 3.28,
       "actual": 3.7,
-      "predicted_oof": 2.974,
-      "error": -0.726,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.956,
+      "error": -0.744,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_083",
       "area_ha": 2.87,
       "actual": 4.61,
-      "predicted_oof": 4.424,
-      "error": -0.186,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.405,
+      "error": -0.205,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_084",
       "area_ha": 12.42,
       "actual": 4.54,
-      "predicted_oof": 4.581,
-      "error": 0.041,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.593,
+      "error": 0.053,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_089",
       "area_ha": 1.72,
       "actual": 3.0,
-      "predicted_oof": 3.037,
-      "error": 0.037,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.035,
+      "error": 0.035,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_090",
       "area_ha": 10.98,
       "actual": 4.68,
-      "predicted_oof": 4.421,
-      "error": -0.259,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.428,
+      "error": -0.252,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_092",
       "area_ha": 0.5,
       "actual": 4.57,
-      "predicted_oof": 4.821,
-      "error": 0.251,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.8,
+      "error": 0.23,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_096",
       "area_ha": 12.87,
       "actual": 4.59,
-      "predicted_oof": 4.349,
-      "error": -0.241,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.348,
+      "error": -0.242,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_097",
       "area_ha": 2.35,
       "actual": 4.69,
-      "predicted_oof": 4.433,
-      "error": -0.258,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.471,
+      "error": -0.219,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_098",
       "area_ha": 4.9,
       "actual": 3.0,
-      "predicted_oof": 3.139,
-      "error": 0.139,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.134,
+      "error": 0.134,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_099",
       "area_ha": 1.17,
       "actual": 3.5,
-      "predicted_oof": 2.926,
-      "error": -0.574,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.932,
+      "error": -0.568,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_100",
       "area_ha": 11.24,
       "actual": 4.5,
-      "predicted_oof": 4.386,
-      "error": -0.114,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.382,
+      "error": -0.118,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_101",
       "area_ha": 12.35,
       "actual": 4.57,
-      "predicted_oof": 4.149,
-      "error": -0.421,
-      "interval_80_half": 0.749
+      "predicted_oof": 4.254,
+      "error": -0.316,
+      "interval_80_half": 0.588
     },
     {
       "id": "AGC_102",
       "area_ha": 12.75,
       "actual": 4.4,
-      "predicted_oof": 4.234,
-      "error": -0.166,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.223,
+      "error": -0.177,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_103",
       "area_ha": 2.48,
       "actual": 3.0,
-      "predicted_oof": 2.975,
-      "error": -0.025,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.977,
+      "error": -0.023,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_104",
       "area_ha": 3.02,
       "actual": 4.56,
-      "predicted_oof": 4.47,
-      "error": -0.09,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.464,
+      "error": -0.096,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_105",
       "area_ha": 2.99,
       "actual": 4.41,
-      "predicted_oof": 4.524,
-      "error": 0.114,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.516,
+      "error": 0.106,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_106",
       "area_ha": 6.09,
       "actual": 4.43,
-      "predicted_oof": 4.266,
-      "error": -0.164,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.269,
+      "error": -0.161,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_108",
       "area_ha": 3.79,
       "actual": 4.51,
-      "predicted_oof": 4.786,
-      "error": 0.276,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.793,
+      "error": 0.283,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_109",
       "area_ha": 3.14,
       "actual": 4.54,
-      "predicted_oof": 4.566,
-      "error": 0.026,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.557,
+      "error": 0.017,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_110",
       "area_ha": 6.19,
       "actual": 4.18,
-      "predicted_oof": 4.34,
-      "error": 0.16,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.33,
+      "error": 0.15,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_111",
       "area_ha": 1.71,
       "actual": 4.72,
-      "predicted_oof": 4.432,
-      "error": -0.288,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.434,
+      "error": -0.286,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_112",
       "area_ha": 7.96,
       "actual": 3.0,
-      "predicted_oof": 2.835,
-      "error": -0.165,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.837,
+      "error": -0.163,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_114",
       "area_ha": 6.95,
       "actual": 3.0,
-      "predicted_oof": 2.98,
-      "error": -0.02,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.978,
+      "error": -0.022,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_115",
       "area_ha": 1.93,
       "actual": 4.6,
-      "predicted_oof": 4.309,
-      "error": -0.291,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.289,
+      "error": -0.311,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_117",
       "area_ha": 5.68,
       "actual": 3.5,
-      "predicted_oof": 3.108,
-      "error": -0.392,
-      "interval_80_half": 0.671
+      "predicted_oof": 3.098,
+      "error": -0.402,
+      "interval_80_half": 0.717
     },
     {
       "id": "AGC_119",
       "area_ha": 0.64,
       "actual": 4.4,
-      "predicted_oof": 4.738,
-      "error": 0.338,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.755,
+      "error": 0.355,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_121",
       "area_ha": 5.92,
       "actual": 3.3,
-      "predicted_oof": 3.107,
-      "error": -0.193,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.102,
+      "error": -0.198,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_122",
@@ -1596,415 +1596,415 @@
       "actual": 3.5,
       "predicted_oof": 2.921,
       "error": -0.579,
-      "interval_80_half": 0.527
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_123",
       "area_ha": 8.01,
       "actual": 2.5,
-      "predicted_oof": 2.92,
-      "error": 0.42,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.917,
+      "error": 0.417,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_124",
       "area_ha": 1.96,
       "actual": 5.05,
-      "predicted_oof": 4.513,
-      "error": -0.537,
-      "interval_80_half": 1.166
+      "predicted_oof": 4.52,
+      "error": -0.53,
+      "interval_80_half": 1.25
     },
     {
       "id": "AGC_125",
       "area_ha": 10.14,
       "actual": 4.06,
-      "predicted_oof": 4.583,
-      "error": 0.523,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.584,
+      "error": 0.524,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_127",
       "area_ha": 0.91,
       "actual": 5.57,
-      "predicted_oof": 4.481,
-      "error": -1.089,
-      "interval_80_half": 0.632
+      "predicted_oof": 4.484,
+      "error": -1.086,
+      "interval_80_half": 0.656
     },
     {
       "id": "AGC_131",
       "area_ha": 1.46,
       "actual": 4.89,
-      "predicted_oof": 4.526,
-      "error": -0.364,
-      "interval_80_half": 0.539
+      "predicted_oof": 4.529,
+      "error": -0.361,
+      "interval_80_half": 0.549
     },
     {
       "id": "AGC_132",
       "area_ha": 6.1,
       "actual": 4.13,
-      "predicted_oof": 4.676,
-      "error": 0.546,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.683,
+      "error": 0.553,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_133",
       "area_ha": 6.08,
       "actual": 3.91,
-      "predicted_oof": 4.317,
-      "error": 0.407,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.341,
+      "error": 0.431,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_134",
       "area_ha": 2.25,
       "actual": 4.52,
-      "predicted_oof": 4.492,
-      "error": -0.028,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.478,
+      "error": -0.042,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_135",
       "area_ha": 1.62,
       "actual": 4.49,
-      "predicted_oof": 4.484,
-      "error": -0.006,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.488,
+      "error": -0.002,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_137",
       "area_ha": 24.81,
       "actual": 4.54,
-      "predicted_oof": 4.703,
+      "predicted_oof": 4.704,
       "error": 0.163,
-      "interval_80_half": 0.527
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_138",
       "area_ha": 7.86,
       "actual": 2.5,
-      "predicted_oof": 2.969,
-      "error": 0.469,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.973,
+      "error": 0.473,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_139",
       "area_ha": 1.92,
       "actual": 4.67,
-      "predicted_oof": 4.243,
-      "error": -0.427,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.244,
+      "error": -0.426,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_140",
       "area_ha": 4.13,
       "actual": 3.2,
-      "predicted_oof": 3.073,
-      "error": -0.127,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.071,
+      "error": -0.129,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_141",
       "area_ha": 3.94,
       "actual": 3.5,
-      "predicted_oof": 2.932,
-      "error": -0.568,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.917,
+      "error": -0.583,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_144",
       "area_ha": 7.48,
       "actual": 2.5,
-      "predicted_oof": 2.982,
-      "error": 0.482,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.001,
+      "error": 0.501,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_145",
       "area_ha": 8.33,
       "actual": 3.5,
-      "predicted_oof": 3.007,
-      "error": -0.493,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.002,
+      "error": -0.498,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_146",
       "area_ha": 1.33,
       "actual": 4.58,
-      "predicted_oof": 4.408,
-      "error": -0.172,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.413,
+      "error": -0.167,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_148",
       "area_ha": 2.46,
       "actual": 3.0,
-      "predicted_oof": 3.209,
-      "error": 0.209,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.207,
+      "error": 0.207,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_150",
       "area_ha": 1.99,
       "actual": 4.52,
-      "predicted_oof": 4.376,
-      "error": -0.144,
-      "interval_80_half": 0.765
+      "predicted_oof": 4.38,
+      "error": -0.14,
+      "interval_80_half": 0.773
     },
     {
       "id": "AGC_151",
       "area_ha": 9.32,
       "actual": 4.69,
-      "predicted_oof": 4.53,
-      "error": -0.16,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.528,
+      "error": -0.162,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_152",
       "area_ha": 2.63,
       "actual": 4.87,
-      "predicted_oof": 4.726,
-      "error": -0.144,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.725,
+      "error": -0.145,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_155",
       "area_ha": 2.24,
       "actual": 4.52,
-      "predicted_oof": 4.768,
-      "error": 0.248,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.77,
+      "error": 0.25,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_157",
       "area_ha": 1.18,
       "actual": 3.0,
-      "predicted_oof": 3.096,
-      "error": 0.096,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.087,
+      "error": 0.087,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_159",
       "area_ha": 2.14,
       "actual": 4.77,
-      "predicted_oof": 4.169,
-      "error": -0.601,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.187,
+      "error": -0.583,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_160",
       "area_ha": 7.61,
       "actual": 3.62,
-      "predicted_oof": 4.715,
-      "error": 1.095,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.713,
+      "error": 1.093,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_161",
       "area_ha": 3.36,
       "actual": 4.46,
-      "predicted_oof": 4.442,
-      "error": -0.018,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.443,
+      "error": -0.017,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_162",
       "area_ha": 4.93,
       "actual": 5.59,
-      "predicted_oof": 4.625,
-      "error": -0.965,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.634,
+      "error": -0.956,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_163",
       "area_ha": 2.57,
       "actual": 3.0,
-      "predicted_oof": 3.074,
-      "error": 0.074,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.081,
+      "error": 0.081,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_164",
       "area_ha": 11.84,
       "actual": 3.0,
-      "predicted_oof": 3.057,
-      "error": 0.057,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.065,
+      "error": 0.065,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_165",
       "area_ha": 6.21,
       "actual": 4.44,
-      "predicted_oof": 4.52,
-      "error": 0.08,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.523,
+      "error": 0.083,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_166",
       "area_ha": 6.76,
       "actual": 2.5,
-      "predicted_oof": 3.253,
-      "error": 0.753,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.252,
+      "error": 0.752,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_167",
       "area_ha": 2.46,
       "actual": 4.54,
-      "predicted_oof": 4.488,
-      "error": -0.052,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.487,
+      "error": -0.053,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_168",
       "area_ha": 1.53,
       "actual": 4.49,
-      "predicted_oof": 4.437,
-      "error": -0.053,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.432,
+      "error": -0.058,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_169",
       "area_ha": 2.51,
       "actual": 2.5,
-      "predicted_oof": 3.133,
-      "error": 0.633,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.128,
+      "error": 0.628,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_170",
       "area_ha": 8.13,
       "actual": 3.0,
-      "predicted_oof": 2.975,
-      "error": -0.025,
-      "interval_80_half": 0.527
+      "predicted_oof": 2.98,
+      "error": -0.02,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_171",
       "area_ha": 11.63,
       "actual": 2.15,
-      "predicted_oof": 4.473,
-      "error": 2.323,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.47,
+      "error": 2.32,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_172",
       "area_ha": 2.33,
       "actual": 5.19,
-      "predicted_oof": 4.443,
-      "error": -0.747,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.452,
+      "error": -0.738,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_176",
       "area_ha": 7.15,
       "actual": 4.38,
-      "predicted_oof": 4.472,
-      "error": 0.092,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.455,
+      "error": 0.075,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_178",
       "area_ha": 9.82,
       "actual": 4.39,
-      "predicted_oof": 4.403,
-      "error": 0.013,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.407,
+      "error": 0.017,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_179",
       "area_ha": 6.35,
       "actual": 4.55,
-      "predicted_oof": 4.516,
-      "error": -0.034,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.507,
+      "error": -0.043,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_180",
       "area_ha": 10.9,
       "actual": 4.14,
-      "predicted_oof": 4.405,
-      "error": 0.265,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.377,
+      "error": 0.237,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_181",
       "area_ha": 1.49,
       "actual": 4.51,
-      "predicted_oof": 4.458,
-      "error": -0.052,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.45,
+      "error": -0.06,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_184",
       "area_ha": 9.96,
       "actual": 4.47,
-      "predicted_oof": 4.417,
-      "error": -0.053,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.42,
+      "error": -0.05,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_185",
       "area_ha": 11.88,
       "actual": 5.01,
-      "predicted_oof": 4.232,
-      "error": -0.778,
-      "interval_80_half": 0.828
+      "predicted_oof": 4.346,
+      "error": -0.664,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_187",
       "area_ha": 8.04,
       "actual": 3.0,
-      "predicted_oof": 3.281,
-      "error": 0.281,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.279,
+      "error": 0.279,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_189",
       "area_ha": 4.6,
       "actual": 4.03,
-      "predicted_oof": 4.482,
-      "error": 0.452,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.489,
+      "error": 0.459,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_193",
       "area_ha": 12.41,
       "actual": 4.57,
-      "predicted_oof": 3.725,
-      "error": -0.845,
-      "interval_80_half": 1.273
+      "predicted_oof": 3.694,
+      "error": -0.876,
+      "interval_80_half": 1.421
     },
     {
       "id": "AGC_194",
       "area_ha": 4.12,
       "actual": 3.2,
-      "predicted_oof": 3.1,
-      "error": -0.1,
-      "interval_80_half": 0.734
+      "predicted_oof": 3.108,
+      "error": -0.092,
+      "interval_80_half": 0.744
     },
     {
       "id": "AGC_195",
       "area_ha": 1.92,
       "actual": 3.68,
-      "predicted_oof": 4.336,
-      "error": 0.656,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.338,
+      "error": 0.658,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_196",
       "area_ha": 8.57,
       "actual": 3.5,
-      "predicted_oof": 3.252,
-      "error": -0.248,
-      "interval_80_half": 0.527
+      "predicted_oof": 3.255,
+      "error": -0.245,
+      "interval_80_half": 0.544
     },
     {
       "id": "AGC_197",
       "area_ha": 11.52,
       "actual": 4.52,
-      "predicted_oof": 4.389,
-      "error": -0.131,
-      "interval_80_half": 0.527
+      "predicted_oof": 4.374,
+      "error": -0.146,
+      "interval_80_half": 0.544
     }
   ]
 }

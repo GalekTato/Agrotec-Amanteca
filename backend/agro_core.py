@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import cdist
 from sklearn.base import BaseEstimator, TransformerMixin
+from pyproj import Transformer
 
 NDVI_GRID = [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25]
 PREC_GRID = [-40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40]
@@ -72,6 +73,18 @@ def select_smart_pearson_columns(
     return selected
 
 
+_WGS84_TO_UTM14 = Transformer.from_crs("EPSG:4326", "EPSG:32614", always_xy=True)
+
+
+def project_latlon_to_utm14(coords: np.ndarray) -> np.ndarray:
+    """Project [lat, lon] rows to metric UTM 14N [x, y] rows."""
+    coords = np.asarray(coords, dtype=float)
+    if coords.ndim != 2 or coords.shape[1] != 2:
+        raise ValueError("Las coordenadas deben tener forma (n, 2) en orden [lat, lon].")
+    x, y = _WGS84_TO_UTM14.transform(coords[:, 1], coords[:, 0])
+    return np.column_stack((x, y))
+
+
 def compute_spatial_idw_feature(
     coords_target: np.ndarray,
     coords_ref: np.ndarray,
@@ -84,7 +97,9 @@ def compute_spatial_idw_feature(
     de las k parcelas de referencia más cercanas, excluyendo coincidencias exactas (d <= 1e-8)
     para evitar fuga de datos cuando se evalúa sobre el propio conjunto de entrenamiento.
     """
-    dists = cdist(coords_target, coords_ref)
+    target_metric = project_latlon_to_utm14(coords_target)
+    ref_metric = project_latlon_to_utm14(coords_ref)
+    dists = cdist(target_metric, ref_metric)
     idw_vals = np.zeros(len(coords_target), dtype=float)
     for i in range(len(coords_target)):
         d = dists[i]

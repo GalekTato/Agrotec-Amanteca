@@ -1,7 +1,7 @@
 """
 main.py
 API Backend en FastAPI para Reto AgroCebada FIRA 2026 - Equipo Agrotec-Amanteca (V4).
-Optimizado con Lifespan Events, Pydantic V2 (0 DeprecationWarnings) y paridad 100%
+Optimizado con Lifespan Events, Pydantic V2 (sin advertencias deprecatorias) y paridad verificable
 con las predicciones reales del Ensemble Agrotec (agro_core.py + sensibilidad_simulador.json).
 """
 
@@ -248,18 +248,33 @@ def simular_escenario(req: SimulationRequest):
             base_df[col] = float(feature_means.get(col, 0.0))
 
     pred_base = float(props.get("RENDIMIENTO_PREDICHO_T_HA", model.predict(base_df[feature_cols])[0]))
-    half_width_80 = float(props.get("INCERTIDUMBRE_T_HA", 0.564))
+    half_width_80 = float(props.get("INCERTIDUMBRE_T_HA", 0.584))
 
-    # Si no hay overrides manuales y existe la superficie precalculada del modelo real,
-    # evaluamos los efectos marginales exactos del modelo (paridad 100% con el Frontend estático).
+    # La superficie precalculada se conserva para el caso base y para el frontend
+    # estático; los escenarios combinados se evalúan conjuntamente para conservar
+    # las interacciones no lineales del modelo.
     sim_parcel = (STATE["sensitivity"] or {}).get("parcels", {}).get(parcela_id)
-    if not req.custom_overrides and sim_parcel is not None:
+    if req.custom_overrides:
+        unknown = sorted(set(req.custom_overrides) - set(feature_cols))
+        invalid = sorted(
+            key for key, value in req.custom_overrides.items()
+            if not np.isfinite(value)
+        )
+        if unknown:
+            raise HTTPException(status_code=422, detail=f"Variables no permitidas: {', '.join(unknown)}")
+        if invalid:
+            raise HTTPException(status_code=422, detail=f"Valores no finitos en: {', '.join(invalid)}")
+
+    if (
+        not req.custom_overrides
+        and req.ndvi_delta_pct == 0.0
+        and req.prec_delta_pct == 0.0
+        and req.tmax_delta_c == 0.0
+        and sim_parcel is not None
+    ):
         pred_base = float(sim_parcel.get("base_yield_t_ha", pred_base))
-        d_ndvi = _lookup_or_interp(sim_parcel.get("ndvi_deltas", {}), req.ndvi_delta_pct, is_float_key=False) or 0.0
-        d_prec = _lookup_or_interp(sim_parcel.get("prec_deltas", {}), req.prec_delta_pct, is_float_key=False) or 0.0
-        d_tmax = _lookup_or_interp(sim_parcel.get("tmax_deltas", {}), req.tmax_delta_c, is_float_key=True) or 0.0
-        delta_t_ha = float(d_ndvi + d_prec + d_tmax)
-        pred_sim = float(np.clip(pred_base + delta_t_ha, 1.0, 6.5))
+        pred_sim = pred_base
+        d_ndvi = d_prec = d_tmax = 0.0
     else:
         sim_df = apply_scenario_df(
             base_df,
@@ -267,17 +282,13 @@ def simular_escenario(req: SimulationRequest):
             prec_delta_pct=req.prec_delta_pct,
             tmax_delta_c=req.tmax_delta_c,
         )
-        if req.custom_overrides:
-            for k, v in req.custom_overrides.items():
-                if k in sim_df.columns:
-                    sim_df[k] = float(v)
+        for k, v in (req.custom_overrides or {}).items():
+            sim_df[k] = float(v)
         for col in feature_cols:
             if col not in sim_df.columns:
                 sim_df[col] = float(feature_means.get(col, 0.0))
         pred_sim = float(np.clip(model.predict(sim_df[feature_cols])[0], 1.0, 6.5))
-        d_ndvi = 0.0
-        d_prec = 0.0
-        d_tmax = 0.0
+        d_ndvi = d_prec = d_tmax = 0.0
 
     if req.ndvi_delta_pct == 0.0 and req.prec_delta_pct == 0.0 and req.tmax_delta_c == 0.0 and not req.custom_overrides:
         pred_sim = pred_base

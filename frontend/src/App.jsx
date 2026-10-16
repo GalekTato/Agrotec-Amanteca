@@ -41,11 +41,11 @@ const MODEL_ARCHITECTURES_INFO = [
     badge: 'MODELO GANADOR SELECCIONADO',
     isWinner: true,
     metrics:
-      '5-Fold MAE: 0.3576 ± 0.0662 t/ha · 5-Fold RMSE: 0.4984 ± 0.1084 t/ha · 5×5 RMSE: 0.5076 ± 0.1183 t/ha · R²: 0.6098',
+      '5-Fold MAE: 0.3562 ± 0.0662 t/ha · 5-Fold RMSE: 0.4968 ± 0.1084 t/ha · 5×5 RMSE: 0.5073 ± 0.1183 t/ha · R²: 0.6124',
     description:
       'Combina cuatro familias algorítmicas complementarias (Extra Trees 40% + Random Forest Podado 25% + SVR Kernel RBF 20% + Gradient Boosting 15%) entrenadas exactamente sobre los 23 predictores seleccionados por el transformador Leak-Free Smart-Pearson (|r| < 0.88, top_k=22) más el potencial microclimático vecinal IDW (k=7).',
     whySelected:
-      'Fue seleccionado por obtener el menor error tanto en validación cruzada 5-Fold (RMSE 0.4984 t/ha) como en validación cruzada repetida 5×5 (25 evaluaciones independientes, RMSE 0.5076 t/ha), logrando que el 73.2% de las parcelas tengan un error Out-Of-Fold menor o igual a ±0.50 t/ha.',
+      'Fue seleccionado por obtener el menor error tanto en validación cruzada 5-Fold (RMSE 0.4968 t/ha) como en validación cruzada repetida 5×5 (25 evaluaciones independientes, RMSE 0.5073 t/ha), logrando que el 72.5% de las parcelas tengan un error Out-Of-Fold menor o igual a ±0.50 t/ha.',
   },
   {
     name: 'Extra Trees Regressor (Smart-Pearson + IDW)',
@@ -111,7 +111,7 @@ const MODEL_ARCHITECTURES_INFO = [
     description:
       'RidgeCV aplica regresión lineal con penalización L2; el estimador Dummy predice siempre la media del pliegue de entrenamiento (3.955 t/ha) como piso estadístico.',
     whySelected:
-      'Demuestran que el ensamble reduce el error absoluto medio en -52.9% frente a predecir la media regional (0.3576 vs. 0.7585 t/ha) y supera el techo lineal de RidgeCV.',
+      'Demuestran que el ensamble reduce el error absoluto medio en -52.9% frente a predecir la media regional (0.3562 vs. 0.7585 t/ha) y supera el techo lineal de RidgeCV.',
   },
 ]
 
@@ -136,6 +136,12 @@ function lookupGridDelta(deltaMap, val, isFloatKey = false) {
     }
   }
   return 0
+}
+
+function lookupCombinedDelta(deltaMap, ndvi, prec, tmax) {
+  if (!deltaMap) return null
+  const key = `${Math.round(Number(ndvi))}|${Math.round(Number(prec))}|${Number(tmax).toFixed(1)}`
+  return Object.prototype.hasOwnProperty.call(deltaMap, key) ? Number(deltaMap[key]) : null
 }
 
 export default function App() {
@@ -272,7 +278,7 @@ export default function App() {
         3.95
     )
     const areaHa = Number(selectedParcel.AREA_HA || 1.0)
-    const halfWidth80 = Number(selectedParcel.INCERTIDUMBRE_T_HA || 0.564)
+    const halfWidth80 = Number(selectedParcel.INCERTIDUMBRE_T_HA || 0.584)
 
     if (ndviDelta === 0 && precDelta === 0 && tmaxDelta === 0) {
       setSimLoading(false)
@@ -295,10 +301,12 @@ export default function App() {
     }
 
     const computePrecomputedModelResponse = () => {
+      const combined = lookupCombinedDelta(parcelSim?.combined_deltas, ndviDelta, precDelta, tmaxDelta)
       const dNdvi = lookupGridDelta(parcelSim?.ndvi_deltas, ndviDelta, false)
       const dPrec = lookupGridDelta(parcelSim?.prec_deltas, precDelta, false)
       const dTmax = lookupGridDelta(parcelSim?.tmax_deltas, tmaxDelta, true)
-      const rawSim = Math.max(1.0, Math.min(6.5, baseYield + dNdvi + dPrec + dTmax))
+      const totalDelta = combined ?? dNdvi + dPrec + dTmax
+      const rawSim = Math.max(1.0, Math.min(6.5, baseYield + totalDelta))
       const simYield = +rawSim.toFixed(4)
       const delta = +(simYield - baseYield).toFixed(4)
       const deltaPct = baseYield > 0 ? +((delta / baseYield) * 100).toFixed(2) : 0
@@ -313,6 +321,7 @@ export default function App() {
           efecto_ndvi_t_ha: +dNdvi.toFixed(4),
           efecto_precipitacion_t_ha: +dPrec.toFixed(4),
           efecto_temperatura_t_ha: +dTmax.toFixed(4),
+          delta_conjunto_t_ha: combined == null ? null : +combined.toFixed(4),
         },
         produccion_base_ton: +(baseYield * areaHa).toFixed(2),
         produccion_simulada_ton: +(simYield * areaHa).toFixed(2),
@@ -361,8 +370,8 @@ export default function App() {
 
   const hasActiveSimulation = ndviDelta !== 0 || precDelta !== 0 || tmaxDelta !== 0
 
-  // La curva fenológica de NDVI refleja directamente el escalamiento porcentual del slider de NDVI
-  // La curva fenológica responde dinámicamente tanto a NDVI como a lluvia CHIRPS y régimen térmico Tmax
+  // La curva redistribuye la respuesta conjunta real del modelo sobre la ventana
+  // fenológica; no inventa elasticidades independientes por variable.
   const ndviChartData = useMemo(() => {
     if (!selectedParcel || !summary?.ndvi_benchmarks) return []
     return summary.ndvi_benchmarks.map((b) => {
@@ -370,10 +379,8 @@ export default function App() {
       // Mayor sensibilidad en meses del ciclo agrícola activo de cebada (mayo a octubre: meses 5 a 10)
       const isReproductiveMonth = b.month >= 5 && b.month <= 10
       const seasonalWeight = isReproductiveMonth ? 1.0 : 0.45
-      const combinedCanopyFactor =
-        (ndviDelta / 100) +
-        (precDelta / 100) * 0.40 * seasonalWeight -
-        (tmaxDelta * 0.028) * seasonalWeight
+      const modelScenarioFactor = Number(simResult?.delta_pct || 0) / 100
+      const combinedCanopyFactor = modelScenarioFactor * seasonalWeight
 
       const simVal = hasActiveSimulation
         ? Math.min(0.95, Math.max(0.05, +(baseVal * (1 + combinedCanopyFactor)).toFixed(4)))
@@ -387,7 +394,7 @@ export default function App() {
         bajoRendimiento: +Number(b.mean_low_yield).toFixed(3),
       }
     })
-  }, [selectedParcel, summary, ndviDelta, precDelta, tmaxDelta, hasActiveSimulation])
+  }, [selectedParcel, summary, ndviDelta, precDelta, tmaxDelta, hasActiveSimulation, simResult])
 
   const localDrivers = useMemo(() => {
     if (!selectedParcel?.top_drivers) return []
@@ -420,7 +427,7 @@ export default function App() {
           r.ID_POLIGONO,
           Number(r.AREA_HA).toFixed(2),
           Number(r.RENDIMIENTO_PREDICHO_T_HA ?? r.RENDIMIENTO_FINAL_T_HA).toFixed(4),
-          Number(r.INCERTIDUMBRE_T_HA ?? 0.564).toFixed(4),
+          Number(r.INCERTIDUMBRE_T_HA ?? 0.584).toFixed(4),
           Number(r.INTERVALO_80_INF_T_HA ?? 3.2).toFixed(4),
           Number(r.INTERVALO_80_SUP_T_HA ?? 4.5).toFixed(4),
           Number(r.PRODUCCION_ESTIMADA_TON).toFixed(2),
@@ -460,19 +467,18 @@ export default function App() {
       </div>
     )
   }
-
   const stats = summary?.dataset_stats || {}
   const eff = summary?.efficiency_metrics || {}
   const baseMetrics = summary?.baseline_metrics || {}
   const envVer = summary?.environment_versions || {}
   const bestModelMetric = summary?.models_comparison?.[0] || {
     model: 'Ensemble Agrotec (Smart-Pearson + IDW)',
-    mae_cv: 0.3576,
+    mae_cv: 0.3562,
     mae_std: 0.0662,
-    rmse_cv: 0.4984,
+    rmse_cv: 0.4968,
     rmse_std: 0.1084,
-    r2_cv: 0.6098,
-    rmse_repeated_cv: 0.5076,
+    r2_cv: 0.6124,
+    rmse_repeated_cv: 0.5073,
     rmse_repeated_std: 0.1183,
   }
 
@@ -668,7 +674,7 @@ export default function App() {
               </span>
             </div>
             <p className="text-xs text-[var(--ink-secondary)] mt-2 tabular-nums border-t border-[var(--rule-hairline)] pt-1.5">
-              RMSE 5F: <b className="text-[var(--ink-primary)]">{Number(bestModelMetric.rmse_cv).toFixed(4)}</b> · RMSE 5×5: <b className="text-[var(--ink-primary)]">{Number(bestModelMetric.rmse_repeated_cv || 0.5076).toFixed(4)} t/ha</b>
+              RMSE 5F: <b className="text-[var(--ink-primary)]">{Number(bestModelMetric.rmse_cv).toFixed(4)}</b> · RMSE 5×5: <b className="text-[var(--ink-primary)]">{Number(bestModelMetric.rmse_repeated_cv || 0.5073).toFixed(4)} t/ha</b>
             </p>
           </div>
 
@@ -1055,7 +1061,7 @@ export default function App() {
                         </div>
                       </div>
                       <p className="text-[11px] text-[var(--ink-secondary)] mt-2 pt-1.5 border-t border-[var(--rule-hairline)] leading-snug">
-                        <b>Nota metodológica:</b> El simulador evalúa las predicciones reales del Ensemble Agrotec sobre los 23 predictores (reflejando correlaciones observacionales aprendidas del histórico, no causalidad física experimental). La gráfica superior muestra el ajuste directo del slider de NDVI.
+                        <b>Nota metodológica:</b> El simulador evalúa conjuntamente las predicciones reales del Ensemble Agrotec sobre los 23 predictores (reflejando correlaciones observacionales aprendidas del histórico, no causalidad física experimental). La gráfica redistribuye la variación porcentual resultante sobre la ventana fenológica activa.
                       </p>
                     </div>
                   )}
@@ -1491,7 +1497,7 @@ export default function App() {
                     Certeza en Campo (&le;0.50 t/ha)
                   </span>
                   <span className="text-2xl font-black text-[var(--ink-primary)] mt-1 block">
-                    {eff.oof_within_050_t_ha_pct || 73.2}%
+                    {eff.oof_within_050_t_ha_pct || 72.5}%
                   </span>
                   <span className="text-xs text-[var(--ink-secondary)] mt-1 block">
                     De las parcelas OOF tienen error &le; ±0.50 t/ha (vs. <b>{baseMetrics.oof_within_050_t_ha_pct || 71.7}%</b> del Baseline RF). Cobertura Conformal 80% real: <b>{eff.conformal_80_coverage_oof_pct || 81.2}%</b>.
@@ -1506,7 +1512,7 @@ export default function App() {
                     {eff.inference_per_parcel_ms ? `${Number(eff.inference_per_parcel_ms).toFixed(2)} ms` : '0.46 ms'} / parcela
                   </span>
                   <span className="text-xs text-[var(--ink-secondary)] mt-1 block">
-                    Inferencia de las 197 parcelas en <b>{Number(eff.inference_197_ms || 91.36).toFixed(1)} ms</b>; artefacto `.joblib` de 4 sub-modelos en <b>{eff.model_bundle_size_kb || 1433.7} KB</b>.
+                    Inferencia de las 197 parcelas en <b>{Number(eff.inference_197_ms || 91.36).toFixed(1)} ms</b>; artefacto `.joblib` de 4 sub-modelos en <b>{eff.model_bundle_size_kb || 1436.8} KB</b>.
                   </span>
                 </div>
               </div>
@@ -1514,7 +1520,7 @@ export default function App() {
               <div className="grid grid-cols-1 sm:grid-cols-3 border border-[var(--rule-hairline)] bg-[var(--surface-subtle)] divide-y sm:divide-y-0 sm:divide-x divide-[var(--rule-hairline)] tabular-nums">
                 <div className="p-3.5">
                   <span className="text-[10px] font-bold uppercase text-[var(--ink-secondary)] block">
-                    Paridad Exacta CV == Modelo Final
+                    Paridad Verificada CV == Modelo Final
                   </span>
                   <span className="text-lg font-black text-[var(--ink-primary)] mt-0.5 block">
                     -{stats.collinearity_reduction_pct || 86.9}% (175 → {stats.total_features_selected || 23})

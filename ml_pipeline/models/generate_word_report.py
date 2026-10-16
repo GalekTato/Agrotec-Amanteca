@@ -281,7 +281,7 @@ def build_word_document():
     meta_rows = [
         ("Universo Geoespacial Auditado", f"{stats['total_parcelas']} polígonos agrícolas ({stats['total_area_ha']:,.2f} ha totales en EPSG:4326)"),
         ("Partición Oficial del Reto", f"{stats['train_parcelas']} parcelas con cosecha observada ({stats['train_area_ha']:.2f} ha) | {stats['pred_parcelas']} parcelas ciegas ({stats['pred_area_ha']:.2f} ha)"),
-        ("Paridad Exacta CV == Modelo Final", f"Filtro Leak-Free Smart-Pearson (|r| < 0.88, 22 vars) + IDW Espacial (k=7, 1 var) = {stats['total_features_selected']} predictores exactos (0% nulos)"),
+        ("Paridad Verificada CV == Modelo Final", f"Filtro Leak-Free Smart-Pearson (|r| < 0.88, 22 vars) + IDW Espacial (k=7, 1 var) = {stats['total_features_selected']} predictores exactos (0% nulos)"),
         ("Precisión Validación Cruzada (5-Fold)", f"MAE = {winner['mae_cv']:.4f} ± {winner['mae_std']:.4f} t/ha | RMSE = {winner['rmse_cv']:.4f} ± {winner['rmse_std']:.4f} t/ha | R² = {winner['r2_cv']:.4f} ± {winner['r2_std']:.4f}"),
         ("Estabilidad en CV Repetida 5×5 (25 corridas)", f"MAE = {winner['mae_repeated_cv']:.4f} ± {winner['mae_repeated_std']:.4f} t/ha | RMSE = {winner['rmse_repeated_cv']:.4f} ± {winner['rmse_repeated_std']:.4f} t/ha"),
         ("Comparativa vs. Baseline y Media", f"Baseline RF (39 vars): MAE {base_m['mae_cv']:.4f} / RMSE {base_m['rmse_cv']:.4f} t/ha | Predecir la Media: MAE {dummy_m['mae_cv']:.4f} / RMSE {dummy_m['rmse_cv']:.4f} t/ha"),
@@ -337,7 +337,7 @@ def build_word_document():
             "(4) Índice Hidrotérmico de De Martonne (Precipitación / [Tmax + 10]) y (5) Índice de Retención Topográfica.",
         ),
         (
-            "Etapa 4 — Selección Leak-Free Smart-Pearson (|r| < 0.88) y Paridad Exacta con el Modelo Publicado: ",
+            "Etapa 4 — Selección Leak-Free Smart-Pearson (|r| < 0.88) y Paridad Verificada con el Modelo Publicado: ",
             "Al auditar la matriz inicial de 175 columnas frente al filtro de Pearson secuencial tradicional (39 variables), "
             "se identificó que recorrer las columnas en orden posicional descartaba variables con mayor correlación con el "
             "rendimiento como tmin_2025_10 y evi_promedio_mes_5. El transformador LeakFreeSmartPearsonIDW ordena los "
@@ -569,7 +569,7 @@ def build_word_document():
         (
             "3. Backend API, Pruebas y Simulador",
             "FastAPI, Pydantic V2, Uvicorn ASGI, Lifespan Memory Cache, agro_core.py, Pytest + HTTPX",
-            "Servicio RESTful con 0 DeprecationWarnings, superficie de sensibilidad precalculada del modelo real (sensibilidad_simulador.json) y suite de pruebas automatizadas.",
+            "Servicio RESTful con sin advertencias deprecatorias, superficie de sensibilidad precalculada del modelo real (sensibilidad_simulador.json) y suite de pruebas automatizadas.",
         ),
         (
             "4. Frontend Cartográfico y Reporteo",

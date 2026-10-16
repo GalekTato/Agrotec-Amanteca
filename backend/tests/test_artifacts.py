@@ -74,6 +74,7 @@ def test_sensitivity_surface_completeness():
         assert pdata["ndvi_deltas"]["0"] == 0.0
         assert pdata["prec_deltas"]["0"] == 0.0
         assert pdata["tmax_deltas"]["0.0"] == 0.0
+        assert pdata["combined_deltas"]["0|0|0.0"] == 0.0
 
 
 def test_no_unverified_or_legacy_numbers_in_codebase_and_docs():

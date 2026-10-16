@@ -650,6 +650,26 @@ def main():
         for i, pid in enumerate(df_full["ID_POLIGONO"]):
             tmax_Lookup[pid][key_str] = round(float(deltas[i]), 4)
 
+    # La combinación de controles se evalúa conjuntamente para conservar
+    # interacciones no lineales; no se suman efectos marginales independientes.
+    combined_Lookup = {pid: {} for pid in df_full["ID_POLIGONO"]}
+    for d_ndvi in NDVI_GRID:
+        for d_prec in PREC_GRID:
+            for d_tmax in TMAX_GRID:
+                if d_ndvi == 0 and d_prec == 0 and d_tmax == 0:
+                    deltas = np.zeros(len(df_full))
+                else:
+                    pert_df = apply_scenario_df(
+                        df_full,
+                        ndvi_delta_pct=float(d_ndvi),
+                        prec_delta_pct=float(d_prec),
+                        tmax_delta_c=float(d_tmax),
+                    )
+                    deltas = final_model.predict(pert_df[active_feature_cols]) - base_preds_197
+                key = f"{d_ndvi}|{d_prec}|{d_tmax:.1f}"
+                for i, pid in enumerate(df_full["ID_POLIGONO"]):
+                    combined_Lookup[pid][key] = round(float(deltas[i]), 4)
+
     sim_payload = {
         "methodology": (
             "Predicciones reales del Ensemble Agrotec evaluadas sobre perturbaciones individuales "
@@ -671,6 +691,7 @@ def main():
             "ndvi_deltas": ndvi_Lookup[pid],
             "prec_deltas": prec_Lookup[pid],
             "tmax_deltas": tmax_Lookup[pid],
+            "combined_deltas": combined_Lookup[pid],
         }
 
     sim_json_str = json.dumps(sim_payload, ensure_ascii=False)

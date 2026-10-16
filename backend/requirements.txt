@@ -1,13 +1,16 @@
 # Requerimientos de Producción y Pruebas Automatizadas (Agrotec-Amanteca V4)
 # Entorno de entrenamiento verificado: Python 3.14.7, scikit-learn 1.9.1, lightgbm 4.7.0, pandas 3.0.6, numpy 2.5.3, scipy 1.18.1, joblib 1.6.0
-fastapi>=0.115.0
+fastapi>=0.143.0,<0.144.0
+starlette>=1.7.0,<1.8.0
 uvicorn>=0.30.0
 pydantic>=2.8.0
 pandas>=2.2.0
 numpy>=1.26.0
 scipy>=1.13.0
+pyproj>=3.6.0
 scikit-learn>=1.5.0
 lightgbm>=4.3.0
 joblib>=1.4.0
-httpx>=0.27.0
+httpx>=0.28.0,<0.29.0
+anyio>=4.4.0
 pytest>=8.0.0
