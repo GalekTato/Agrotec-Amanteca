@@ -57,7 +57,11 @@ La inclusión financiera requiere que productores y organizaciones puedan presen
 
 Agrotec-Amanteca cumplió el objetivo de construir una solución funcional para estimar el rendimiento de cebada por parcela y consultar sus resultados en una interfaz web. La integración de datos satelitales, climáticos, topográficos y espaciales produjo un conjunto de 23 predictores consistente entre validación e inferencia. El ensamble superó al baseline y a la referencia nula bajo métricas medidas, y la validación OOF permitió reportar tanto error como cobertura empírica de incertidumbre. La aplicación aporta valor porque conecta el resultado estadístico con un mapa, una tabla exportable y un simulador trazable. La conclusión no es que el modelo sea universal ni causal: su confiabilidad está condicionada por las 138 parcelas etiquetadas, la representatividad del dataset y la similitud entre futuras observaciones y el dominio de entrenamiento. Para fortalecerlo se requieren nuevas parcelas independientes, campañas agrícolas adicionales y validaciones por localidad y tiempo. También debe mantenerse la separación entre predicción, simulación y decisión financiera. Bajo esas condiciones, el sistema es una base estable, lógica y auditable para apoyo a decisiones agrícolas, y cuenta con una ruta clara de mejora sin depender de añadir complejidad innecesaria.
 
-# **H. Bibliografía**
+# **H. Respuestas a las preguntas guía del reto**
+
+1. ¿Qué índice es más importante en la predicción? La variable con mayor importancia relativa combinada en el artefacto auditado es Potencial Microclimático Vecinal (IDW k=7), con 26.80%. Esta variable no es un índice satelital: resume el contexto espacial de las parcelas de referencia y debe interpretarse como señal predictiva geográfica, no como causalidad. Entre los índices agronómicos sintéticos, el Índice Hidrotérmico de Aridez (Prec/Tmax) ocupa el primer lugar, con 10.70%. 2. ¿Qué variable climática tiene mayor peso? Dentro de las variables climáticas individuales, Temp. Máxima 2023-02 alcanza 7.70% de importancia relativa combinada; le sigue Precipitación 2025-02 con 6.86%. Estas importancias son globales para este conjunto y método, no una ley universal ni un efecto causal. 3. ¿Qué combinación de variables funciona mejor? La combinación ganadora es el conjunto de 23 predictores formado por 22 variables Smart-Pearson y el IDW, procesado por el VotingRegressor de Extra Trees (40%), Random Forest (25%), SVR (20%) y Gradient Boosting (15%). Se seleccionó por su desempeño conjunto en 5-Fold y 5×5 Repeated CV: RMSE 0.4968 y 0.5073 t/ha, respectivamente. No se afirma que una terna aislada sea óptima, porque el modelo aprende interacciones no lineales entre las 23 variables.
+
+# **I. Bibliografía**
 
 * FIRA. (2026). Bases de participación: Reto AgroCebada FIRA 2026. Documento oficial proporcionado por el comité organizador.
 * FIRA. (2025). Reglas de Operación para apoyos a los sectores agropecuario, forestal, pesquero, alimentario y rural. Diario Oficial de la Federación.
@@ -67,7 +71,7 @@ Agrotec-Amanteca cumplió el objetivo de construir una solución funcional para 
 * FastAPI developers. (s. f.). FastAPI documentation. https://fastapi.tiangolo.com/
 * CHIRPS Climate Hazards Center. (s. f.). Climate Hazards InfraRed Precipitation with Station data.
 
-# **I. Anexos y cumplimiento de entregables**
+# **J. Anexos y cumplimiento de entregables**
 
 Anexo 1 — Integración y aportaciones del equipo: se documentan las funciones declaradas por el equipo. Las responsabilidades fueron colaborativas y todos los integrantes participaron en la revisión final.
 

@@ -24,6 +24,7 @@ El modelo, el código fuente y el dashboard cumplen el objetivo técnico del ret
 | Declaración de IA y prompts | Anexo 2: GitHub Copilot CLI, Antigravity CLI y 8 prompts representativos | Cumplido |
 | Video demostrativo máximo 5 minutos | Enlace externo requerido por la plataforma | **Pendiente de subir o pegar enlace** |
 | Presentación de máximo 15 minutos para finalistas | `GUIA_DEFENSA_ORAL_AGROTEC.md` contiene guion y preguntas | Preparado |
+| Preguntas guía para bonus | Respuestas explícitas en la sección H/I del reporte: IDW, variable climática y combinación ganadora | Cumplido |
 
 ## Acciones antes de entregar
 

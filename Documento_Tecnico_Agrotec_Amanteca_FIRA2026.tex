@@ -212,6 +212,13 @@ La aplicación aporta valor porque conecta el resultado estadístico con un mapa
 
 Para fortalecerlo se requieren nuevas parcelas independientes, campañas agrícolas adicionales y validaciones por localidad y tiempo. También debe mantenerse la separación entre predicción, simulación y decisión financiera. Bajo esas condiciones, el sistema es una base estable, lógica y auditable para apoyo a decisiones agrícolas, y cuenta con una ruta clara de mejora sin depender de añadir complejidad innecesaria.
 
+\section{Respuestas a las preguntas guía del reto}
+\begin{enumerate}
+\item \textbf{¿Qué índice es más importante en la predicción?} La variable con mayor importancia relativa combinada en el artefacto auditado es \textbf{Potencial Microclimático Vecinal (IDW $k=7$)}, con \textbf{26.80\%}. No es un índice satelital: resume el contexto espacial de las parcelas de referencia y debe interpretarse como señal predictiva geográfica, no como causalidad. Entre los índices agronómicos sintéticos, el \textbf{Índice Hidrotérmico de Aridez (Prec/Tmax)} ocupa el primer lugar, con \textbf{10.70\%}.
+\item \textbf{¿Qué variable climática tiene mayor peso?} Entre las variables climáticas individuales, \textbf{Temperatura Máxima 2023-02} alcanza \textbf{7.70\%} de importancia relativa combinada; le sigue \textbf{Precipitación 2025-02}, con \textbf{6.86\%}. Estas importancias son globales para este conjunto y método, no una ley universal ni un efecto causal.
+\item \textbf{¿Qué combinación de variables funciona mejor?} La combinación ganadora es el conjunto de \textbf{23 predictores}: 22 variables Smart-Pearson más IDW, procesadas por el VotingRegressor de Extra Trees (40\%), Random Forest (25\%), SVR (20\%) y Gradient Boosting (15\%). Se seleccionó por su desempeño conjunto en 5-Fold y 5$\times$5 Repeated CV: RMSE 0.4968 y 0.5073 t/ha, respectivamente. No se afirma que una terna aislada sea óptima, porque el modelo aprende interacciones no lineales entre las 23 variables.
+\end{enumerate}
+
 \section{Bibliografía}
 \begin{enumerate}[label={[\arabic*]}]
 \item FIRA. (2026). \textit{Bases de participación: Reto AgroCebada FIRA 2026}. Documento oficial proporcionado por el comité organizador.
