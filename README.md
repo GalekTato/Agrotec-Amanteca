@@ -14,7 +14,6 @@
 ## 🌐 Demo Interactiva en Vivo
 
 - **Dashboard Cartográfico y Simulador Agronómico**: [https://galektato.github.io/Agrotec-Amanteca/](https://galektato.github.io/Agrotec-Amanteca/)
-- **Matriz de cumplimiento de las bases**: [`BASES_CUMPLIMIENTO_AGROCEBADA.md`](BASES_CUMPLIMIENTO_AGROCEBADA.md)
 
 ---
 
