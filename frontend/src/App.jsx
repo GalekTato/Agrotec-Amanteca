@@ -1,14 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
   ArrowUpRight,
-  Cpu,
-  Database,
   Download,
-  Layers,
   Moon,
   RefreshCw,
   Search,
-  ShieldCheck,
   Sun,
 } from 'lucide-react'
 import {
@@ -41,107 +37,111 @@ const TEAM_MEMBERS = [
 
 const MODEL_ARCHITECTURES_INFO = [
   {
-    name: 'Ensemble Agrotec V3 (Voting Heterogéneo + Smart-Pearson + IDW Espacial)',
+    name: 'Ensemble Agrotec (Voting Heterogéneo + Smart-Pearson + IDW Espacial)',
     badge: 'MODELO GANADOR SELECCIONADO',
     isWinner: true,
-    metrics: 'MAE: 0.3576 t/ha · RMSE: 0.4984 t/ha · R²: 0.6098 · MAPE: 10.18%',
+    metrics:
+      '5-Fold MAE: 0.3576 ± 0.0662 t/ha · 5-Fold RMSE: 0.4984 ± 0.1084 t/ha · 5×5 RMSE: 0.5076 ± 0.1183 t/ha · R²: 0.6098',
     description:
-      'Combina cuatro familias algorítmicas complementarias (Extra Trees 40% + Random Forest Podado 25% + SVR Kernel RBF 20% + Gradient Boosting 15%) alimentadas por nuestro filtro Leak-Free Smart-Pearson (|r| < 0.88) y potencial microclimático vecinal por ponderación inversa a la distancia (IDW k=7).',
+      'Combina cuatro familias algorítmicas complementarias (Extra Trees 40% + Random Forest Podado 25% + SVR Kernel RBF 20% + Gradient Boosting 15%) entrenadas exactamente sobre los 23 predictores seleccionados por el transformador Leak-Free Smart-Pearson (|r| < 0.88, top_k=22) más el potencial microclimático vecinal IDW (k=7).',
     whySelected:
-      'Fue seleccionado porque rompe la barrera de RMSE < 0.50 t/ha (0.4984 t/ha) y logra que el 73.2% de las parcelas tengan un error menor a ±0.50 t/ha, al compensar el sesgo paramétrico de SVR con la captura de interacciones no lineales de los árboles y la continuidad espacial vecinal.',
+      'Fue seleccionado por obtener el menor error tanto en validación cruzada 5-Fold (RMSE 0.4984 t/ha) como en validación cruzada repetida 5×5 (25 evaluaciones independientes, RMSE 0.5076 t/ha), logrando que el 73.2% de las parcelas tengan un error Out-Of-Fold menor o igual a ±0.50 t/ha.',
   },
   {
-    name: 'Stacking Meta-Ensemble V3 (Meta-Regresor RidgeCV L2)',
-    badge: '2.º LUGAR EN PRECISIÓN',
+    name: 'Extra Trees Regressor (Smart-Pearson + IDW)',
+    badge: 'MEJOR MODELO INDIVIDUAL EN 5×5 CV',
     isWinner: false,
-    metrics: 'MAE: 0.3606 t/ha · RMSE: 0.5006 t/ha · R²: 0.6095',
+    metrics:
+      '5-Fold MAE: 0.3682 ± 0.0615 t/ha · 5-Fold RMSE: 0.5077 ± 0.0950 t/ha · 5×5 RMSE: 0.5124 ± 0.1110 t/ha · R²: 0.5947',
     description:
-      'Arquitectura jerárquica de dos niveles donde un regresor lineal penalizado (RidgeCV) aprende los pesos óptimos sobre las predicciones Out-Of-Fold generadas por los estimadores base.',
-    whySelected:
-      'Obtuvo un desempeño sobresaliente casi idéntico al Voting Ensemble, pero requiere 5.5× más tiempo de cómputo en validación cruzada por el entrenamiento anidado de pliegues internos.',
-  },
-  {
-    name: 'Extra Trees Regressor V3 (Extremely Randomized Trees)',
-    badge: 'MEJOR MODELO INDIVIDUAL',
-    isWinner: false,
-    metrics: 'MAE: 0.3682 t/ha · RMSE: 0.5077 t/ha · R²: 0.5947',
-    description:
-      'Ensamble de árboles de decisión que introduce aleatoriedad adicional al elegir los puntos de corte de cada variable, reduciendo drásticamente la varianza en datasets tabulares de tamaño moderado (N = 138).',
+      'Ensamble de árboles de decisión extremadamente aleatorizados que introduce cortes aleatorios en cada nodo, reduciendo la varianza en datasets tabulares de tamaño moderado (N = 138 parcelas de entrenamiento).',
     whySelected:
       'Aporta el 40% del peso dentro del ensamble ganador gracias a su estabilidad frente al ruido en lecturas satelitales mensuales.',
   },
   {
-    name: 'Random Forest Regressor (Modelo Base / Baseline)',
+    name: 'Stacking Meta-Ensemble (Meta-Regresor RidgeCV L2)',
+    badge: 'ALTA PRECISIÓN EN 5-FOLD CV',
+    isWinner: false,
+    metrics:
+      '5-Fold MAE: 0.3606 ± 0.0661 t/ha · 5-Fold RMSE: 0.5006 ± 0.1068 t/ha · 5×5 RMSE: 0.5186 ± 0.1175 t/ha · R²: 0.6095',
+    description:
+      'Arquitectura jerárquica de dos niveles donde un regresor lineal penalizado (RidgeCV) aprende los pesos sobre las predicciones Out-Of-Fold generadas por los estimadores base.',
+    whySelected:
+      'Obtuvo el segundo menor RMSE en 5-Fold CV (0.5006 t/ha), pero presenta mayor varianza en 5×5 Repeated CV y mayor costo computacional por el entrenamiento anidado.',
+  },
+  {
+    name: 'Random Forest Regressor (Baseline 39 Variables Base)',
     badge: 'PUNTO DE REFERENCIA (BASELINE)',
     isWinner: false,
-    metrics: 'MAE: 0.3742 t/ha · RMSE: 0.5139 t/ha · R²: 0.5859',
+    metrics:
+      '5-Fold MAE: 0.3742 ± 0.0592 t/ha · 5-Fold RMSE: 0.5139 ± 0.0923 t/ha · 5×5 RMSE: 0.5175 ± 0.1107 t/ha · R²: 0.5859',
     description:
-      'Bosque aleatorio clásico entrenado mediante Bagging (muestreo bootstrap con reemplazo) sobre las 39 variables del filtro secuencial original sin podar profundidad.',
+      'Bosque aleatorio clásico entrenado mediante Bagging (muestreo bootstrap con reemplazo) sobre las 39 variables del filtro secuencial original.',
     whySelected:
-      'Sirvió como línea base auditable para demostrar la ganancia neta de precisión (-4.4% en MAE y -3.0% en RMSE) lograda por la ingeniería de datos V3.',
+      'Sirvió como línea base auditable para medir la ganancia neta de precisión (-4.4% en MAE CV y -3.0% en RMSE CV) alcanzada por la selección Smart-Pearson + IDW.',
   },
   {
     name: 'Support Vector Regressor (SVR Kernel RBF + RobustScaler)',
     badge: 'REGULARIZACIÓN GEOMÉTRICA',
     isWinner: false,
-    metrics: 'MAE: 0.3682 t/ha · RMSE: 0.5210 t/ha · R²: 0.5729',
+    metrics:
+      '5-Fold MAE: 0.3682 ± 0.0780 t/ha · 5-Fold RMSE: 0.5210 ± 0.1175 t/ha · 5×5 RMSE: 0.5310 ± 0.1183 t/ha · R²: 0.5729',
     description:
-      'Proyecta los predictores escalados por rango intercuartílico (RobustScaler) hacia un espacio de dimensión infinita mediante un kernel gaussiano RBF, construyendo un tubo de tolerancia ε-insensible.',
+      'Proyecta los predictores escalados por rango intercuartílico (RobustScaler) mediante un kernel gaussiano RBF, construyendo un tubo de tolerancia ε-insensible.',
     whySelected:
-      'Suaviza las predicciones escalonadas típicas de los árboles de decisión y mejora la extrapolación suave en el simulador agronómico.',
+      'Integra el 20% del peso del ensamble ganador, suavizando las predicciones escalonadas típicas de los árboles de decisión.',
   },
   {
     name: 'Gradient Boosting Regressor (GBR) y LightGBM',
     badge: 'BOOSTING SECUENCIAL',
     isWinner: false,
-    metrics: 'GBR MAE: 0.3841 t/ha (RMSE: 0.5095) · LightGBM MAE: 0.4198 t/ha',
+    metrics:
+      'GBR 5-Fold RMSE: 0.5095 ± 0.0922 t/ha (5×5 RMSE: 0.5152) · LightGBM 5-Fold RMSE: 0.5494 ± 0.0919 t/ha',
     description:
-      'Entrenan árboles secuenciales de baja profundidad (max_depth=3–4) donde cada árbol corrige los residuos pseudo-gradiente de la iteración previa.',
+      'Entrenan árboles secuenciales de baja profundidad donde cada árbol corrige los residuos pseudo-gradiente de la iteración previa.',
     whySelected:
       'GBR se integró con 15% de peso en el ensamble final para capturar gradientes térmicos finos; LightGBM en solitario tiende a sobreajustar cuando N = 138.',
   },
   {
-    name: 'RidgeCV (Regresión Lineal Regularizada L2)',
-    badge: 'CONTROL LINEAL PARAMÉTRICO',
+    name: 'RidgeCV Lineal y Referencia (Predecir la Media)',
+    badge: 'CONTROLES PARAMÉTRICO Y NULO',
     isWinner: false,
-    metrics: 'MAE: 0.3819 t/ha · RMSE: 0.5180 t/ha · R²: 0.5802',
+    metrics:
+      'RidgeCV 5-Fold RMSE: 0.5180 ± 0.0846 t/ha (R²: 0.5802) · Dummy Media 5-Fold RMSE: 0.8545 ± 0.0926 t/ha (R²: -0.0870)',
     description:
-      'Modelo lineal con penalización de Tikhonov (L2) y selección automática del hiperparámetro α por validación cruzada.',
+      'RidgeCV aplica regresión lineal con penalización L2; el estimador Dummy predice siempre la media del pliegue de entrenamiento (3.955 t/ha) como piso estadístico.',
     whySelected:
-      'Permitió comprobar que existe un +3.0% adicional de varianza no lineal explicada que solo los ensambles híbridos logran capturar.',
+      'Demuestran que el ensamble reduce el error absoluto medio en -52.9% frente a predecir la media regional (0.3576 vs. 0.7585 t/ha) y supera el techo lineal de RidgeCV.',
   },
 ]
 
-const TECH_STACK_SUMMARY = [
-  {
-    category: 'Ciencia de Datos y Machine Learning',
-    items: 'Python 3.11 · Scikit-Learn · LightGBM · SciPy Spatial (IDW k-NN) · Joblib · NumPy · Pandas',
-    detail:
-      'Pipeline reproducible con validación cruzada 5-Fold y 5×5 Repeated CV, transformador LeakFreeSmartPearson (|r| < 0.88) e importancia por permutación.',
-  },
-  {
-    category: 'Ingeniería Geoespacial y Clima',
-    items: 'GeoPandas · Shapely · Rasterio (all_touched=True) · CHIRPS Rasters · INEGI CEM4 · Apache Parquet',
-    detail:
-      'Extracción zonal multianual de precipitación y temperatura (2022–2025), elevación/pendiente a 120 m y reconstrucción fenológica mensual de NDVI y EVI.',
-  },
-  {
-    category: 'Backend & Motor de Inferencia en Tiempo Real',
-    items: 'FastAPI · Pydantic V2 · Uvicorn ASGI · Lifespan Memory Cache · Docker',
-    detail:
-      'API RESTful de ultra-baja latencia (<5 ms por consulta) con recarga inteligente de artefactos y simulador agronómico multivariable.',
-  },
-  {
-    category: 'Frontend Cartográfico & Diseño Editorial',
-    items: 'React 18 · Vite 6 · Tailwind CSS · LeafletJS · Esri ArcGIS Online · Recharts',
-    detail:
-      'Interfaz responsive multi-dispositivo bajo retícula técnica Swiss (Modo Claro) / Industrial (Modo Oscuro) con 3 capas satelitales y topográficas libres de API Key.',
-  },
-]
+function lookupGridDelta(deltaMap, val, isFloatKey = false) {
+  if (!deltaMap) return 0
+  const key = isFloatKey ? Number(val).toFixed(1) : String(Math.round(Number(val)))
+  if (Object.prototype.hasOwnProperty.call(deltaMap, key)) {
+    return Number(deltaMap[key])
+  }
+  const entries = Object.entries(deltaMap)
+    .map(([k, v]) => [Number(k), Number(v)])
+    .sort((a, b) => a[0] - b[0])
+  if (!entries.length) return 0
+  if (val <= entries[0][0]) return entries[0][1]
+  if (val >= entries[entries.length - 1][0]) return entries[entries.length - 1][1]
+  for (let i = 0; i < entries.length - 1; i += 1) {
+    const [x0, y0] = entries[i]
+    const [x1, y1] = entries[i + 1]
+    if (val >= x0 && val <= x1) {
+      const t = x1 === x0 ? 0 : (val - x0) / (x1 - x0)
+      return y0 + t * (y1 - y0)
+    }
+  }
+  return 0
+}
 
 export default function App() {
   const [summary, setSummary] = useState(null)
   const [geojson, setGeojson] = useState(null)
+  const [sensitivity, setSensitivity] = useState(null)
   const [loading, setLoading] = useState(true)
   const [apiMode, setApiMode] = useState('checking')
   const [activeTab, setActiveTab] = useState('cockpit')
@@ -183,32 +183,40 @@ export default function App() {
     async function fetchAllData() {
       setLoading(true)
       try {
-        const [sumRes, geoRes] = await Promise.all([
+        const [sumRes, geoRes, simRes] = await Promise.all([
           fetch(`${API_BASE}/api/summary`),
           fetch(`${API_BASE}/api/parcelas`),
+          fetch(`${API_BASE}/api/sensibilidad`),
         ])
-        if (sumRes.ok && geoRes.ok) {
-          const [sumJson, geoJson] = await Promise.all([sumRes.json(), geoRes.json()])
+        if (sumRes.ok && geoRes.ok && simRes.ok) {
+          const [sumJson, geoJson, simJson] = await Promise.all([
+            sumRes.json(),
+            geoRes.json(),
+            simRes.json(),
+          ])
           if (mounted) {
             setSummary(sumJson)
             setGeojson(geoJson)
+            setSensitivity(simJson)
             setApiMode('cloud')
             setLoading(false)
           }
           return
         }
       } catch {
-        // Fallback automático a los datos estáticos precalculados
+        // Fallback automático a los artefactos estáticos precalculados del modelo
       }
 
       try {
-        const [sumStatic, geoStatic] = await Promise.all([
+        const [sumStatic, geoStatic, simStatic] = await Promise.all([
           fetch('./data/metrics_summary.json').then((r) => r.json()),
           fetch('./data/parcelas_197_dashboard.geojson').then((r) => r.json()),
+          fetch('./data/sensibilidad_simulador.json').then((r) => r.json()),
         ])
         if (mounted) {
           setSummary(sumStatic)
           setGeojson(geoStatic)
+          setSensitivity(simStatic)
           setApiMode('edge')
           setLoading(false)
         }
@@ -250,54 +258,68 @@ export default function App() {
     )
   }, [allParcels, filteredParcels, selectedId])
 
-  // Simulador Agronómico: respuesta instantánea en los 3 sliders (NDVI, CHIRPS y Tmax °C)
+  // Simulador Agronómico 100% respaldado por la superficie de respuesta precalculada del modelo real
   useEffect(() => {
     if (!selectedParcel) return
     let cancelled = false
 
+    const parcelId = selectedParcel.ID_POLIGONO
+    const parcelSim = sensitivity?.parcels?.[parcelId]
     const baseYield = Number(
-      selectedParcel.RENDIMIENTO_PREDICHO_T_HA ||
-        selectedParcel.RENDIMIENTO_FINAL_T_HA ||
+      parcelSim?.base_yield_t_ha ??
+        selectedParcel.RENDIMIENTO_PREDICHO_T_HA ??
+        selectedParcel.RENDIMIENTO_FINAL_T_HA ??
         3.95
     )
     const areaHa = Number(selectedParcel.AREA_HA || 1.0)
+    const halfWidth80 = Number(selectedParcel.INCERTIDUMBRE_T_HA || 0.564)
 
     if (ndviDelta === 0 && precDelta === 0 && tmaxDelta === 0) {
       setSimLoading(false)
       setSimResult({
         rendimiento_base_modelo_t_ha: baseYield,
         rendimiento_simulado_t_ha: baseYield,
+        intervalo_80_inf_t_ha: Math.max(1.0, +(baseYield - halfWidth80).toFixed(4)),
+        intervalo_80_sup_t_ha: +(baseYield + halfWidth80).toFixed(4),
         delta_t_ha: 0,
         delta_pct: 0,
+        desglose_modelo_t_ha: {
+          efecto_ndvi_t_ha: 0,
+          efecto_precipitacion_t_ha: 0,
+          efecto_temperatura_t_ha: 0,
+        },
         produccion_base_ton: +(baseYield * areaHa).toFixed(2),
         produccion_simulada_ton: +(baseYield * areaHa).toFixed(2),
       })
       return
     }
 
-    // Cálculo instantáneo calibrado para que la interfaz responda al instante sin trabarse
-    const computeClientElasticity = () => {
-      const ndviEffect = baseYield * (ndviDelta / 100) * 0.42
-      const precEffect = baseYield * (precDelta / 100) * 0.28
-      const tmaxEffect = -0.065 * tmaxDelta
-      const simYield = Math.max(
-        1.4,
-        Math.min(6.2, +(baseYield + ndviEffect + precEffect + tmaxEffect).toFixed(4))
-      )
+    const computePrecomputedModelResponse = () => {
+      const dNdvi = lookupGridDelta(parcelSim?.ndvi_deltas, ndviDelta, false)
+      const dPrec = lookupGridDelta(parcelSim?.prec_deltas, precDelta, false)
+      const dTmax = lookupGridDelta(parcelSim?.tmax_deltas, tmaxDelta, true)
+      const rawSim = Math.max(1.0, Math.min(6.5, baseYield + dNdvi + dPrec + dTmax))
+      const simYield = +rawSim.toFixed(4)
       const delta = +(simYield - baseYield).toFixed(4)
-      const deltaPct = +((delta / baseYield) * 100).toFixed(2)
+      const deltaPct = baseYield > 0 ? +((delta / baseYield) * 100).toFixed(2) : 0
       return {
         rendimiento_base_modelo_t_ha: baseYield,
         rendimiento_simulado_t_ha: simYield,
+        intervalo_80_inf_t_ha: Math.max(1.0, +(simYield - halfWidth80).toFixed(4)),
+        intervalo_80_sup_t_ha: +(simYield + halfWidth80).toFixed(4),
         delta_t_ha: delta,
         delta_pct: deltaPct,
+        desglose_modelo_t_ha: {
+          efecto_ndvi_t_ha: +dNdvi.toFixed(4),
+          efecto_precipitacion_t_ha: +dPrec.toFixed(4),
+          efecto_temperatura_t_ha: +dTmax.toFixed(4),
+        },
         produccion_base_ton: +(baseYield * areaHa).toFixed(2),
         produccion_simulada_ton: +(simYield * areaHa).toFixed(2),
       }
     }
 
-    // Actualizar inmediatamente en cliente para evitar bloqueo visual
-    setSimResult(computeClientElasticity())
+    setSimResult(computePrecomputedModelResponse())
 
     async function syncBackendSimulation() {
       if (apiMode !== 'cloud') {
@@ -310,7 +332,7 @@ export default function App() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            id_poligono: selectedParcel.ID_POLIGONO,
+            id_poligono: parcelId,
             ndvi_delta_pct: ndviDelta,
             prec_delta_pct: precDelta,
             tmax_delta_c: tmaxDelta,
@@ -323,7 +345,7 @@ export default function App() {
           }
         }
       } catch {
-        // Conserva el cálculo instantáneo de sensibilidad agronómica
+        // Conserva la predicción exacta precalculada del modelo en sensibilidad_simulador.json
       } finally {
         if (!cancelled) {
           setSimLoading(false)
@@ -335,26 +357,19 @@ export default function App() {
     return () => {
       cancelled = true
     }
-  }, [selectedParcel, ndviDelta, precDelta, tmaxDelta, apiMode])
+  }, [selectedParcel, sensitivity, ndviDelta, precDelta, tmaxDelta, apiMode])
 
   const hasActiveSimulation = ndviDelta !== 0 || precDelta !== 0 || tmaxDelta !== 0
 
-  // La curva fenológica responde dinámicamente tanto a NDVI como a lluvia CHIRPS y anomalía Tmax °C
+  // La curva fenológica de NDVI refleja directamente el escalamiento porcentual del slider de NDVI
   const ndviChartData = useMemo(() => {
     if (!selectedParcel || !summary?.ndvi_benchmarks) return []
     return summary.ndvi_benchmarks.map((b) => {
       const baseVal = Number(selectedParcel[b.feature] || 0)
-      // Peso estacional: mayor sensibilidad en meses reproductivos (mayo-octubre)
-      const isReproductiveMonth = b.month >= 5 && b.month <= 10
-      const seasonalWeight = isReproductiveMonth ? 1.0 : 0.45
-      const combinedCanopyFactor =
-        (ndviDelta / 100) +
-        (precDelta / 100) * 0.45 * seasonalWeight -
-        tmaxDelta * 0.028 * seasonalWeight
-
-      const simVal = hasActiveSimulation
-        ? Math.min(0.95, Math.max(0.05, +(baseVal * (1 + combinedCanopyFactor)).toFixed(4)))
-        : baseVal
+      const simVal =
+        ndviDelta !== 0
+          ? Math.min(0.95, Math.max(0.05, +(baseVal * (1 + ndviDelta / 100)).toFixed(4)))
+          : baseVal
 
       return {
         month: b.month_name,
@@ -364,7 +379,7 @@ export default function App() {
         bajoRendimiento: +Number(b.mean_low_yield).toFixed(3),
       }
     })
-  }, [selectedParcel, summary, ndviDelta, precDelta, tmaxDelta, hasActiveSimulation])
+  }, [selectedParcel, summary, ndviDelta])
 
   const localDrivers = useMemo(() => {
     if (!selectedParcel?.top_drivers) return []
@@ -385,6 +400,8 @@ export default function App() {
       'AREA_HA',
       'RENDIMIENTO_T_HA',
       'INCERTIDUMBRE_T_HA',
+      'INTERVALO_80_INF_T_HA',
+      'INTERVALO_80_SUP_T_HA',
       'PRODUCCION_ESTIMADA_TON',
       'RENDIMIENTO_BASELINE_RF_T_HA',
     ]
@@ -395,7 +412,9 @@ export default function App() {
           r.ID_POLIGONO,
           Number(r.AREA_HA).toFixed(2),
           Number(r.RENDIMIENTO_PREDICHO_T_HA ?? r.RENDIMIENTO_FINAL_T_HA).toFixed(4),
-          Number(r.INCERTIDUMBRE_T_HA ?? 0.25).toFixed(4),
+          Number(r.INCERTIDUMBRE_T_HA ?? 0.564).toFixed(4),
+          Number(r.INTERVALO_80_INF_T_HA ?? 3.2).toFixed(4),
+          Number(r.INTERVALO_80_SUP_T_HA ?? 4.5).toFixed(4),
           Number(r.PRODUCCION_ESTIMADA_TON).toFixed(2),
           Number(r.RENDIMIENTO_BASELINE_RF_T_HA ?? r.RENDIMIENTO_FINAL_T_HA).toFixed(4),
         ].join(',')
@@ -424,10 +443,10 @@ export default function App() {
             FIRA 2026 · Agrotec-Amanteca
           </div>
           <h1 className="text-xl font-black tracking-tight">
-            Cargando Cartografía y Modelo Predictivo V3
+            Cargando Cartografía y Modelo Predictivo Auditado
           </h1>
           <p className="text-xs text-[var(--ink-secondary)] mt-2">
-            Sincronizando 197 polígonos agrícolas (138 entrenamiento, 59 predicción ciega).
+            Sincronizando 197 polígonos agrícolas (138 entrenamiento, 59 predicción ciega) y superficie de respuesta del modelo.
           </p>
         </div>
       </div>
@@ -436,12 +455,54 @@ export default function App() {
 
   const stats = summary?.dataset_stats || {}
   const eff = summary?.efficiency_metrics || {}
+  const baseMetrics = summary?.baseline_metrics || {}
+  const envVer = summary?.environment_versions || {}
   const bestModelMetric = summary?.models_comparison?.[0] || {
-    model: 'Ensemble Agrotec V3 (Smart-Pearson + IDW)',
+    model: 'Ensemble Agrotec (Smart-Pearson + IDW)',
     mae_cv: 0.3576,
+    mae_std: 0.0662,
     rmse_cv: 0.4984,
+    rmse_std: 0.1084,
     r2_cv: 0.6098,
+    rmse_repeated_cv: 0.5076,
+    rmse_repeated_std: 0.1183,
   }
+
+  const maeGainPct =
+    baseMetrics.mae_cv && bestModelMetric.mae_cv
+      ? (((baseMetrics.mae_cv - bestModelMetric.mae_cv) / baseMetrics.mae_cv) * 100).toFixed(1)
+      : '4.4'
+  const r2GainPts =
+    baseMetrics.r2_cv && bestModelMetric.r2_cv
+      ? ((bestModelMetric.r2_cv - baseMetrics.r2_cv) * 100).toFixed(2)
+      : '2.39'
+
+  const techStackDynamic = [
+    {
+      category: 'Ciencia de Datos y Machine Learning',
+      items: `Python ${envVer.python || '3.14'} · Scikit-Learn ${envVer.scikit_learn || '1.9'} · LightGBM ${envVer.lightgbm || '4.7'} · SciPy Spatial (IDW k=7) · Joblib ${envVer.joblib || '1.6'}`,
+      detail:
+        'Pipeline reproducible con validación cruzada 5-Fold y 5×5 Repeated CV (25 corridas), transformador LeakFreeSmartPearsonIDW (|r| < 0.88, 23 variables exactas) e intervalos conformales al 80%.',
+    },
+    {
+      category: 'Ingeniería Geoespacial y Clima',
+      items: `GeoPandas ${envVer.geopandas || '1.2'} · Shapely · Rasterio (all_touched=True) · CHIRPS Rasters · INEGI CEM4 · Apache Parquet`,
+      detail:
+        'Extracción zonal multianual de precipitación y temperatura (2022–2025), elevación/pendiente a 120 m y reconstrucción fenológica mensual de NDVI y EVI en EPSG:4326 / UTM 14N.',
+    },
+    {
+      category: 'Backend & Motor de Inferencia en Tiempo Real',
+      items: 'FastAPI · Pydantic V2 · Uvicorn ASGI · Lifespan Memory Cache · Pytest Suite',
+      detail:
+        'API RESTful sin DeprecationWarnings con módulo compartido agro_core.py, superficie de sensibilidad precalculada y paridad matemática 100% entre cliente y servidor.',
+    },
+    {
+      category: 'Frontend Cartográfico & Diseño Editorial',
+      items: 'React 18 · Vite 6 · Tailwind CSS · LeafletJS · Esri ArcGIS Online · Recharts',
+      detail:
+        'Interfaz responsive multi-dispositivo bajo retícula técnica Swiss (Modo Claro) / Industrial (Modo Oscuro) con 3 capas satelitales y topográficas libres de API Key.',
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-[var(--surface-bg)] text-[var(--ink-primary)] flex flex-col pb-16 md:pb-0">
@@ -510,7 +571,7 @@ export default function App() {
             })}
           </nav>
 
-          {/* Toggle Claro/Oscuro + Exportación CSV (Sin etiqueta innecesaria de API Railway) */}
+          {/* Toggle Claro/Oscuro + Exportación CSV */}
           <div className="col-span-6 sm:col-span-7 lg:col-span-4 px-3 sm:px-5 py-2.5 flex items-center justify-end gap-2.5">
             <button
               type="button"
@@ -572,12 +633,12 @@ export default function App() {
             </div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="folio-numeral text-3xl sm:text-4xl lg:text-[42px] text-[var(--ink-primary)]">
-                {Number(stats.pred_yield_mean || 3.92).toFixed(2)}
+                {Number(stats.pred_yield_mean || 3.948).toFixed(2)}
               </span>
               <span className="text-xs font-bold uppercase text-[var(--ink-secondary)]">t/ha</span>
             </div>
             <p className="text-xs text-[var(--ink-secondary)] mt-2 tabular-nums border-t border-[var(--rule-hairline)] pt-1.5">
-              Media Entrenamiento (138): <b className="text-[var(--ink-primary)]">{Number(stats.train_yield_mean || 3.96).toFixed(2)} t/ha</b> · Rango: {Number(stats.pred_yield_min || 2.86).toFixed(2)}–{Number(stats.pred_yield_max || 4.86).toFixed(2)}
+              Media Entrenamiento (138): <b className="text-[var(--ink-primary)]">{Number(stats.train_yield_mean || 3.955).toFixed(2)} t/ha</b> · Rango: {Number(stats.pred_yield_min || 2.71).toFixed(2)}–{Number(stats.pred_yield_max || 5.0).toFixed(2)}
             </p>
           </div>
 
@@ -594,10 +655,12 @@ export default function App() {
               <span className="folio-numeral text-3xl sm:text-4xl lg:text-[42px] text-[var(--ink-primary)]">
                 {Number(bestModelMetric.mae_cv).toFixed(4)}
               </span>
-              <span className="text-xs font-bold uppercase text-[var(--ink-secondary)]">MAE (t/ha)</span>
+              <span className="text-xs font-bold uppercase text-[var(--ink-secondary)]">
+                ±{Number(bestModelMetric.mae_std || 0.066).toFixed(3)} MAE
+              </span>
             </div>
             <p className="text-xs text-[var(--ink-secondary)] mt-2 tabular-nums border-t border-[var(--rule-hairline)] pt-1.5">
-              RMSE CV: <b className="text-[var(--ink-primary)]">{Number(bestModelMetric.rmse_cv).toFixed(4)} t/ha</b> · Precisión Media: <b className="text-[#16A34A]">{(100 - Number(eff.mape_oof_pct || 10.18)).toFixed(2)}%</b>
+              RMSE 5F: <b className="text-[var(--ink-primary)]">{Number(bestModelMetric.rmse_cv).toFixed(4)}</b> · RMSE 5×5: <b className="text-[var(--ink-primary)]">{Number(bestModelMetric.rmse_repeated_cv || 0.5076).toFixed(4)} t/ha</b>
             </p>
           </div>
 
@@ -607,39 +670,39 @@ export default function App() {
                 03 · Volumen Productivo Estimado
               </span>
               <span className="text-[11px] font-bold text-[var(--ink-secondary)] tabular-nums">
-                {Number(stats.total_area_ha || 1560.6).toFixed(1)} ha
+                {Number(stats.total_area_ha || 1301.05).toFixed(1)} ha
               </span>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="folio-numeral text-3xl sm:text-4xl lg:text-[42px] text-[var(--ink-primary)]">
-                {Number(stats.total_production_ton || 6120).toLocaleString('es-MX', {
+                {Number(stats.total_production_ton || 5066.44).toLocaleString('es-MX', {
                   maximumFractionDigits: 0,
                 })}
               </span>
               <span className="text-xs font-bold uppercase text-[var(--ink-secondary)]">toneladas</span>
             </div>
             <p className="text-xs text-[var(--ink-secondary)] mt-2 tabular-nums border-t border-[var(--rule-hairline)] pt-1.5">
-              Cosecha en 59 parcelas de prueba: <b className="text-[var(--ink-primary)]">{Number(stats.pred_production_ton || 1845).toFixed(1)} t</b> ({Number(stats.pred_area_ha || 467.6).toFixed(1)} ha)
+              Cosecha en 59 parcelas de prueba: <b className="text-[var(--ink-primary)]">{Number(stats.pred_production_ton || 1542.68).toFixed(1)} t</b> ({Number(stats.pred_area_ha || 393.57).toFixed(1)} ha)
             </p>
           </div>
 
           <div className="p-4 sm:p-5 flex flex-col justify-between">
             <div className="flex items-baseline justify-between">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-secondary)]">
-                04 · Pureza de Datos y Eficiencia
+                04 · Pureza de Datos y Cobertura 80%
               </span>
               <span className="text-[11px] font-bold text-[#FF4F00] tabular-nums">
-                {Number(eff.inference_197_ms || 88.1).toFixed(1)} ms
+                {Number(eff.inference_197_ms || 91.4).toFixed(1)} ms
               </span>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="folio-numeral text-3xl sm:text-4xl lg:text-[42px] text-[var(--ink-primary)]">
-                175→{stats.total_features_selected || 28}
+                175→{stats.total_features_selected || 23}
               </span>
               <span className="text-xs font-bold uppercase text-[var(--ink-secondary)]">predictores</span>
             </div>
             <p className="text-xs text-[var(--ink-secondary)] mt-2 tabular-nums border-t border-[var(--rule-hairline)] pt-1.5">
-              Smart-Pearson <b className="text-[var(--ink-primary)]">|r| &lt; 0.88</b> · Acierto &le;0.5 t/ha: <b className="text-[#16A34A]">{eff.oof_within_050_t_ha_pct || 73.2}%</b>
+              Smart-Pearson <b className="text-[var(--ink-primary)]">|r| &lt; 0.88</b> · Cobertura Int. 80%: <b className="text-[#16A34A]">{eff.conformal_80_coverage_oof_pct || 81.2}%</b>
             </p>
           </div>
         </section>
@@ -779,8 +842,8 @@ export default function App() {
                       >
                         {Number(selectedParcel.RENDIMIENTO_FINAL_T_HA).toFixed(2)} t/ha
                       </span>
-                      <span className="text-[11px] text-[var(--ink-secondary)]">
-                        IC: ±{Number(selectedParcel.INCERTIDUMBRE_T_HA || 0.25).toFixed(2)} t/ha
+                      <span className="text-[11px] text-[var(--ink-secondary)] block">
+                        Int. 80%: [{Number(selectedParcel.INTERVALO_80_INF_T_HA || 3.3).toFixed(2)}–{Number(selectedParcel.INTERVALO_80_SUP_T_HA || 4.5).toFixed(2)}] (±{Number(selectedParcel.INCERTIDUMBRE_T_HA || 0.56).toFixed(2)})
                       </span>
                     </div>
 
@@ -810,14 +873,14 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Curva Fenológica Mensual de NDVI (Sensible a NDVI, CHIRPS y Tmax) */}
+                {/* Curva Fenológica Mensual de NDVI */}
                 <div className="p-4 sm:p-5 bg-[var(--surface-panel)]">
                   <div className="mb-2">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">
                       Curva Fenológica Satelital (NDVI Mensual · Meses 1 a 11)
                     </h3>
                     <p className="text-xs text-[var(--ink-secondary)]">
-                      Comparativa de {selectedParcel.ID_POLIGONO} frente al umbral élite (&ge;4.35 t/ha) y respuesta del escenario simulado
+                      Comparativa de {selectedParcel.ID_POLIGONO} frente al umbral élite (&ge;4.35 t/ha) y variación directa de NDVI satelital
                     </p>
                   </div>
 
@@ -855,11 +918,11 @@ export default function App() {
                           fillOpacity={0.12}
                           strokeWidth={2.5}
                         />
-                        {hasActiveSimulation && (
+                        {ndviDelta !== 0 && (
                           <Area
                             type="monotone"
                             dataKey="simulado"
-                            name="Respuesta Fenológica Simulada"
+                            name="NDVI Escalado Simulador"
                             stroke="#FF4F00"
                             fill="#FF4F00"
                             fillOpacity={0.14}
@@ -871,15 +934,15 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Simulador Agronómico de Sensibilidad en Tiempo Real */}
+                {/* Simulador Agronómico de Sensibilidad Respaldado 100% por el Modelo */}
                 <div className="p-4 sm:p-5 bg-[var(--surface-subtle)]">
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">
-                        Simulador de Sensibilidad Agronómica (Inferencia en Vivo)
+                        Simulador de Sensibilidad del Modelo (Predicciones Reales del Ensamble)
                       </h3>
                       <p className="text-xs text-[var(--ink-secondary)]">
-                        Ajusta vigor NDVI, régimen pluvial CHIRPS o anomalía térmica Tmax °C
+                        Evalúa la respuesta aprendida por el Ensemble Agrotec ante perturbaciones en NDVI/EVI, CHIRPS o Tmax/Tmin
                       </p>
                     </div>
                     {hasActiveSimulation && (
@@ -900,7 +963,7 @@ export default function App() {
                   <div className="space-y-3 tabular-nums">
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span>Vigor Satelital NDVI / EVI (Ciclo Reproductivo)</span>
+                        <span>Vigor Satelital NDVI / EVI (Meses 1–11)</span>
                         <span className="font-bold text-[#FF4F00]">
                           {ndviDelta > 0 ? `+${ndviDelta}%` : `${ndviDelta}%`}
                         </span>
@@ -918,7 +981,7 @@ export default function App() {
 
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span>Precipitación Mensual Acumulada (CHIRPS)</span>
+                        <span>Precipitación Mensual CHIRPS</span>
                         <span className="font-bold text-[#FF4F00]">
                           {precDelta > 0 ? `+${precDelta}%` : `${precDelta}%`}
                         </span>
@@ -936,7 +999,7 @@ export default function App() {
 
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span>Anomalía de Temperatura Máxima (Tmax °C)</span>
+                        <span>Régimen Térmico Tmax / Tmin (°C)</span>
                         <span className="font-bold text-[#FF4F00]">
                           {tmaxDelta > 0 ? `+${tmaxDelta.toFixed(1)} °C` : `${tmaxDelta.toFixed(1)} °C`}
                         </span>
@@ -954,42 +1017,52 @@ export default function App() {
                   </div>
 
                   {simResult && (
-                    <div className="mt-4 pt-3 border-t border-[var(--rule-strong)] flex items-center justify-between tabular-nums bg-[var(--surface-panel)] p-3 border">
-                      <div>
-                        <span className="text-[10px] font-bold uppercase text-[var(--ink-secondary)] block">
-                          Rendimiento Simulado ({simLoading ? 'Sincronizando...' : 'Ensemble V3 Activo'})
-                        </span>
-                        <div className="flex items-baseline gap-2 mt-0.5">
-                          <span className="text-2xl font-black text-[var(--ink-primary)]">
-                            {Number(simResult.rendimiento_simulado_t_ha).toFixed(3)} t/ha
+                    <div className="mt-4 pt-3 border-t border-[var(--rule-strong)] bg-[var(--surface-panel)] p-3 border tabular-nums">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-[10px] font-bold uppercase text-[var(--ink-secondary)] block">
+                            Predicción del Modelo ({simLoading ? 'Sincronizando...' : 'Superficie Real del Ensamble'})
                           </span>
-                          <span
-                            className={`text-xs font-bold ${
-                              simResult.delta_t_ha >= 0 ? 'text-[#16A34A]' : 'text-[#DC2626]'
-                            }`}
-                          >
-                            ({simResult.delta_t_ha >= 0 ? '+' : ''}
-                            {Number(simResult.delta_t_ha).toFixed(3)} t/ha / {simResult.delta_pct}%)
+                          <div className="flex items-baseline gap-2 mt-0.5">
+                            <span className="text-2xl font-black text-[var(--ink-primary)]">
+                              {Number(simResult.rendimiento_simulado_t_ha).toFixed(3)} t/ha
+                            </span>
+                            <span
+                              className={`text-xs font-bold ${
+                                simResult.delta_t_ha >= 0 ? 'text-[#16A34A]' : 'text-[#DC2626]'
+                              }`}
+                            >
+                              ({simResult.delta_t_ha >= 0 ? '+' : ''}
+                              {Number(simResult.delta_t_ha).toFixed(3)} t/ha / {simResult.delta_pct}%)
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] font-bold uppercase text-[var(--ink-secondary)] block">
+                            Producción Estimada
+                          </span>
+                          <span className="text-lg font-black text-[#FF4F00]">
+                            {Number(simResult.produccion_simulada_ton).toFixed(1)} t
                           </span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[10px] font-bold uppercase text-[var(--ink-secondary)] block">
-                          Producción Estimada
-                        </span>
-                        <span className="text-lg font-black text-[#FF4F00]">
-                          {Number(simResult.produccion_simulada_ton).toFixed(1)} t
-                        </span>
-                      </div>
+                      <p className="text-[11px] text-[var(--ink-secondary)] mt-2 pt-1.5 border-t border-[var(--rule-hairline)] leading-snug">
+                        <b>Nota metodológica:</b> El simulador evalúa las predicciones reales del Ensemble Agrotec sobre los 23 predictores (reflejando correlaciones observacionales aprendidas del histórico, no causalidad física experimental). La gráfica superior muestra el ajuste directo del slider de NDVI.
+                      </p>
                     </div>
                   )}
                 </div>
 
-                {/* Explicabilidad Local de la Parcela (5 Factores Principales) */}
+                {/* Factores Destacados vs. Media Regional */}
                 <div className="p-4 sm:p-5 bg-[var(--surface-panel)]">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)] mb-2.5">
-                    Variables Determinantes en {selectedParcel.ID_POLIGONO} (Atribución Local)
-                  </h3>
+                  <div className="mb-2.5">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--ink-primary)]">
+                      Factores Destacados vs. Media Regional en {selectedParcel.ID_POLIGONO}
+                    </h3>
+                    <p className="text-[11px] text-[var(--ink-secondary)]">
+                      Desviación estandarizada (z-score) ponderada por la importancia global de cada variable en el ensamble
+                    </p>
+                  </div>
                   <div className="divide-y divide-[var(--rule-hairline)] border border-[var(--rule-hairline)] tabular-nums">
                     {localDrivers.map((d) => (
                       <div
@@ -1009,7 +1082,7 @@ export default function App() {
                               : 'border-[#DC2626] text-[#DC2626]'
                           }`}
                         >
-                          {d.impact_score >= 0 ? 'Impulsa ▲' : 'Limita ▼'} ({d.z_score > 0 ? `+${d.z_score}` : d.z_score}σ)
+                          {d.impact_score >= 0 ? 'Favorable ▲' : 'Desfavorable ▼'} ({d.z_score > 0 ? `+${d.z_score}` : d.z_score}σ)
                         </span>
                       </div>
                     ))}
@@ -1043,8 +1116,8 @@ export default function App() {
                         <th className="py-2.5 px-3">Set</th>
                         <th className="py-2.5 px-3">MAE (5-Fold)</th>
                         <th className="py-2.5 px-3">RMSE (5-Fold)</th>
-                        <th className="py-2.5 px-3">R²</th>
-                        <th className="py-2.5 px-3">Tiempo CV</th>
+                        <th className="py-2.5 px-3">RMSE (5×5 Rep)</th>
+                        <th className="py-2.5 px-3">R² (5F)</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--rule-hairline)]">
@@ -1072,8 +1145,13 @@ export default function App() {
                           <td className="py-2.5 px-3 font-bold">
                             {m.rmse_cv.toFixed(4)} <span className="text-[var(--ink-muted)] font-normal">±{m.rmse_std.toFixed(3)}</span>
                           </td>
+                          <td className="py-2.5 px-3 font-bold">
+                            {Number(m.rmse_repeated_cv || m.rmse_cv).toFixed(4)}{' '}
+                            <span className="text-[var(--ink-muted)] font-normal">
+                              ±{Number(m.rmse_repeated_std || m.rmse_std).toFixed(3)}
+                            </span>
+                          </td>
                           <td className="py-2.5 px-3 font-bold text-[#16A34A]">{m.r2_cv.toFixed(4)}</td>
-                          <td className="py-2.5 px-3 text-[var(--ink-secondary)]">{m.cv_time_ms ? `${m.cv_time_ms.toFixed(0)} ms` : '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1085,7 +1163,7 @@ export default function App() {
               <div className="lg:col-span-5 p-4 sm:p-6">
                 <div className="border-b border-[var(--rule-strong)] pb-3 mb-4">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-secondary)]">
-                    Auditoría Fuera de Muestra (5-Fold OOF)
+                    Auditoría Fuera de Muestra (5-Fold OOF · Cobertura Conformal 80%: {eff.conformal_80_coverage_oof_pct || 81.2}%)
                   </span>
                   <h3 className="text-lg font-black text-[var(--ink-primary)] mt-0.5">
                     Rendimiento Observado vs. Predicho (138 Parcelas)
@@ -1138,14 +1216,14 @@ export default function App() {
               </div>
             </div>
 
-            {/* EXPLICACIÓN DETALLADA DE CADA MODELO EVALUADO Y POR QUÉ GANÓ EL ENSEMBLE V3 */}
+            {/* EXPLICACIÓN DETALLADA DE CADA MODELO EVALUADO Y POR QUÉ GANÓ EL ENSEMBLE */}
             <div className="border border-[var(--rule-strong)] bg-[var(--surface-panel)] p-4 sm:p-6">
               <div className="border-b border-[var(--rule-strong)] pb-3 mb-4">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF4F00]">
                   Fundamento Algorítmico y Criterio de Selección
                 </span>
                 <h3 className="text-lg sm:text-xl font-black text-[var(--ink-primary)] mt-0.5">
-                  ¿En qué consiste cada modelo evaluado y por qué fue seleccionado el Ensemble Agrotec V3?
+                  ¿En qué consiste cada modelo evaluado y por qué fue seleccionado el Ensemble Agrotec?
                 </h3>
               </div>
 
@@ -1191,10 +1269,10 @@ export default function App() {
             <div className="border border-[var(--rule-strong)] bg-[var(--surface-panel)] p-4 sm:p-6">
               <div className="border-b border-[var(--rule-strong)] pb-3 mb-4">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF4F00]">
-                  Interpretabilidad Agronómica (XAI)
+                  Interpretabilidad Agronómica del Ensamble Completo (Permutación + Impureza)
                 </span>
                 <h3 className="text-lg font-black text-[var(--ink-primary)] mt-0.5">
-                  Importancia Relativa de Variables Predictoras (Top 15)
+                  Importancia Relativa de Variables Predictoras (Top 15 de las 23 Seleccionadas)
                 </h3>
               </div>
               <div className="h-80 w-full">
@@ -1266,7 +1344,7 @@ export default function App() {
                     <th className="py-2.5 px-3">ID Polígono</th>
                     <th className="py-2.5 px-3">Área (ha)</th>
                     <th className="py-2.5 px-3">Rendimiento Predicho (t/ha)</th>
-                    <th className="py-2.5 px-3">Incertidumbre (±t/ha)</th>
+                    <th className="py-2.5 px-3">Intervalo Conformal 80% (t/ha)</th>
                     <th className="py-2.5 px-3">Cosecha Estimada (ton)</th>
                     <th className="py-2.5 px-3">Elevación (msnm)</th>
                     <th className="py-2.5 px-3">Inspección</th>
@@ -1277,6 +1355,9 @@ export default function App() {
                     .filter((p) => p.CONJUNTO === 'PREDICCION')
                     .map((p, i) => {
                       const yVal = Number(p.RENDIMIENTO_PREDICHO_T_HA ?? p.RENDIMIENTO_FINAL_T_HA)
+                      const inf80 = Number(p.INTERVALO_80_INF_T_HA || yVal - 0.56).toFixed(2)
+                      const sup80 = Number(p.INTERVALO_80_SUP_T_HA || yVal + 0.56).toFixed(2)
+                      const half80 = Number(p.INCERTIDUMBRE_T_HA || 0.56).toFixed(2)
                       return (
                         <tr key={p.ID_POLIGONO} className="hover:bg-[var(--surface-subtle)]">
                           <td className="py-2.5 px-3 text-[var(--ink-muted)] font-bold">
@@ -1293,7 +1374,7 @@ export default function App() {
                             </span>
                           </td>
                           <td className="py-2.5 px-3 text-[var(--ink-secondary)]">
-                            ±{Number(p.INCERTIDUMBRE_T_HA || 0.25).toFixed(3)}
+                            [{inf80} – {sup80}] <span className="text-[var(--ink-muted)]">(±{half80})</span>
                           </td>
                           <td className="py-2.5 px-3 font-bold text-[var(--ink-primary)]">
                             {Number(p.PRODUCCION_ESTIMADA_TON).toFixed(2)} t
@@ -1370,21 +1451,21 @@ export default function App() {
                   Auditoría Estadística y Computacional
                 </span>
                 <h3 className="text-xl font-black text-[var(--ink-primary)] mt-0.5">
-                  Cifras Demostrativas de Precisión, Calidad de Datos y Eficiencia
+                  Cifras Medibles de Precisión, Calibración de Incertidumbre y Eficiencia
                 </h3>
               </div>
 
-              {/* 6 Indicadores Cuantitativos Demostrativos */}
+              {/* 6 Indicadores Cuantitativos Medidos */}
               <div className="grid grid-cols-1 sm:grid-cols-3 border border-[var(--rule-strong)] divide-y sm:divide-y-0 sm:divide-x divide-[var(--rule-strong)] tabular-nums">
                 <div className="p-4">
                   <span className="text-[10px] font-bold uppercase text-[var(--ink-secondary)] block">
-                    Precisión Media (100 - MAPE)
+                    Exactitud Media OOF (100 - MAPE)
                   </span>
                   <span className="text-2xl font-black text-[#16A34A] mt-1 block">
-                    {(100 - Number(eff.mape_oof_pct || 10.18)).toFixed(2)}%
+                    {Number(eff.accuracy_oof_pct || (100 - Number(eff.mape_oof_pct || 10.18))).toFixed(2)}%
                   </span>
                   <span className="text-xs text-[var(--ink-secondary)] mt-1 block">
-                    Error porcentual absoluto medio (MAPE) de solo <b>{eff.mape_oof_pct || 10.18}%</b> en validación cruzada fuera de muestra (138 parcelas).
+                    MAPE Out-Of-Fold de <b>{eff.mape_oof_pct || 10.18}%</b> en las 138 parcelas (frente a <b>{baseMetrics.mape_oof_pct || 10.65}%</b> medido en el Baseline RF de 39 variables).
                   </span>
                 </div>
 
@@ -1396,19 +1477,19 @@ export default function App() {
                     {eff.oof_within_050_t_ha_pct || 73.2}%
                   </span>
                   <span className="text-xs text-[var(--ink-secondary)] mt-1 block">
-                    De las parcelas evaluadas fuera de muestra presentan una desviación menor a ±0.50 t/ha (RMSE = <b>{Number(bestModelMetric.rmse_cv).toFixed(4)} t/ha</b>).
+                    De las parcelas OOF tienen error &le; ±0.50 t/ha (vs. <b>{baseMetrics.oof_within_050_t_ha_pct || 71.7}%</b> del Baseline RF). Cobertura Conformal 80% real: <b>{eff.conformal_80_coverage_oof_pct || 81.2}%</b>.
                   </span>
                 </div>
 
                 <div className="p-4">
                   <span className="text-[10px] font-bold uppercase text-[var(--ink-secondary)] block">
-                    Velocidad y Ligereza V3
+                    Latencia y Artefacto Serializado
                   </span>
                   <span className="text-2xl font-black text-[#FF4F00] mt-1 block">
-                    {eff.inference_per_parcel_ms ? `${(eff.inference_per_parcel_ms * 1000).toFixed(0)} µs` : '0.44 ms'} / polígono
+                    {eff.inference_per_parcel_ms ? `${Number(eff.inference_per_parcel_ms).toFixed(2)} ms` : '0.46 ms'} / parcela
                   </span>
                   <span className="text-xs text-[var(--ink-secondary)] mt-1 block">
-                    Inferencia completa de las 197 parcelas en <b>{eff.inference_197_ms || 88.06} ms</b> con un modelo 70% más compacto (<b>{eff.model_bundle_size_kb || 1441.4} KB</b>).
+                    Inferencia de las 197 parcelas en <b>{Number(eff.inference_197_ms || 91.36).toFixed(1)} ms</b>; artefacto `.joblib` de 4 sub-modelos en <b>{eff.model_bundle_size_kb || 1433.7} KB</b>.
                   </span>
                 </div>
               </div>
@@ -1416,13 +1497,13 @@ export default function App() {
               <div className="grid grid-cols-1 sm:grid-cols-3 border border-[var(--rule-hairline)] bg-[var(--surface-subtle)] divide-y sm:divide-y-0 sm:divide-x divide-[var(--rule-hairline)] tabular-nums">
                 <div className="p-3.5">
                   <span className="text-[10px] font-bold uppercase text-[var(--ink-secondary)] block">
-                    Reducción de Colinealidad
+                    Paridad Exacta CV == Modelo Final
                   </span>
                   <span className="text-lg font-black text-[var(--ink-primary)] mt-0.5 block">
-                    -{stats.collinearity_reduction_pct || 84.0}% (175 → {stats.total_features_selected || 28})
+                    -{stats.collinearity_reduction_pct || 86.9}% (175 → {stats.total_features_selected || 23})
                   </span>
                   <span className="text-[11px] text-[var(--ink-secondary)]">
-                    Filtro Smart-Pearson |r| &lt; 0.88 guiado por relevancia con el rendimiento.
+                    22 variables por Smart-Pearson (|r| &lt; 0.88) + 1 potencial espacial IDW (k=7).
                   </span>
                 </div>
                 <div className="p-3.5">
@@ -1433,18 +1514,18 @@ export default function App() {
                     100% Completitud (0 Nulos)
                   </span>
                   <span className="text-[11px] text-[var(--ink-secondary)]">
-                    197 polígonos georreferenciados en EPSG:4326 con extracción CHIRPS all_touched=True.
+                    197 polígonos en EPSG:4326 con centroides proyectados en UTM 14N (EPSG:32614).
                   </span>
                 </div>
                 <div className="p-3.5">
                   <span className="text-[10px] font-bold uppercase text-[var(--ink-secondary)] block">
-                    Mejora vs. Modelo Baseline
+                    Mejora Medida vs. Baseline RF
                   </span>
                   <span className="text-lg font-black text-[#FF4F00] mt-0.5 block">
-                    -4.4% MAE · +2.4 pts R²
+                    -{maeGainPct}% MAE · +{r2GainPts} pts R²
                   </span>
                   <span className="text-[11px] text-[var(--ink-secondary)]">
-                    Reducción de MAE de 0.3742 a 0.3576 t/ha y mejora de R² de 0.5859 a 0.6098.
+                    Reducción de MAE de {Number(baseMetrics.mae_cv || 0.3742).toFixed(4)} a {Number(bestModelMetric.mae_cv).toFixed(4)} t/ha y R² de {Number(baseMetrics.r2_cv || 0.5859).toFixed(4)} a {Number(bestModelMetric.r2_cv).toFixed(4)}.
                   </span>
                 </div>
               </div>
@@ -1453,7 +1534,7 @@ export default function App() {
               <div className="border border-[var(--rule-strong)] p-4 sm:p-5 bg-[var(--surface-subtle)] space-y-3">
                 <div className="flex items-center justify-between border-b border-[var(--rule-hairline)] pb-2">
                   <div className="font-black text-xs sm:text-sm text-[var(--ink-primary)] uppercase">
-                    Resumen de Tecnologías Implementadas (Stack Tecnológico End-to-End)
+                    Resumen de Tecnologías Implementadas (Stack Tecnológico Verificado)
                   </div>
                   <span className="text-[10px] font-bold uppercase text-[#FF4F00]">
                     Arquitectura Abierta y Reproducible
@@ -1461,7 +1542,7 @@ export default function App() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                  {TECH_STACK_SUMMARY.map((tech) => (
+                  {techStackDynamic.map((tech) => (
                     <div
                       key={tech.category}
                       className="p-3 bg-[var(--surface-panel)] border border-[var(--rule-hairline)]"

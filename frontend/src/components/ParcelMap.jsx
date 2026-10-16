@@ -120,12 +120,16 @@ export default function ParcelMap({
           const setLabel =
             p.CONJUNTO === 'PREDICCION' ? 'PREDICCIÓN CIEGA (59)' : 'ENTRENAMIENTO (138)'
 
+          const inf80 = Number(p.INTERVALO_80_INF_T_HA || (Number(yVal) - Number(p.INCERTIDUMBRE_T_HA || 0.56))).toFixed(2)
+          const sup80 = Number(p.INTERVALO_80_SUP_T_HA || (Number(yVal) + Number(p.INCERTIDUMBRE_T_HA || 0.56))).toFixed(2)
+          const half80 = Number(p.INCERTIDUMBRE_T_HA || 0.56).toFixed(2)
+
           lyr.bindTooltip(
             `<div>
               <div style="font-weight:800;font-size:12px;border-bottom:1px solid var(--rule-hairline);padding-bottom:3px;margin-bottom:4px;">
                 ${p.ID_POLIGONO} · <span style="color:#FF4F00;">${setLabel}</span>
               </div>
-              <div>Rendimiento: <b>${yVal} t/ha</b> (±${Number(p.INCERTIDUMBRE_T_HA || 0.25).toFixed(2)})</div>
+              <div>Rendimiento: <b>${yVal} t/ha</b> (Int. 80%: [${inf80}–${sup80}], ±${half80})</div>
               <div>Área: <b>${Number(p.AREA_HA || 0).toFixed(2)} ha</b> · Cosecha: <b>${Number(p.PRODUCCION_ESTIMADA_TON || 0).toFixed(1)} t</b></div>
             </div>`,
             { sticky: true, className: 'swiss-tooltip' }
