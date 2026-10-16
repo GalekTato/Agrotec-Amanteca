@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="240" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0B132B"/>
+      <stop offset="100%" stop-color="#06281E"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="60" y1="30" x2="180" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDE047"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="30" y1="40" x2="210" y2="210" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Escudo Hexagonal Geoespacial (Polígono Satelital + Greca Amanteca) -->
+  <polygon points="120,10 215,65 215,175 120,230 25,175 25,65" fill="url(#bgGrad)" stroke="url(#emeraldGrad)" stroke-width="5"/>
+  <polygon points="120,24 202,72 202,168 120,216 38,168 38,72" fill="none" stroke="#10B981" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="6 4"/>
+
+  <!-- Red de Polígonos Agrícolas (Fondo Satelital) -->
+  <path d="M38 145 L88 128 L120 148 L165 125 L202 145" stroke="#10B981" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+  <path d="M58 178 L95 152 L120 168 L152 148 L182 178" stroke="#34D399" stroke-opacity="0.45" stroke-width="2" fill="none"/>
+  <line x1="88" y1="128" x2="95" y2="152" stroke="#10B981" stroke-opacity="0.3" stroke-width="1.5"/>
+  <line x1="165" y1="125" x2="152" y2="148" stroke="#10B981" stroke-opacity="0.3" stroke-width="1.5"/>
+
+  <!-- Greca Escalonada Prehispánica (Sello Amanteca) -->
+  <path d="M72 184 H92 V174 H106 V164 H134 V174 H148 V184 H168" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="square"/>
+
+  <!-- Espiga Central de Cebada Dorada -->
+  <line x1="120" y1="44" x2="120" y2="192" stroke="url(#goldGrad)" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Aristas superiores -->
+  <line x1="120" y1="44" x2="120" y2="28" stroke="#FDE047" stroke-width="2" stroke-linecap="round"/>
+  <line x1="112" y1="54" x2="98" y2="34" stroke="#FDE047" stroke-width="2" stroke-linecap="round"/>
+  <line x1="128" y1="54" x2="142" y2="34" stroke="#FDE047" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Granos Izquierdos -->
+  <path d="M117 62 C98 56, 92 70, 117 80 Z" fill="url(#goldGrad)"/>
+  <path d="M117 84 C94 78, 88 94, 117 104 Z" fill="url(#goldGrad)"/>
+  <path d="M117 108 C94 102, 88 118, 117 128 Z" fill="url(#goldGrad)"/>
+  <path d="M117 132 C98 126, 92 142, 117 150 Z" fill="url(#goldGrad)"/>
+
+  <!-- Granos Derechos -->
+  <path d="M123 62 C142 56, 148 70, 123 80 Z" fill="url(#goldGrad)"/>
+  <path d="M123 84 C146 78, 152 94, 123 104 Z" fill="url(#goldGrad)"/>
+  <path d="M123 108 C146 102, 152 118, 123 128 Z" fill="url(#goldGrad)"/>
+  <path d="M123 132 C142 126, 148 142, 123 150 Z" fill="url(#goldGrad)"/>
+
+  <!-- Nodos Satelitales / Órbita de Datos -->
+  <circle cx="66" cy="76" r="4.5" fill="#34D399"/>
+  <circle cx="174" cy="76" r="4.5" fill="#34D399"/>
+  <path d="M66 76 Q120 42 174 76" stroke="#34D399" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+</svg>

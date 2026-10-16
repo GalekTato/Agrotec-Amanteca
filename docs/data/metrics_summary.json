@@ -1,0 +1,1773 @@
+{
+  "project": "Reto AgroCebada FIRA 2026",
+  "team": "Agrotec-Amanteca",
+  "dataset_stats": {
+    "total_parcelas": 197,
+    "train_parcelas": 138,
+    "pred_parcelas": 59,
+    "total_features_initial": 175,
+    "total_features_selected": 28,
+    "base_features_after_pearson": 27,
+    "pearson_threshold": 0.88,
+    "max_pairwise_corr": 0.9763,
+    "mean_pairwise_corr": 0.3722,
+    "completeness_pct": 100.0,
+    "collinearity_reduction_pct": 84.0,
+    "total_area_ha": 1301.05,
+    "train_area_ha": 907.48,
+    "pred_area_ha": 393.57,
+    "train_yield_mean": 3.955,
+    "train_yield_std": 0.851,
+    "train_yield_min": 2.0,
+    "train_yield_max": 5.59,
+    "pred_yield_mean": 3.947,
+    "pred_yield_std": 0.696,
+    "pred_yield_min": 2.72,
+    "pred_yield_max": 5.06,
+    "total_production_ton": 5062.74,
+    "pred_production_ton": 1538.98
+  },
+  "efficiency_metrics": {
+    "train_time_ms": 730.48,
+    "inference_197_ms": 88.056,
+    "inference_per_parcel_ms": 0.447,
+    "total_pipeline_ms": 141252.8,
+    "model_bundle_size_kb": 1441.4,
+    "oof_within_050_t_ha_pct": 73.2,
+    "oof_within_035_t_ha_pct": 57.2,
+    "mape_oof_pct": 10.18
+  },
+  "winner_model": "Ensemble Agrotec V3 (Smart-Pearson + IDW)",
+  "models_comparison": [
+    {
+      "model": "Ensemble Agrotec V3 (Smart-Pearson + IDW)",
+      "feature_set": "23 Smart-Pearson+IDW",
+      "mae_cv": 0.3576,
+      "mae_std": 0.0662,
+      "rmse_cv": 0.4984,
+      "rmse_std": 0.1084,
+      "r2_cv": 0.6098,
+      "mae_repeated_cv": 0.3724,
+      "rmse_repeated_cv": 0.5076,
+      "cv_time_ms": 2932.9,
+      "folds_mae": [
+        0.3902,
+        0.2797,
+        0.3378,
+        0.4686,
+        0.3119
+      ],
+      "folds_rmse": [
+        0.5909,
+        0.4074,
+        0.4218,
+        0.665,
+        0.407
+      ],
+      "folds_r2": [
+        0.2743,
+        0.7681,
+        0.7182,
+        0.5697,
+        0.7187
+      ]
+    },
+    {
+      "model": "Stacking Meta-Ensemble V3 (Smart-Pearson)",
+      "feature_set": "23 Smart-Pearson+IDW",
+      "mae_cv": 0.3606,
+      "mae_std": 0.0661,
+      "rmse_cv": 0.5006,
+      "rmse_std": 0.1068,
+      "r2_cv": 0.6095,
+      "mae_repeated_cv": 0.3792,
+      "rmse_repeated_cv": 0.5186,
+      "cv_time_ms": 16325.4,
+      "folds_mae": [
+        0.3813,
+        0.2929,
+        0.3434,
+        0.4778,
+        0.3078
+      ],
+      "folds_rmse": [
+        0.5821,
+        0.4242,
+        0.4314,
+        0.67,
+        0.3953
+      ],
+      "folds_r2": [
+        0.2956,
+        0.7486,
+        0.7053,
+        0.5632,
+        0.7346
+      ]
+    },
+    {
+      "model": "Ensemble Agrotec V2 (Filtro Secuencial 39)",
+      "feature_set": "39 base",
+      "mae_cv": 0.3661,
+      "mae_std": 0.0628,
+      "rmse_cv": 0.5058,
+      "rmse_std": 0.097,
+      "r2_cv": 0.5999,
+      "mae_repeated_cv": 0.3832,
+      "rmse_repeated_cv": 0.5129,
+      "cv_time_ms": 2729.6,
+      "folds_mae": [
+        0.4139,
+        0.3008,
+        0.3486,
+        0.462,
+        0.3055
+      ],
+      "folds_rmse": [
+        0.5925,
+        0.4296,
+        0.4437,
+        0.6511,
+        0.4123
+      ],
+      "folds_r2": [
+        0.2703,
+        0.7421,
+        0.6882,
+        0.5876,
+        0.7114
+      ]
+    },
+    {
+      "model": "Extra Trees V3 (Smart-Pearson + IDW)",
+      "feature_set": "23 Smart-Pearson+IDW",
+      "mae_cv": 0.3682,
+      "mae_std": 0.0615,
+      "rmse_cv": 0.5077,
+      "rmse_std": 0.095,
+      "r2_cv": 0.5947,
+      "mae_repeated_cv": 0.3776,
+      "rmse_repeated_cv": 0.5124,
+      "cv_time_ms": 1238.5,
+      "folds_mae": [
+        0.4102,
+        0.2904,
+        0.3494,
+        0.4636,
+        0.3277
+      ],
+      "folds_rmse": [
+        0.6023,
+        0.4253,
+        0.4455,
+        0.643,
+        0.4225
+      ],
+      "folds_r2": [
+        0.2461,
+        0.7473,
+        0.6857,
+        0.5978,
+        0.6969
+      ]
+    },
+    {
+      "model": "Gradient Boosting Regressor",
+      "feature_set": "39 base",
+      "mae_cv": 0.3841,
+      "mae_std": 0.0625,
+      "rmse_cv": 0.5095,
+      "rmse_std": 0.092,
+      "r2_cv": 0.5952,
+      "mae_repeated_cv": 0.3922,
+      "rmse_repeated_cv": 0.5152,
+      "cv_time_ms": 353.6,
+      "folds_mae": [
+        0.418,
+        0.3188,
+        0.3788,
+        0.4844,
+        0.3204
+      ],
+      "folds_rmse": [
+        0.5898,
+        0.4323,
+        0.4601,
+        0.6476,
+        0.418
+      ],
+      "folds_r2": [
+        0.277,
+        0.7389,
+        0.6648,
+        0.592,
+        0.7033
+      ]
+    },
+    {
+      "model": "Extra Trees Regressor (39 base)",
+      "feature_set": "39 base",
+      "mae_cv": 0.3731,
+      "mae_std": 0.0635,
+      "rmse_cv": 0.5134,
+      "rmse_std": 0.0962,
+      "r2_cv": 0.5857,
+      "mae_repeated_cv": 0.3908,
+      "rmse_repeated_cv": 0.522,
+      "cv_time_ms": 1051.9,
+      "folds_mae": [
+        0.4352,
+        0.3181,
+        0.3681,
+        0.4535,
+        0.2907
+      ],
+      "folds_rmse": [
+        0.6089,
+        0.4467,
+        0.4714,
+        0.6442,
+        0.396
+      ],
+      "folds_r2": [
+        0.2293,
+        0.7213,
+        0.6481,
+        0.5962,
+        0.7337
+      ]
+    },
+    {
+      "model": "Random Forest (Baseline 39 base)",
+      "feature_set": "39 base",
+      "mae_cv": 0.3742,
+      "mae_std": 0.0592,
+      "rmse_cv": 0.5139,
+      "rmse_std": 0.0923,
+      "r2_cv": 0.5859,
+      "mae_repeated_cv": 0.3856,
+      "rmse_repeated_cv": 0.5175,
+      "cv_time_ms": 1669.8,
+      "folds_mae": [
+        0.4241,
+        0.2972,
+        0.3704,
+        0.4553,
+        0.324
+      ],
+      "folds_rmse": [
+        0.6027,
+        0.4295,
+        0.4696,
+        0.6454,
+        0.4225
+      ],
+      "folds_r2": [
+        0.2449,
+        0.7423,
+        0.6508,
+        0.5948,
+        0.6969
+      ]
+    },
+    {
+      "model": "RidgeCV Lineal Regularizado",
+      "feature_set": "39 base",
+      "mae_cv": 0.3819,
+      "mae_std": 0.0608,
+      "rmse_cv": 0.518,
+      "rmse_std": 0.0846,
+      "r2_cv": 0.5802,
+      "mae_repeated_cv": 0.3896,
+      "rmse_repeated_cv": 0.5201,
+      "cv_time_ms": 58.3,
+      "folds_mae": [
+        0.4113,
+        0.3104,
+        0.3811,
+        0.4794,
+        0.3272
+      ],
+      "folds_rmse": [
+        0.594,
+        0.4163,
+        0.4995,
+        0.6358,
+        0.4442
+      ],
+      "folds_r2": [
+        0.2667,
+        0.7579,
+        0.6049,
+        0.6067,
+        0.6649
+      ]
+    },
+    {
+      "model": "SVR (Kernel RBF + RobustScaler)",
+      "feature_set": "39 base",
+      "mae_cv": 0.3682,
+      "mae_std": 0.078,
+      "rmse_cv": 0.521,
+      "rmse_std": 0.1175,
+      "r2_cv": 0.5729,
+      "mae_repeated_cv": 0.3883,
+      "rmse_repeated_cv": 0.531,
+      "cv_time_ms": 58.3,
+      "folds_mae": [
+        0.4129,
+        0.2937,
+        0.3066,
+        0.5001,
+        0.3278
+      ],
+      "folds_rmse": [
+        0.6117,
+        0.4052,
+        0.4169,
+        0.7044,
+        0.4669
+      ],
+      "folds_r2": [
+        0.2222,
+        0.7706,
+        0.7248,
+        0.5172,
+        0.6297
+      ]
+    },
+    {
+      "model": "LightGBM Regressor",
+      "feature_set": "39 base",
+      "mae_cv": 0.4198,
+      "mae_std": 0.0653,
+      "rmse_cv": 0.5494,
+      "rmse_std": 0.0917,
+      "r2_cv": 0.5321,
+      "mae_repeated_cv": 0.4214,
+      "rmse_repeated_cv": 0.5426,
+      "cv_time_ms": 103.5,
+      "folds_mae": [
+        0.4407,
+        0.3143,
+        0.4584,
+        0.5027,
+        0.3828
+      ],
+      "folds_rmse": [
+        0.613,
+        0.4518,
+        0.5425,
+        0.6873,
+        0.4526
+      ],
+      "folds_r2": [
+        0.2191,
+        0.7147,
+        0.534,
+        0.5404,
+        0.6521
+      ]
+    }
+  ],
+  "feature_importances": [
+    {
+      "feature": "spatial_idw_yield",
+      "label": "Potencial Microclimático Vecinal (IDW k=7)",
+      "category": "Autocorrelación Geoespacial (IDW)",
+      "importance": 0.28958,
+      "importance_pct": 28.96,
+      "perm_importance": 0.18347,
+      "corr_with_target": 0.8037,
+      "mean_train": 3.961,
+      "std_train": 0.738,
+      "min_val": 2.631,
+      "max_val": 5.263
+    },
+    {
+      "feature": "indice_hidrotermico",
+      "label": "Índice Hidrotérmico de Aridez (Prec/Tmax)",
+      "category": "Índices Agronómicos Sintéticos",
+      "importance": 0.09641,
+      "importance_pct": 9.64,
+      "perm_importance": 0.0351,
+      "corr_with_target": -0.6731,
+      "mean_train": 6.048,
+      "std_train": 1.835,
+      "min_val": 4.403,
+      "max_val": 12.59
+    },
+    {
+      "feature": "tmax_2023_02",
+      "label": "Temp. Máxima 2023-02 (°C)",
+      "category": "Régimen Térmico (Tmax / Tmin)",
+      "importance": 0.09056,
+      "importance_pct": 9.06,
+      "perm_importance": 0.02534,
+      "corr_with_target": -0.7193,
+      "mean_train": 23.698,
+      "std_train": 0.238,
+      "min_val": 23.437,
+      "max_val": 24.112
+    },
+    {
+      "feature": "prec_2022_07",
+      "label": "Precipitación 2022-07 (mm)",
+      "category": "Precipitación (CHIRPS)",
+      "importance": 0.0727,
+      "importance_pct": 7.27,
+      "perm_importance": 0.02168,
+      "corr_with_target": -0.6482,
+      "mean_train": 98.377,
+      "std_train": 38.603,
+      "min_val": 65.591,
+      "max_val": 247.664
+    },
+    {
+      "feature": "tmax_2023_05",
+      "label": "Temp. Máxima 2023-05 (°C)",
+      "category": "Régimen Térmico (Tmax / Tmin)",
+      "importance": 0.05272,
+      "importance_pct": 5.27,
+      "perm_importance": 0.01115,
+      "corr_with_target": -0.6986,
+      "mean_train": 24.446,
+      "std_train": 0.168,
+      "min_val": 24.219,
+      "max_val": 24.756
+    },
+    {
+      "feature": "prec_2025_02",
+      "label": "Precipitación 2025-02 (mm)",
+      "category": "Precipitación (CHIRPS)",
+      "importance": 0.05164,
+      "importance_pct": 5.16,
+      "perm_importance": 0.0144,
+      "corr_with_target": -0.6517,
+      "mean_train": 35.714,
+      "std_train": 8.334,
+      "min_val": 21.26,
+      "max_val": 61.02
+    },
+    {
+      "feature": "evi_promedio_mes_5",
+      "label": "EVI Mayo (Vigor Temprano)",
+      "category": "Vigor Satelital (NDVI / EVI)",
+      "importance": 0.0335,
+      "importance_pct": 3.35,
+      "perm_importance": 0.02263,
+      "corr_with_target": 0.592,
+      "mean_train": 0.117,
+      "std_train": 0.018,
+      "min_val": 0.076,
+      "max_val": 0.184
+    },
+    {
+      "feature": "prec_2025_06",
+      "label": "Precipitación 2025-06 (mm)",
+      "category": "Precipitación (CHIRPS)",
+      "importance": 0.0254,
+      "importance_pct": 2.54,
+      "perm_importance": 0.01913,
+      "corr_with_target": -0.5091,
+      "mean_train": 243.897,
+      "std_train": 51.79,
+      "min_val": 193.798,
+      "max_val": 366.063
+    },
+    {
+      "feature": "evi_promedio_mes_4",
+      "label": "EVI Mes 4 (Vigor Satelital)",
+      "category": "Vigor Satelital (NDVI / EVI)",
+      "importance": 0.02209,
+      "importance_pct": 2.21,
+      "perm_importance": 0.02274,
+      "corr_with_target": 0.5647,
+      "mean_train": 0.107,
+      "std_train": 0.014,
+      "min_val": 0.073,
+      "max_val": 0.161
+    },
+    {
+      "feature": "prec_2023_10",
+      "label": "Precipitación 2023-10 (mm)",
+      "category": "Precipitación (CHIRPS)",
+      "importance": 0.02082,
+      "importance_pct": 2.08,
+      "perm_importance": 0.00455,
+      "corr_with_target": 0.5015,
+      "mean_train": 101.861,
+      "std_train": 20.608,
+      "min_val": 69.092,
+      "max_val": 143.982
+    },
+    {
+      "feature": "ndvi_auc_verano",
+      "label": "Integral Fenológica NDVI (Mayo–Oct)",
+      "category": "Índices Agronómicos Sintéticos",
+      "importance": 0.01904,
+      "importance_pct": 1.9,
+      "perm_importance": 0.02486,
+      "corr_with_target": 0.0746,
+      "mean_train": 1.882,
+      "std_train": 0.165,
+      "min_val": 1.396,
+      "max_val": 2.543
+    },
+    {
+      "feature": "evi_promedio_mes_2",
+      "label": "EVI Mes 2 (Vigor Satelital)",
+      "category": "Vigor Satelital (NDVI / EVI)",
+      "importance": 0.01807,
+      "importance_pct": 1.81,
+      "perm_importance": 0.01743,
+      "corr_with_target": 0.4441,
+      "mean_train": 0.107,
+      "std_train": 0.016,
+      "min_val": 0.077,
+      "max_val": 0.192
+    },
+    {
+      "feature": "ndvi_promedio_mes_3",
+      "label": "NDVI Mes 3 (Vigor Satelital)",
+      "category": "Vigor Satelital (NDVI / EVI)",
+      "importance": 0.01801,
+      "importance_pct": 1.8,
+      "perm_importance": 0.0202,
+      "corr_with_target": 0.4408,
+      "mean_train": 0.144,
+      "std_train": 0.022,
+      "min_val": 0.102,
+      "max_val": 0.249
+    },
+    {
+      "feature": "retencion_topografica",
+      "label": "Índice Retención Hídrica por Pendiente",
+      "category": "Índices Agronómicos Sintéticos",
+      "importance": 0.01738,
+      "importance_pct": 1.74,
+      "perm_importance": 0.01856,
+      "corr_with_target": -0.4436,
+      "mean_train": 73.715,
+      "std_train": 40.675,
+      "min_val": 16.932,
+      "max_val": 177.796
+    },
+    {
+      "feature": "ndvi_promedio_mes_6",
+      "label": "NDVI Junio (Amacollamiento)",
+      "category": "Vigor Satelital (NDVI / EVI)",
+      "importance": 0.01726,
+      "importance_pct": 1.73,
+      "perm_importance": 0.02381,
+      "corr_with_target": 0.5245,
+      "mean_train": 0.188,
+      "std_train": 0.043,
+      "min_val": 0.122,
+      "max_val": 0.36
+    },
+    {
+      "feature": "ndvi_tasa_vegetativa",
+      "label": "Tasa Desarrollo Vegetativo (Ago–May)",
+      "category": "Índices Agronómicos Sintéticos",
+      "importance": 0.0162,
+      "importance_pct": 1.62,
+      "perm_importance": 0.01854,
+      "corr_with_target": -0.4026,
+      "mean_train": 0.405,
+      "std_train": 0.074,
+      "min_val": 0.194,
+      "max_val": 0.546
+    },
+    {
+      "feature": "AREA_HA",
+      "label": "Superficie de Parcela (ha)",
+      "category": "Fisiografía y Superficie (INEGI)",
+      "importance": 0.01553,
+      "importance_pct": 1.55,
+      "perm_importance": 0.01423,
+      "corr_with_target": -0.0784,
+      "mean_train": 6.576,
+      "std_train": 7.183,
+      "min_val": 0.35,
+      "max_val": 64.3
+    },
+    {
+      "feature": "ndvi_promedio_mes_9",
+      "label": "NDVI Septiembre (Llenado de grano)",
+      "category": "Vigor Satelital (NDVI / EVI)",
+      "importance": 0.01549,
+      "importance_pct": 1.55,
+      "perm_importance": 0.01762,
+      "corr_with_target": -0.4165,
+      "mean_train": 0.466,
+      "std_train": 0.057,
+      "min_val": 0.319,
+      "max_val": 0.664
+    },
+    {
+      "feature": "prec_2023_09",
+      "label": "Precipitación 2023-09 (mm)",
+      "category": "Precipitación (CHIRPS)",
+      "importance": 0.01524,
+      "importance_pct": 1.52,
+      "perm_importance": 0.00851,
+      "corr_with_target": -0.4364,
+      "mean_train": 49.824,
+      "std_train": 15.544,
+      "min_val": 32.431,
+      "max_val": 125.868
+    },
+    {
+      "feature": "tmax_2024_03",
+      "label": "Temp. Máxima 2024-03 (°C)",
+      "category": "Régimen Térmico (Tmax / Tmin)",
+      "importance": 0.01437,
+      "importance_pct": 1.44,
+      "perm_importance": 0.00426,
+      "corr_with_target": -0.5627,
+      "mean_train": 27.055,
+      "std_train": 0.113,
+      "min_val": 26.851,
+      "max_val": 27.295
+    },
+    {
+      "feature": "ndvi_promedio_mes_8",
+      "label": "NDVI Agosto (Espigamiento - Pico)",
+      "category": "Vigor Satelital (NDVI / EVI)",
+      "importance": 0.01376,
+      "importance_pct": 1.38,
+      "perm_importance": 0.01428,
+      "corr_with_target": -0.2494,
+      "mean_train": 0.554,
+      "std_train": 0.07,
+      "min_val": 0.344,
+      "max_val": 0.7
+    },
+    {
+      "feature": "prec_2022_01",
+      "label": "Precipitación 2022-01 (mm)",
+      "category": "Precipitación (CHIRPS)",
+      "importance": 0.0137,
+      "importance_pct": 1.37,
+      "perm_importance": 0.00399,
+      "corr_with_target": 0.5455,
+      "mean_train": 18.4,
+      "std_train": 4.212,
+      "min_val": 6.848,
+      "max_val": 23.235
+    },
+    {
+      "feature": "evi_promedio_mes_11",
+      "label": "EVI Mes 11 (Vigor Satelital)",
+      "category": "Vigor Satelital (NDVI / EVI)",
+      "importance": 0.01202,
+      "importance_pct": 1.2,
+      "perm_importance": 0.01629,
+      "corr_with_target": 0.5041,
+      "mean_train": 0.199,
+      "std_train": 0.04,
+      "min_val": 0.128,
+      "max_val": 0.342
+    },
+    {
+      "feature": "tmin_2025_10",
+      "label": "Temp. Mínima 2025-10 (°C)",
+      "category": "Régimen Térmico (Tmax / Tmin)",
+      "importance": 0.00948,
+      "importance_pct": 0.95,
+      "perm_importance": 0.00326,
+      "corr_with_target": 0.5993,
+      "mean_train": 10.891,
+      "std_train": 0.539,
+      "min_val": 9.463,
+      "max_val": 11.444
+    },
+    {
+      "feature": "prec_2025_01",
+      "label": "Precipitación 2025-01 (mm)",
+      "category": "Precipitación (CHIRPS)",
+      "importance": 0.00895,
+      "importance_pct": 0.9,
+      "perm_importance": 0.00452,
+      "corr_with_target": -0.4366,
+      "mean_train": 17.203,
+      "std_train": 3.674,
+      "min_val": 11.715,
+      "max_val": 32.748
+    },
+    {
+      "feature": "tmax_2025_11",
+      "label": "Temp. Máxima 2025-11 (°C)",
+      "category": "Régimen Térmico (Tmax / Tmin)",
+      "importance": 0.00745,
+      "importance_pct": 0.74,
+      "perm_importance": 0.00506,
+      "corr_with_target": -0.5528,
+      "mean_train": 21.95,
+      "std_train": 0.216,
+      "min_val": 21.599,
+      "max_val": 22.372
+    },
+    {
+      "feature": "prec_2024_10",
+      "label": "Precipitación 2024-10 (mm)",
+      "category": "Precipitación (CHIRPS)",
+      "importance": 0.00729,
+      "importance_pct": 0.73,
+      "perm_importance": 0.00382,
+      "corr_with_target": 0.4041,
+      "mean_train": 58.374,
+      "std_train": 7.998,
+      "min_val": 39.495,
+      "max_val": 73.917
+    },
+    {
+      "feature": "tmax_2024_01",
+      "label": "Temp. Máxima 2024-01 (°C)",
+      "category": "Régimen Térmico (Tmax / Tmin)",
+      "importance": 0.00537,
+      "importance_pct": 0.54,
+      "perm_importance": 0.0033,
+      "corr_with_target": 0.4058,
+      "mean_train": 22.26,
+      "std_train": 0.108,
+      "min_val": 21.789,
+      "max_val": 22.411
+    }
+  ],
+  "ndvi_benchmarks": [
+    {
+      "feature": "ndvi_promedio_mes_1",
+      "month": 1,
+      "month_name": "Ene",
+      "mean_all": 0.1659,
+      "mean_high_yield": 0.175,
+      "mean_low_yield": 0.1544
+    },
+    {
+      "feature": "ndvi_promedio_mes_5",
+      "month": 5,
+      "month_name": "May",
+      "mean_all": 0.1497,
+      "mean_high_yield": 0.1598,
+      "mean_low_yield": 0.1349
+    },
+    {
+      "feature": "ndvi_promedio_mes_6",
+      "month": 6,
+      "month_name": "Jun",
+      "mean_all": 0.192,
+      "mean_high_yield": 0.2072,
+      "mean_low_yield": 0.1555
+    },
+    {
+      "feature": "ndvi_promedio_mes_7",
+      "month": 7,
+      "month_name": "Jul",
+      "mean_all": 0.4124,
+      "mean_high_yield": 0.4213,
+      "mean_low_yield": 0.3666
+    },
+    {
+      "feature": "ndvi_promedio_mes_8",
+      "month": 8,
+      "month_name": "Ago",
+      "mean_all": 0.554,
+      "mean_high_yield": 0.5369,
+      "mean_low_yield": 0.57
+    },
+    {
+      "feature": "ndvi_promedio_mes_9",
+      "month": 9,
+      "month_name": "Sep",
+      "mean_all": 0.4659,
+      "mean_high_yield": 0.4444,
+      "mean_low_yield": 0.4964
+    },
+    {
+      "feature": "ndvi_promedio_mes_10",
+      "month": 10,
+      "month_name": "Oct",
+      "mean_all": 0.3843,
+      "mean_high_yield": 0.3984,
+      "mean_low_yield": 0.3704
+    },
+    {
+      "feature": "ndvi_promedio_mes_11",
+      "month": 11,
+      "month_name": "Nov",
+      "mean_all": 0.2765,
+      "mean_high_yield": 0.2994,
+      "mean_low_yield": 0.2484
+    }
+  ],
+  "oof_validation_scatter": [
+    {
+      "id": "AGC_001",
+      "area_ha": 7.61,
+      "actual": 3.5,
+      "predicted_oof": 3.131,
+      "error": -0.369
+    },
+    {
+      "id": "AGC_002",
+      "area_ha": 2.31,
+      "actual": 4.63,
+      "predicted_oof": 4.285,
+      "error": -0.345
+    },
+    {
+      "id": "AGC_004",
+      "area_ha": 8.0,
+      "actual": 3.0,
+      "predicted_oof": 2.957,
+      "error": -0.043
+    },
+    {
+      "id": "AGC_005",
+      "area_ha": 2.27,
+      "actual": 5.16,
+      "predicted_oof": 4.801,
+      "error": -0.359
+    },
+    {
+      "id": "AGC_006",
+      "area_ha": 3.84,
+      "actual": 4.49,
+      "predicted_oof": 4.346,
+      "error": -0.144
+    },
+    {
+      "id": "AGC_007",
+      "area_ha": 2.87,
+      "actual": 3.5,
+      "predicted_oof": 3.139,
+      "error": -0.361
+    },
+    {
+      "id": "AGC_008",
+      "area_ha": 10.77,
+      "actual": 4.55,
+      "predicted_oof": 4.486,
+      "error": -0.064
+    },
+    {
+      "id": "AGC_009",
+      "area_ha": 0.38,
+      "actual": 4.79,
+      "predicted_oof": 4.565,
+      "error": -0.225
+    },
+    {
+      "id": "AGC_010",
+      "area_ha": 7.27,
+      "actual": 4.1,
+      "predicted_oof": 4.282,
+      "error": 0.182
+    },
+    {
+      "id": "AGC_012",
+      "area_ha": 4.08,
+      "actual": 4.69,
+      "predicted_oof": 4.647,
+      "error": -0.043
+    },
+    {
+      "id": "AGC_013",
+      "area_ha": 5.6,
+      "actual": 4.01,
+      "predicted_oof": 4.448,
+      "error": 0.438
+    },
+    {
+      "id": "AGC_014",
+      "area_ha": 7.44,
+      "actual": 4.83,
+      "predicted_oof": 4.181,
+      "error": -0.649
+    },
+    {
+      "id": "AGC_015",
+      "area_ha": 1.97,
+      "actual": 2.64,
+      "predicted_oof": 4.979,
+      "error": 2.339
+    },
+    {
+      "id": "AGC_017",
+      "area_ha": 1.6,
+      "actual": 4.98,
+      "predicted_oof": 4.641,
+      "error": -0.339
+    },
+    {
+      "id": "AGC_018",
+      "area_ha": 1.67,
+      "actual": 4.49,
+      "predicted_oof": 4.458,
+      "error": -0.032
+    },
+    {
+      "id": "AGC_019",
+      "area_ha": 5.65,
+      "actual": 3.0,
+      "predicted_oof": 3.073,
+      "error": 0.073
+    },
+    {
+      "id": "AGC_020",
+      "area_ha": 8.34,
+      "actual": 3.5,
+      "predicted_oof": 3.312,
+      "error": -0.188
+    },
+    {
+      "id": "AGC_021",
+      "area_ha": 2.86,
+      "actual": 4.94,
+      "predicted_oof": 4.49,
+      "error": -0.45
+    },
+    {
+      "id": "AGC_022",
+      "area_ha": 11.99,
+      "actual": 4.55,
+      "predicted_oof": 4.484,
+      "error": -0.066
+    },
+    {
+      "id": "AGC_023",
+      "area_ha": 7.72,
+      "actual": 3.0,
+      "predicted_oof": 3.064,
+      "error": 0.064
+    },
+    {
+      "id": "AGC_024",
+      "area_ha": 11.53,
+      "actual": 3.03,
+      "predicted_oof": 4.118,
+      "error": 1.088
+    },
+    {
+      "id": "AGC_026",
+      "area_ha": 5.49,
+      "actual": 3.55,
+      "predicted_oof": 4.25,
+      "error": 0.7
+    },
+    {
+      "id": "AGC_032",
+      "area_ha": 1.44,
+      "actual": 4.03,
+      "predicted_oof": 4.537,
+      "error": 0.507
+    },
+    {
+      "id": "AGC_033",
+      "area_ha": 21.04,
+      "actual": 4.47,
+      "predicted_oof": 4.705,
+      "error": 0.235
+    },
+    {
+      "id": "AGC_034",
+      "area_ha": 8.09,
+      "actual": 2.0,
+      "predicted_oof": 3.316,
+      "error": 1.316
+    },
+    {
+      "id": "AGC_035",
+      "area_ha": 23.8,
+      "actual": 4.68,
+      "predicted_oof": 4.098,
+      "error": -0.582
+    },
+    {
+      "id": "AGC_037",
+      "area_ha": 2.66,
+      "actual": 3.5,
+      "predicted_oof": 3.051,
+      "error": -0.449
+    },
+    {
+      "id": "AGC_038",
+      "area_ha": 3.28,
+      "actual": 3.3,
+      "predicted_oof": 3.109,
+      "error": -0.191
+    },
+    {
+      "id": "AGC_040",
+      "area_ha": 5.46,
+      "actual": 3.0,
+      "predicted_oof": 3.066,
+      "error": 0.066
+    },
+    {
+      "id": "AGC_041",
+      "area_ha": 25.13,
+      "actual": 2.5,
+      "predicted_oof": 2.947,
+      "error": 0.447
+    },
+    {
+      "id": "AGC_044",
+      "area_ha": 0.68,
+      "actual": 3.5,
+      "predicted_oof": 3.281,
+      "error": -0.219
+    },
+    {
+      "id": "AGC_045",
+      "area_ha": 1.49,
+      "actual": 4.1,
+      "predicted_oof": 4.617,
+      "error": 0.517
+    },
+    {
+      "id": "AGC_046",
+      "area_ha": 7.92,
+      "actual": 3.0,
+      "predicted_oof": 2.881,
+      "error": -0.119
+    },
+    {
+      "id": "AGC_047",
+      "area_ha": 64.3,
+      "actual": 4.45,
+      "predicted_oof": 3.89,
+      "error": -0.56
+    },
+    {
+      "id": "AGC_048",
+      "area_ha": 8.29,
+      "actual": 2.5,
+      "predicted_oof": 2.889,
+      "error": 0.389
+    },
+    {
+      "id": "AGC_049",
+      "area_ha": 0.87,
+      "actual": 5.53,
+      "predicted_oof": 4.691,
+      "error": -0.839
+    },
+    {
+      "id": "AGC_051",
+      "area_ha": 11.12,
+      "actual": 4.45,
+      "predicted_oof": 4.239,
+      "error": -0.211
+    },
+    {
+      "id": "AGC_053",
+      "area_ha": 8.54,
+      "actual": 3.5,
+      "predicted_oof": 2.947,
+      "error": -0.553
+    },
+    {
+      "id": "AGC_054",
+      "area_ha": 2.01,
+      "actual": 2.5,
+      "predicted_oof": 2.93,
+      "error": 0.43
+    },
+    {
+      "id": "AGC_055",
+      "area_ha": 1.37,
+      "actual": 5.45,
+      "predicted_oof": 4.652,
+      "error": -0.798
+    },
+    {
+      "id": "AGC_056",
+      "area_ha": 3.65,
+      "actual": 5.07,
+      "predicted_oof": 4.458,
+      "error": -0.612
+    },
+    {
+      "id": "AGC_057",
+      "area_ha": 0.63,
+      "actual": 4.55,
+      "predicted_oof": 4.817,
+      "error": 0.267
+    },
+    {
+      "id": "AGC_058",
+      "area_ha": 7.7,
+      "actual": 2.5,
+      "predicted_oof": 3.008,
+      "error": 0.508
+    },
+    {
+      "id": "AGC_059",
+      "area_ha": 19.53,
+      "actual": 4.41,
+      "predicted_oof": 4.398,
+      "error": -0.012
+    },
+    {
+      "id": "AGC_060",
+      "area_ha": 2.34,
+      "actual": 4.52,
+      "predicted_oof": 4.63,
+      "error": 0.11
+    },
+    {
+      "id": "AGC_062",
+      "area_ha": 2.0,
+      "actual": 3.81,
+      "predicted_oof": 4.322,
+      "error": 0.512
+    },
+    {
+      "id": "AGC_064",
+      "area_ha": 2.45,
+      "actual": 4.51,
+      "predicted_oof": 4.467,
+      "error": -0.043
+    },
+    {
+      "id": "AGC_066",
+      "area_ha": 7.15,
+      "actual": 3.0,
+      "predicted_oof": 2.982,
+      "error": -0.018
+    },
+    {
+      "id": "AGC_067",
+      "area_ha": 1.53,
+      "actual": 3.0,
+      "predicted_oof": 3.43,
+      "error": 0.43
+    },
+    {
+      "id": "AGC_068",
+      "area_ha": 3.1,
+      "actual": 2.5,
+      "predicted_oof": 3.107,
+      "error": 0.607
+    },
+    {
+      "id": "AGC_069",
+      "area_ha": 0.38,
+      "actual": 5.46,
+      "predicted_oof": 4.697,
+      "error": -0.763
+    },
+    {
+      "id": "AGC_070",
+      "area_ha": 20.83,
+      "actual": 3.3,
+      "predicted_oof": 3.381,
+      "error": 0.081
+    },
+    {
+      "id": "AGC_072",
+      "area_ha": 4.38,
+      "actual": 4.55,
+      "predicted_oof": 4.391,
+      "error": -0.159
+    },
+    {
+      "id": "AGC_073",
+      "area_ha": 2.05,
+      "actual": 4.3,
+      "predicted_oof": 4.331,
+      "error": 0.031
+    },
+    {
+      "id": "AGC_074",
+      "area_ha": 8.54,
+      "actual": 2.5,
+      "predicted_oof": 3.413,
+      "error": 0.913
+    },
+    {
+      "id": "AGC_077",
+      "area_ha": 6.08,
+      "actual": 4.76,
+      "predicted_oof": 4.343,
+      "error": -0.417
+    },
+    {
+      "id": "AGC_078",
+      "area_ha": 2.3,
+      "actual": 3.0,
+      "predicted_oof": 3.077,
+      "error": 0.077
+    },
+    {
+      "id": "AGC_079",
+      "area_ha": 18.87,
+      "actual": 3.3,
+      "predicted_oof": 2.91,
+      "error": -0.39
+    },
+    {
+      "id": "AGC_080",
+      "area_ha": 18.99,
+      "actual": 3.5,
+      "predicted_oof": 2.981,
+      "error": -0.519
+    },
+    {
+      "id": "AGC_081",
+      "area_ha": 3.28,
+      "actual": 3.7,
+      "predicted_oof": 2.974,
+      "error": -0.726
+    },
+    {
+      "id": "AGC_083",
+      "area_ha": 2.87,
+      "actual": 4.61,
+      "predicted_oof": 4.424,
+      "error": -0.186
+    },
+    {
+      "id": "AGC_084",
+      "area_ha": 12.42,
+      "actual": 4.54,
+      "predicted_oof": 4.581,
+      "error": 0.041
+    },
+    {
+      "id": "AGC_089",
+      "area_ha": 1.72,
+      "actual": 3.0,
+      "predicted_oof": 3.037,
+      "error": 0.037
+    },
+    {
+      "id": "AGC_090",
+      "area_ha": 10.98,
+      "actual": 4.68,
+      "predicted_oof": 4.421,
+      "error": -0.259
+    },
+    {
+      "id": "AGC_092",
+      "area_ha": 0.5,
+      "actual": 4.57,
+      "predicted_oof": 4.821,
+      "error": 0.251
+    },
+    {
+      "id": "AGC_096",
+      "area_ha": 12.87,
+      "actual": 4.59,
+      "predicted_oof": 4.349,
+      "error": -0.241
+    },
+    {
+      "id": "AGC_097",
+      "area_ha": 2.35,
+      "actual": 4.69,
+      "predicted_oof": 4.433,
+      "error": -0.258
+    },
+    {
+      "id": "AGC_098",
+      "area_ha": 4.9,
+      "actual": 3.0,
+      "predicted_oof": 3.139,
+      "error": 0.139
+    },
+    {
+      "id": "AGC_099",
+      "area_ha": 1.17,
+      "actual": 3.5,
+      "predicted_oof": 2.926,
+      "error": -0.574
+    },
+    {
+      "id": "AGC_100",
+      "area_ha": 11.24,
+      "actual": 4.5,
+      "predicted_oof": 4.386,
+      "error": -0.114
+    },
+    {
+      "id": "AGC_101",
+      "area_ha": 12.35,
+      "actual": 4.57,
+      "predicted_oof": 4.149,
+      "error": -0.421
+    },
+    {
+      "id": "AGC_102",
+      "area_ha": 12.75,
+      "actual": 4.4,
+      "predicted_oof": 4.234,
+      "error": -0.166
+    },
+    {
+      "id": "AGC_103",
+      "area_ha": 2.48,
+      "actual": 3.0,
+      "predicted_oof": 2.975,
+      "error": -0.025
+    },
+    {
+      "id": "AGC_104",
+      "area_ha": 3.02,
+      "actual": 4.56,
+      "predicted_oof": 4.47,
+      "error": -0.09
+    },
+    {
+      "id": "AGC_105",
+      "area_ha": 2.99,
+      "actual": 4.41,
+      "predicted_oof": 4.524,
+      "error": 0.114
+    },
+    {
+      "id": "AGC_106",
+      "area_ha": 6.09,
+      "actual": 4.43,
+      "predicted_oof": 4.266,
+      "error": -0.164
+    },
+    {
+      "id": "AGC_108",
+      "area_ha": 3.79,
+      "actual": 4.51,
+      "predicted_oof": 4.786,
+      "error": 0.276
+    },
+    {
+      "id": "AGC_109",
+      "area_ha": 3.14,
+      "actual": 4.54,
+      "predicted_oof": 4.566,
+      "error": 0.026
+    },
+    {
+      "id": "AGC_110",
+      "area_ha": 6.19,
+      "actual": 4.18,
+      "predicted_oof": 4.34,
+      "error": 0.16
+    },
+    {
+      "id": "AGC_111",
+      "area_ha": 1.71,
+      "actual": 4.72,
+      "predicted_oof": 4.432,
+      "error": -0.288
+    },
+    {
+      "id": "AGC_112",
+      "area_ha": 7.96,
+      "actual": 3.0,
+      "predicted_oof": 2.835,
+      "error": -0.165
+    },
+    {
+      "id": "AGC_114",
+      "area_ha": 6.95,
+      "actual": 3.0,
+      "predicted_oof": 2.98,
+      "error": -0.02
+    },
+    {
+      "id": "AGC_115",
+      "area_ha": 1.93,
+      "actual": 4.6,
+      "predicted_oof": 4.309,
+      "error": -0.291
+    },
+    {
+      "id": "AGC_117",
+      "area_ha": 5.68,
+      "actual": 3.5,
+      "predicted_oof": 3.108,
+      "error": -0.392
+    },
+    {
+      "id": "AGC_119",
+      "area_ha": 0.64,
+      "actual": 4.4,
+      "predicted_oof": 4.738,
+      "error": 0.338
+    },
+    {
+      "id": "AGC_121",
+      "area_ha": 5.92,
+      "actual": 3.3,
+      "predicted_oof": 3.107,
+      "error": -0.193
+    },
+    {
+      "id": "AGC_122",
+      "area_ha": 7.45,
+      "actual": 3.5,
+      "predicted_oof": 2.921,
+      "error": -0.579
+    },
+    {
+      "id": "AGC_123",
+      "area_ha": 8.01,
+      "actual": 2.5,
+      "predicted_oof": 2.92,
+      "error": 0.42
+    },
+    {
+      "id": "AGC_124",
+      "area_ha": 1.96,
+      "actual": 5.05,
+      "predicted_oof": 4.513,
+      "error": -0.537
+    },
+    {
+      "id": "AGC_125",
+      "area_ha": 10.14,
+      "actual": 4.06,
+      "predicted_oof": 4.583,
+      "error": 0.523
+    },
+    {
+      "id": "AGC_127",
+      "area_ha": 0.91,
+      "actual": 5.57,
+      "predicted_oof": 4.481,
+      "error": -1.089
+    },
+    {
+      "id": "AGC_131",
+      "area_ha": 1.46,
+      "actual": 4.89,
+      "predicted_oof": 4.526,
+      "error": -0.364
+    },
+    {
+      "id": "AGC_132",
+      "area_ha": 6.1,
+      "actual": 4.13,
+      "predicted_oof": 4.676,
+      "error": 0.546
+    },
+    {
+      "id": "AGC_133",
+      "area_ha": 6.08,
+      "actual": 3.91,
+      "predicted_oof": 4.317,
+      "error": 0.407
+    },
+    {
+      "id": "AGC_134",
+      "area_ha": 2.25,
+      "actual": 4.52,
+      "predicted_oof": 4.492,
+      "error": -0.028
+    },
+    {
+      "id": "AGC_135",
+      "area_ha": 1.62,
+      "actual": 4.49,
+      "predicted_oof": 4.484,
+      "error": -0.006
+    },
+    {
+      "id": "AGC_137",
+      "area_ha": 24.81,
+      "actual": 4.54,
+      "predicted_oof": 4.703,
+      "error": 0.163
+    },
+    {
+      "id": "AGC_138",
+      "area_ha": 7.86,
+      "actual": 2.5,
+      "predicted_oof": 2.969,
+      "error": 0.469
+    },
+    {
+      "id": "AGC_139",
+      "area_ha": 1.92,
+      "actual": 4.67,
+      "predicted_oof": 4.243,
+      "error": -0.427
+    },
+    {
+      "id": "AGC_140",
+      "area_ha": 4.13,
+      "actual": 3.2,
+      "predicted_oof": 3.073,
+      "error": -0.127
+    },
+    {
+      "id": "AGC_141",
+      "area_ha": 3.94,
+      "actual": 3.5,
+      "predicted_oof": 2.932,
+      "error": -0.568
+    },
+    {
+      "id": "AGC_144",
+      "area_ha": 7.48,
+      "actual": 2.5,
+      "predicted_oof": 2.982,
+      "error": 0.482
+    },
+    {
+      "id": "AGC_145",
+      "area_ha": 8.33,
+      "actual": 3.5,
+      "predicted_oof": 3.007,
+      "error": -0.493
+    },
+    {
+      "id": "AGC_146",
+      "area_ha": 1.33,
+      "actual": 4.58,
+      "predicted_oof": 4.408,
+      "error": -0.172
+    },
+    {
+      "id": "AGC_148",
+      "area_ha": 2.46,
+      "actual": 3.0,
+      "predicted_oof": 3.209,
+      "error": 0.209
+    },
+    {
+      "id": "AGC_150",
+      "area_ha": 1.99,
+      "actual": 4.52,
+      "predicted_oof": 4.376,
+      "error": -0.144
+    },
+    {
+      "id": "AGC_151",
+      "area_ha": 9.32,
+      "actual": 4.69,
+      "predicted_oof": 4.53,
+      "error": -0.16
+    },
+    {
+      "id": "AGC_152",
+      "area_ha": 2.63,
+      "actual": 4.87,
+      "predicted_oof": 4.726,
+      "error": -0.144
+    },
+    {
+      "id": "AGC_155",
+      "area_ha": 2.24,
+      "actual": 4.52,
+      "predicted_oof": 4.768,
+      "error": 0.248
+    },
+    {
+      "id": "AGC_157",
+      "area_ha": 1.18,
+      "actual": 3.0,
+      "predicted_oof": 3.096,
+      "error": 0.096
+    },
+    {
+      "id": "AGC_159",
+      "area_ha": 2.14,
+      "actual": 4.77,
+      "predicted_oof": 4.169,
+      "error": -0.601
+    },
+    {
+      "id": "AGC_160",
+      "area_ha": 7.61,
+      "actual": 3.62,
+      "predicted_oof": 4.715,
+      "error": 1.095
+    },
+    {
+      "id": "AGC_161",
+      "area_ha": 3.36,
+      "actual": 4.46,
+      "predicted_oof": 4.442,
+      "error": -0.018
+    },
+    {
+      "id": "AGC_162",
+      "area_ha": 4.93,
+      "actual": 5.59,
+      "predicted_oof": 4.625,
+      "error": -0.965
+    },
+    {
+      "id": "AGC_163",
+      "area_ha": 2.57,
+      "actual": 3.0,
+      "predicted_oof": 3.074,
+      "error": 0.074
+    },
+    {
+      "id": "AGC_164",
+      "area_ha": 11.84,
+      "actual": 3.0,
+      "predicted_oof": 3.057,
+      "error": 0.057
+    },
+    {
+      "id": "AGC_165",
+      "area_ha": 6.21,
+      "actual": 4.44,
+      "predicted_oof": 4.52,
+      "error": 0.08
+    },
+    {
+      "id": "AGC_166",
+      "area_ha": 6.76,
+      "actual": 2.5,
+      "predicted_oof": 3.253,
+      "error": 0.753
+    },
+    {
+      "id": "AGC_167",
+      "area_ha": 2.46,
+      "actual": 4.54,
+      "predicted_oof": 4.488,
+      "error": -0.052
+    },
+    {
+      "id": "AGC_168",
+      "area_ha": 1.53,
+      "actual": 4.49,
+      "predicted_oof": 4.437,
+      "error": -0.053
+    },
+    {
+      "id": "AGC_169",
+      "area_ha": 2.51,
+      "actual": 2.5,
+      "predicted_oof": 3.133,
+      "error": 0.633
+    },
+    {
+      "id": "AGC_170",
+      "area_ha": 8.13,
+      "actual": 3.0,
+      "predicted_oof": 2.975,
+      "error": -0.025
+    },
+    {
+      "id": "AGC_171",
+      "area_ha": 11.63,
+      "actual": 2.15,
+      "predicted_oof": 4.473,
+      "error": 2.323
+    },
+    {
+      "id": "AGC_172",
+      "area_ha": 2.33,
+      "actual": 5.19,
+      "predicted_oof": 4.443,
+      "error": -0.747
+    },
+    {
+      "id": "AGC_176",
+      "area_ha": 7.15,
+      "actual": 4.38,
+      "predicted_oof": 4.472,
+      "error": 0.092
+    },
+    {
+      "id": "AGC_178",
+      "area_ha": 9.82,
+      "actual": 4.39,
+      "predicted_oof": 4.403,
+      "error": 0.013
+    },
+    {
+      "id": "AGC_179",
+      "area_ha": 6.35,
+      "actual": 4.55,
+      "predicted_oof": 4.516,
+      "error": -0.034
+    },
+    {
+      "id": "AGC_180",
+      "area_ha": 10.9,
+      "actual": 4.14,
+      "predicted_oof": 4.405,
+      "error": 0.265
+    },
+    {
+      "id": "AGC_181",
+      "area_ha": 1.49,
+      "actual": 4.51,
+      "predicted_oof": 4.458,
+      "error": -0.052
+    },
+    {
+      "id": "AGC_184",
+      "area_ha": 9.96,
+      "actual": 4.47,
+      "predicted_oof": 4.417,
+      "error": -0.053
+    },
+    {
+      "id": "AGC_185",
+      "area_ha": 11.88,
+      "actual": 5.01,
+      "predicted_oof": 4.232,
+      "error": -0.778
+    },
+    {
+      "id": "AGC_187",
+      "area_ha": 8.04,
+      "actual": 3.0,
+      "predicted_oof": 3.281,
+      "error": 0.281
+    },
+    {
+      "id": "AGC_189",
+      "area_ha": 4.6,
+      "actual": 4.03,
+      "predicted_oof": 4.482,
+      "error": 0.452
+    },
+    {
+      "id": "AGC_193",
+      "area_ha": 12.41,
+      "actual": 4.57,
+      "predicted_oof": 3.725,
+      "error": -0.845
+    },
+    {
+      "id": "AGC_194",
+      "area_ha": 4.12,
+      "actual": 3.2,
+      "predicted_oof": 3.1,
+      "error": -0.1
+    },
+    {
+      "id": "AGC_195",
+      "area_ha": 1.92,
+      "actual": 3.68,
+      "predicted_oof": 4.336,
+      "error": 0.656
+    },
+    {
+      "id": "AGC_196",
+      "area_ha": 8.57,
+      "actual": 3.5,
+      "predicted_oof": 3.252,
+      "error": -0.248
+    },
+    {
+      "id": "AGC_197",
+      "area_ha": 11.52,
+      "actual": 4.52,
+      "predicted_oof": 4.389,
+      "error": -0.131
+    }
+  ]
+}
