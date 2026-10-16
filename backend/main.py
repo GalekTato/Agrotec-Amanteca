@@ -172,13 +172,13 @@ def simular_escenario(req: SimulationRequest):
     base_df = pd.DataFrame([{col: float(props[col]) for col in props if isinstance(props[col], (int, float))}])
     sim_df = base_df.copy()
 
-    # Aplicar ajustes de escenario agronómico
+    # Aplicar ajustes de escenario agronómico (NDVI/EVI, Precipitación y Régimen Térmico Tmax/Tmin)
     for col in sim_df.columns:
-        if col.startswith("ndvi_promedio_mes_") and req.ndvi_delta_pct != 0.0:
+        if (col.startswith("ndvi_promedio_mes_") or col.startswith("evi_promedio_mes_")) and req.ndvi_delta_pct != 0.0:
             sim_df[col] = float(np.clip(sim_df[col].iloc[0] * (1.0 + req.ndvi_delta_pct / 100.0), 0.05, 0.95))
         elif col.startswith("prec_") and req.prec_delta_pct != 0.0:
             sim_df[col] = float(max(0.0, sim_df[col].iloc[0] * (1.0 + req.prec_delta_pct / 100.0)))
-        elif col.startswith("tmax_") and req.tmax_delta_c != 0.0:
+        elif (col.startswith("tmax_") or col.startswith("tmin_")) and req.tmax_delta_c != 0.0:
             sim_df[col] = float(sim_df[col].iloc[0] + req.tmax_delta_c)
 
     if req.custom_overrides:

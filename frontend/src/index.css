@@ -1,24 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --surface-primary: #FFFFFF;
-  --surface-neutral: #F7F7F8;
+  --surface-bg: #F7F7F8;
+  --surface-panel: #FFFFFF;
+  --surface-subtle: #F4F4F5;
+  --surface-active: #FFF7ED;
   --ink-primary: #111111;
   --ink-secondary: #52525B;
   --ink-muted: #71717A;
   --rule-strong: #111111;
   --rule-hairline: #D4D4D8;
   --accent-swiss: #FF4F00;
+  --invert-bg: #111111;
+  --invert-ink: #FFFFFF;
+}
+
+html.dark {
+  --surface-bg: #0B0C0E;
+  --surface-panel: #121418;
+  --surface-subtle: #181B20;
+  --surface-active: #261710;
+  --ink-primary: #F4F4F5;
+  --ink-secondary: #A1A1AA;
+  --ink-muted: #71717A;
+  --rule-strong: #3F3F46;
+  --rule-hairline: #27272A;
+  --accent-swiss: #FF4F00;
+  --invert-bg: #F4F4F5;
+  --invert-ink: #111111;
 }
 
 @layer base {
   body {
     font-family: 'Helvetica Neue', 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-    background-color: var(--surface-neutral);
+    background-color: var(--surface-bg);
     color: var(--ink-primary);
     font-feature-settings: "tnum" 1, "cv05" 1;
     font-variant-numeric: tabular-nums;
     overflow-x: hidden;
+    transition: background-color 150ms ease, color 150ms ease;
   }
 }
 
@@ -35,16 +55,16 @@
   line-height: 0.95;
 }
 
-/* Leaflet Swiss Cartographic Styling */
+/* Leaflet Cartographic Styling */
 .leaflet-container {
-  background: #E4E4E7 !important;
+  background: var(--surface-subtle) !important;
   font-family: 'Helvetica Neue', 'Inter', sans-serif !important;
 }
 
 .swiss-tooltip {
-  background: #FFFFFF !important;
-  border: 1px solid #111111 !important;
-  color: #111111 !important;
+  background: var(--surface-panel) !important;
+  border: 1px solid var(--rule-strong) !important;
+  color: var(--ink-primary) !important;
   border-radius: 0px !important;
   padding: 8px 10px !important;
   font-size: 12px !important;
@@ -53,20 +73,20 @@
 }
 
 .leaflet-bar {
-  border: 1px solid #111111 !important;
+  border: 1px solid var(--rule-strong) !important;
   border-radius: 0px !important;
   box-shadow: none !important;
 }
 
 .leaflet-bar a {
-  background-color: #FFFFFF !important;
-  color: #111111 !important;
-  border-bottom: 1px solid #D4D4D8 !important;
+  background-color: var(--surface-panel) !important;
+  color: var(--ink-primary) !important;
+  border-bottom: 1px solid var(--rule-hairline) !important;
   border-radius: 0px !important;
 }
 
 .leaflet-bar a:hover {
-  background-color: #FF4F00 !important;
+  background-color: var(--accent-swiss) !important;
   color: #FFFFFF !important;
 }
 
@@ -76,7 +96,7 @@ input[type="range"].swiss-slider {
   appearance: none;
   width: 100%;
   height: 4px;
-  background: #D4D4D8;
+  background: var(--rule-hairline);
   outline: none;
 }
 
@@ -85,8 +105,8 @@ input[type="range"].swiss-slider::-webkit-slider-thumb {
   appearance: none;
   width: 14px;
   height: 14px;
-  background: #FF4F00;
-  border: 1px solid #111111;
+  background: var(--accent-swiss);
+  border: 1px solid var(--rule-strong);
   cursor: pointer;
 }
 
@@ -95,11 +115,11 @@ input[type="range"].swiss-slider::-webkit-slider-thumb {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F7F7F8;
+  background: var(--surface-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #A1A1AA;
+  background: var(--ink-muted);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF4F00;
+  background: var(--accent-swiss);
 }

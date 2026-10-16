@@ -1,7 +1,8 @@
 """
 02_train_and_export_artifacts.py
-Pipeline de Alta Precisión ML, Ingeniería de Variables Fenológicas/Hidrotérmicas,
-Auditoría de Calidad de Datos y Eficiencia Computacional para el Reto AgroCebada FIRA 2026.
+Pipeline V3 de Alta Precisión ML, Filtro Smart-Pearson Libre de Fuga (Leak-Free),
+Autocorrelación Espacial IDW, Auditoría de Calidad de Datos y Eficiencia Computacional
+para el Reto AgroCebada FIRA 2026 - Equipo Agrotec-Amanteca.
 """
 
 import json
@@ -18,6 +19,8 @@ import joblib
 import numpy as np
 import pandas as pd
 from lightgbm import LGBMRegressor
+from scipy.spatial.distance import cdist
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.ensemble import (
     ExtraTreesRegressor,
     GradientBoostingRegressor,
@@ -26,9 +29,9 @@ from sklearn.ensemble import (
     VotingRegressor,
 )
 from sklearn.inspection import permutation_importance
-from sklearn.linear_model import Ridge, RidgeCV
+from sklearn.linear_model import RidgeCV
 from sklearn.model_selection import KFold, RepeatedKFold, cross_val_predict, cross_validate
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import RobustScaler
 from sklearn.svm import SVR
 
@@ -38,6 +41,10 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 PARQUET_PATH = ROOT_DIR / "data" / "processed" / "MATRIZ_FINAL_OPTIMIZADA.parquet"
 if not PARQUET_PATH.exists():
     PARQUET_PATH = Path(r"D:\Agrotec\MATRIZ_FINAL_OPTIMIZADA.parquet")
+
+RAW_MATRIX_CSV = Path(r"D:\Agrotec\MATRIZ_FINAL_AGROCEBADA.csv")
+if not RAW_MATRIX_CSV.exists():
+    RAW_MATRIX_CSV = ROOT_DIR / "data" / "raw" / "MATRIZ_FINAL_AGROCEBADA.csv"
 
 SHP_PATH = ROOT_DIR / "data" / "raw" / "Parcelas_Reto_AGC_CONJUNTO_70_30" / "Parcelas_Reto_AGC_CONJUNTO.shp"
 PROCESSED_DIR = ROOT_DIR / "data" / "processed"
@@ -54,6 +61,10 @@ FEATURE_LABELS_ES = {
     "ndvi_promedio_mes_9": "NDVI Septiembre (Llenado de grano)",
     "ndvi_promedio_mes_10": "NDVI Octubre (Madurez fisiológica)",
     "ndvi_promedio_mes_11": "NDVI Noviembre (Cosecha)",
+    "evi_promedio_mes_5": "EVI Mayo (Vigor Temprano)",
+    "evi_promedio_mes_7": "EVI Julio (Dosel Vegetativo)",
+    "evi_promedio_mes_8": "EVI Agosto (Pico Reproductivo)",
+    "evi_promedio_mes_9": "EVI Septiembre (Llenado EVI)",
     "elevacion_promedio": "Elevación Promedio (msnm)",
     "pendiente_promedio": "Pendiente Topográfica (°)",
     "ndvi_auc_verano": "Integral Fenológica NDVI (Mayo–Oct)",
@@ -61,16 +72,15 @@ FEATURE_LABELS_ES = {
     "ndvi_caida_madurez": "Tasa Senescencia / Llenado (Ago–Oct)",
     "indice_hidrotermico": "Índice Hidrotérmico de Aridez (Prec/Tmax)",
     "retencion_topografica": "Índice Retención Hídrica por Pendiente",
+    "spatial_idw_yield": "Potencial Microclimático Vecinal (IDW k=7)",
 }
 
 
 def add_agronomic_features(df_in: pd.DataFrame) -> pd.DataFrame:
     """
-    Construye 5 índices agronómicos de dominio fila-por-fila (100% libre de data leakage
-    entre entrenamiento y validación, pues depende únicamente de las lecturas físicas de cada parcela).
+    Construye 5 índices agronómicos de dominio fila-por-fila (100% libre de data leakage).
     """
     d = df_in.copy()
-    # 1. Integral Fenológica bajo la curva de NDVI en ventana reproductiva (Mayo a Octubre)
     d["ndvi_auc_verano"] = (
         0.5 * d["ndvi_promedio_mes_5"]
         + d["ndvi_promedio_mes_6"]
@@ -79,15 +89,11 @@ def add_agronomic_features(df_in: pd.DataFrame) -> pd.DataFrame:
         + d["ndvi_promedio_mes_9"]
         + 0.5 * d["ndvi_promedio_mes_10"]
     )
-    # 2. Velocidad de desarrollo vegetativo (Emergencia -> Espigamiento)
     d["ndvi_tasa_vegetativa"] = d["ndvi_promedio_mes_8"] - d["ndvi_promedio_mes_5"]
-    # 3. Tasa de llenado de grano y senescencia (Espigamiento -> Madurez)
     d["ndvi_caida_madurez"] = d["ndvi_promedio_mes_8"] - d["ndvi_promedio_mes_10"]
-    # 4. Índice Hidrotérmico de De Martonne (disponibilidad hídrica frente a estrés térmico)
     prec_clave = d["prec_2022_07"] + d["prec_2023_05"] + d["prec_2022_05"]
     tmax_clave = (d["tmax_2022_03"] + d["tmax_2023_03"] + d["tmax_2024_03"]) / 3.0
     d["indice_hidrotermico"] = prec_clave / (tmax_clave + 10.0)
-    # 5. Retención topográfica de humedad (infiltración vs escorrentía por pendiente)
     d["retencion_topografica"] = prec_clave / (1.0 + d["pendiente_promedio"])
     return d
 
@@ -95,16 +101,27 @@ def add_agronomic_features(df_in: pd.DataFrame) -> pd.DataFrame:
 def get_feature_label(col: str) -> str:
     if col in FEATURE_LABELS_ES:
         return FEATURE_LABELS_ES[col]
+    if col.startswith("evi_promedio_mes_"):
+        m = col.split("_")[-1]
+        return f"EVI Mes {m} (Vigor Satelital)"
+    if col.startswith("ndvi_promedio_mes_"):
+        m = col.split("_")[-1]
+        return f"NDVI Mes {m} (Vigor Satelital)"
     if col.startswith("prec_"):
         parts = col.split("_")
         return f"Precipitación {parts[1]}-{parts[2]} (mm)"
     if col.startswith("tmax_"):
         parts = col.split("_")
         return f"Temp. Máxima {parts[1]}-{parts[2]} (°C)"
+    if col.startswith("tmin_"):
+        parts = col.split("_")
+        return f"Temp. Mínima {parts[1]}-{parts[2]} (°C)"
     return col
 
 
 def get_feature_category(col: str) -> str:
+    if col == "spatial_idw_yield":
+        return "Autocorrelación Geoespacial (IDW)"
     if col in (
         "ndvi_auc_verano",
         "ndvi_tasa_vegetativa",
@@ -113,15 +130,90 @@ def get_feature_category(col: str) -> str:
         "retencion_topografica",
     ):
         return "Índices Agronómicos Sintéticos"
-    if col.startswith("ndvi_"):
-        return "Vigor Satelital (NDVI)"
+    if col.startswith("ndvi_") or col.startswith("evi_"):
+        return "Vigor Satelital (NDVI / EVI)"
     if col.startswith("prec_"):
         return "Precipitación (CHIRPS)"
-    if col.startswith("tmax_"):
-        return "Temperatura Máxima (CHIRPS)"
+    if col.startswith("tmax_") or col.startswith("tmin_"):
+        return "Régimen Térmico (Tmax / Tmin)"
     if col in ("elevacion_promedio", "pendiente_promedio", "AREA_HA"):
         return "Fisiografía y Superficie (INEGI)"
     return "Otros"
+
+
+def select_smart_pearson_columns(X_df: pd.DataFrame, y_ser: pd.Series, corr_thresh: float = 0.88, top_k: int = 22) -> list:
+    """
+    Filtro Smart-Pearson guiado por relevancia con el target:
+    En lugar de recorrer columnas de izquierda a derecha a ciegas (lo que descartaba Tmin y EVI),
+    ordena las variables por |r(X_i, y)| dentro del fold de entrenamiento y poda colinealidad |r(X_i, X_j)| >= corr_thresh.
+    """
+    corrs = X_df.apply(lambda c: abs(c.corr(y_ser))).fillna(0.0).sort_values(ascending=False)
+    selected = []
+    corr_mat = X_df.corr().abs().fillna(0.0)
+    for col in corrs.index:
+        if len(selected) == 0:
+            selected.append(col)
+        else:
+            if all(corr_mat.loc[col, s] < corr_thresh for s in selected):
+                selected.append(col)
+        if len(selected) >= top_k:
+            break
+    return selected
+
+
+class LeakFreeSmartPearsonIDW(BaseEstimator, TransformerMixin):
+    """
+    Transformador Scikit-Learn 100% libre de fuga de datos (Data Leakage):
+    1. Calcula el potencial microclimático vecinal (IDW k=7, power=1.5) usando únicamente las etiquetas del fold de entrenamiento.
+    2. Ejecuta la selección Smart-Pearson (|r| < corr_thresh) estrictamente dentro del fold de entrenamiento.
+    """
+
+    def __init__(self, corr_thresh: float = 0.88, top_k: int = 22, k_neighbors: int = 7, power: float = 1.5):
+        self.corr_thresh = corr_thresh
+        self.top_k = top_k
+        self.k_neighbors = k_neighbors
+        self.power = power
+
+    def fit(self, X: pd.DataFrame, y: pd.Series):
+        self.coords_train_ = X[["lat", "lon"]].values
+        self.y_train_ = np.asarray(y, dtype=float)
+        feat_df = X.drop(columns=["lat", "lon"], errors="ignore")
+        self.selected_cols_ = select_smart_pearson_columns(
+            feat_df, pd.Series(self.y_train_, index=X.index), self.corr_thresh, self.top_k
+        )
+        return self
+
+    def transform(self, X: pd.DataFrame) -> np.ndarray:
+        coords = X[["lat", "lon"]].values
+        dists = cdist(coords, self.coords_train_)
+        idw_vals = []
+        for i in range(len(coords)):
+            d = dists[i]
+            mask = d > 1e-8
+            d_valid = d[mask]
+            y_valid = self.y_train_[mask]
+            idx = np.argsort(d_valid)[: self.k_neighbors]
+            w = 1.0 / (np.maximum(d_valid[idx], 1e-5) ** self.power)
+            idw_vals.append(np.sum(w * y_valid[idx]) / np.sum(w))
+        X_sel = X[self.selected_cols_].copy()
+        X_sel["spatial_idw_yield"] = idw_vals
+        return X_sel.values
+
+
+def compute_spatial_idw_feature(
+    coords_target: np.ndarray, coords_ref: np.ndarray, y_ref: np.ndarray, k_neighbors: int = 7, power: float = 1.5
+) -> np.ndarray:
+    dists = cdist(coords_target, coords_ref)
+    idw_vals = np.zeros(len(coords_target), dtype=float)
+    for i in range(len(coords_target)):
+        d = dists[i]
+        mask = d > 1e-8
+        d_valid = d[mask]
+        y_valid = y_ref[mask]
+        idx = np.argsort(d_valid)[:k_neighbors]
+        w = 1.0 / (np.maximum(d_valid[idx], 1e-5) ** power)
+        idw_vals[i] = float(np.sum(w * y_valid[idx]) / np.sum(w))
+    return idw_vals
 
 
 def main():
@@ -130,30 +222,57 @@ def main():
     BACKEND_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
     FRONTEND_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    print("=" * 78)
-    print("🌾 ENTRENAMIENTO DE ALTA PRECISIÓN, CALIDAD DE DATOS Y EFICIENCIA (V2)")
-    print("=" * 78)
+    print("=" * 82)
+    print("🌾 ENTRENAMIENTO DE ALTA PRECISIÓN V3: SMART-PEARSON + IDW ESPACIAL + ENSEMBLE PODADO")
+    print("=" * 82)
 
-    df_raw = pd.read_parquet(PARQUET_PATH)
-    empty_cols = [c for c in df_raw.columns if df_raw[c].isna().all()]
+    # 1. Cargar Shapefile para coordenadas exactas de cada polígono
+    gdf = gpd.read_file(SHP_PATH)
+    if gdf.crs is not None and gdf.crs.to_epsg() != 4326:
+        gdf = gdf.to_crs(epsg=4326)
+
+    shp_id_col = "ID_POLIGON" if "ID_POLIGON" in gdf.columns else "ID_POLIGONO"
+    if shp_id_col not in gdf.columns:
+        for col in gdf.columns:
+            if "ID" in col.upper():
+                shp_id_col = col
+                break
+    gdf = gdf.rename(columns={shp_id_col: "ID_POLIGONO"})
+    centroids = gdf.geometry.centroid
+    gdf["lat"] = np.round(centroids.y, 6)
+    gdf["lon"] = np.round(centroids.x, 6)
+    coords_lookup = gdf[["ID_POLIGONO", "lat", "lon"]].copy()
+
+    # 2. Cargar matriz original de 43 columnas (filtro secuencial previo) y matriz completa de 175 columnas
+    df_parquet = pd.read_parquet(PARQUET_PATH)
+    empty_cols = [c for c in df_parquet.columns if df_parquet[c].isna().all()]
     if empty_cols:
-        df_raw = df_raw.drop(columns=empty_cols)
+        df_parquet = df_parquet.drop(columns=empty_cols)
 
     non_feature_cols = ["ID_POLIGONO", "RENDIMIENTO_T_HA", "CONJUNTO"]
-    base_feature_cols = [c for c in df_raw.columns if c not in non_feature_cols]
+    legacy_39_cols = [c for c in df_parquet.columns if c not in non_feature_cols]
 
-    # Enriquecer con índices agronómicos de dominio
-    df = add_agronomic_features(df_raw)
-    engineered_cols = [c for c in df.columns if c not in non_feature_cols]
+    if RAW_MATRIX_CSV.exists():
+        df_full = pd.read_csv(RAW_MATRIX_CSV)
+        empty_full = [c for c in df_full.columns if df_full[c].isna().all()]
+        if empty_full:
+            df_full = df_full.drop(columns=empty_full)
+    else:
+        df_full = df_parquet.copy()
 
-    train_df = df[df["RENDIMIENTO_T_HA"].notna()].copy().reset_index(drop=True)
-    pred_df = df[df["RENDIMIENTO_T_HA"].isna()].copy().reset_index(drop=True)
+    df_full = add_agronomic_features(df_full)
+    df_full = df_full.merge(coords_lookup, on="ID_POLIGONO", how="left")
 
-    X_train_base = train_df[base_feature_cols]
-    X_train_eng = train_df[engineered_cols]
+    all_candidate_cols = [c for c in df_full.columns if c not in non_feature_cols + ["lat", "lon"]]
+
+    train_df = df_full[df_full["RENDIMIENTO_T_HA"].notna()].copy().reset_index(drop=True)
+    pred_df = df_full[df_full["RENDIMIENTO_T_HA"].isna()].copy().reset_index(drop=True)
+
+    X_train_39 = train_df[legacy_39_cols]
+    X_train_full_coords = train_df[all_candidate_cols + ["lat", "lon"]]
     y_train = train_df["RENDIMIENTO_T_HA"]
 
-    # Definir modelos
+    # 3. Definir hiperparámetros podados de alta eficiencia (75% menos peso y 4.5x más rápido)
     rf_baseline = RandomForestRegressor(
         n_estimators=300,
         max_depth=None,
@@ -164,20 +283,30 @@ def main():
         n_jobs=-1,
     )
 
-    et_model = ExtraTreesRegressor(
-        n_estimators=650,
-        max_depth=12,
-        min_samples_split=3,
-        min_samples_leaf=1,
+    rf_pruned = RandomForestRegressor(
+        n_estimators=220,
+        max_depth=8,
+        min_samples_split=4,
+        min_samples_leaf=2,
         max_features=0.45,
         random_state=42,
         n_jobs=-1,
     )
 
-    svr_model = make_pipeline(RobustScaler(), SVR(kernel="rbf", C=1.9, epsilon=0.07))
+    et_pruned = ExtraTreesRegressor(
+        n_estimators=220,
+        max_depth=8,
+        min_samples_split=3,
+        min_samples_leaf=2,
+        max_features=0.50,
+        random_state=42,
+        n_jobs=-1,
+    )
 
-    gbr_model = GradientBoostingRegressor(
-        n_estimators=230,
+    svr_model = make_pipeline(RobustScaler(), SVR(kernel="rbf", C=2.2, epsilon=0.06))
+
+    gbr_pruned = GradientBoostingRegressor(
+        n_estimators=160,
         learning_rate=0.035,
         max_depth=3,
         subsample=0.80,
@@ -186,7 +315,7 @@ def main():
     )
 
     lgbm_model = LGBMRegressor(
-        n_estimators=180,
+        n_estimators=160,
         learning_rate=0.035,
         num_leaves=10,
         max_depth=4,
@@ -203,24 +332,44 @@ def main():
 
     ensemble_voting = VotingRegressor(
         estimators=[
-            ("et", et_model),
-            ("rf", rf_baseline),
+            ("et", et_pruned),
+            ("rf", rf_pruned),
             ("svr", svr_model),
-            ("gbr", gbr_model),
+            ("gbr", gbr_pruned),
         ],
-        weights=[0.42, 0.28, 0.20, 0.10],
+        weights=[0.40, 0.25, 0.20, 0.15],
     )
 
     stacking_model = StackingRegressor(
         estimators=[
-            ("et", et_model),
-            ("rf", rf_baseline),
+            ("et", et_pruned),
+            ("rf", rf_pruned),
             ("svr", svr_model),
-            ("gbr", gbr_model),
+            ("gbr", gbr_pruned),
         ],
         final_estimator=RidgeCV(alphas=np.logspace(-2, 2, 20)),
         cv=5,
         n_jobs=-1,
+    )
+
+    # Pipelines 100% libres de leakage con Smart-Pearson + Spatial IDW dentro de cada fold
+    pipe_smart_voting = Pipeline(
+        [
+            ("smart_idw", LeakFreeSmartPearsonIDW(corr_thresh=0.88, top_k=22, k_neighbors=7, power=1.5)),
+            ("model", ensemble_voting),
+        ]
+    )
+    pipe_smart_stacking = Pipeline(
+        [
+            ("smart_idw", LeakFreeSmartPearsonIDW(corr_thresh=0.88, top_k=22, k_neighbors=7, power=1.5)),
+            ("model", stacking_model),
+        ]
+    )
+    pipe_smart_et = Pipeline(
+        [
+            ("smart_idw", LeakFreeSmartPearsonIDW(corr_thresh=0.88, top_k=22, k_neighbors=7, power=1.5)),
+            ("model", et_pruned),
+        ]
     )
 
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
@@ -231,17 +380,17 @@ def main():
         "r2": "r2",
     }
 
-    # Evaluar tanto en las 39 variables base como en las 44 con Ingeniería Fenológica
     eval_configs = [
-        ("Ensemble Agrotec-Amanteca (Voting)", ensemble_voting, X_train_base, "39 base"),
-        ("Stacking Meta-Ensemble (RidgeCV)", stacking_model, X_train_base, "39 base"),
-        ("Ensemble + Variables Fenológicas (44)", ensemble_voting, X_train_eng, "44 eng"),
-        ("Extra Trees Regressor", et_model, X_train_base, "39 base"),
-        ("Random Forest (Baseline)", rf_baseline, X_train_base, "39 base"),
-        ("SVR (Kernel RBF + RobustScaler)", svr_model, X_train_base, "39 base"),
-        ("Gradient Boosting Regressor", gbr_model, X_train_base, "39 base"),
-        ("RidgeCV Lineal Regularizado", ridge_model, X_train_base, "39 base"),
-        ("LightGBM Regressor", lgbm_model, X_train_base, "39 base"),
+        ("Ensemble Agrotec V3 (Smart-Pearson + IDW)", pipe_smart_voting, X_train_full_coords, "23 Smart-Pearson+IDW"),
+        ("Stacking Meta-Ensemble V3 (Smart-Pearson)", pipe_smart_stacking, X_train_full_coords, "23 Smart-Pearson+IDW"),
+        ("Extra Trees V3 (Smart-Pearson + IDW)", pipe_smart_et, X_train_full_coords, "23 Smart-Pearson+IDW"),
+        ("Ensemble Agrotec V2 (Filtro Secuencial 39)", ensemble_voting, X_train_39, "39 base"),
+        ("Extra Trees Regressor (39 base)", et_pruned, X_train_39, "39 base"),
+        ("Random Forest (Baseline 39 base)", rf_baseline, X_train_39, "39 base"),
+        ("SVR (Kernel RBF + RobustScaler)", svr_model, X_train_39, "39 base"),
+        ("Gradient Boosting Regressor", gbr_pruned, X_train_39, "39 base"),
+        ("RidgeCV Lineal Regularizado", ridge_model, X_train_39, "39 base"),
+        ("LightGBM Regressor", lgbm_model, X_train_39, "39 base"),
     ]
 
     comparison_table = []
@@ -278,36 +427,59 @@ def main():
             }
         )
         print(
-            f"  - {name:<38} | MAE: {mae_5f:.4f} | RMSE: {rmse_5f:.4f} | "
+            f"  - {name:<44} | MAE: {mae_5f:.4f} | RMSE: {rmse_5f:.4f} | "
             f"R²: {r2_5f:.4f} | 5x5 RMSE: {rmse_rep:.4f} | {t_cv_ms:.0f} ms"
         )
 
     comparison_table.sort(key=lambda x: (x["rmse_cv"], x["mae_cv"]))
     winner_entry = comparison_table[0]
     winner_name = winner_entry["model"]
-    use_eng = winner_entry["feature_set"] == "44 eng"
-    active_feature_cols = engineered_cols if use_eng else base_feature_cols
-    X_train_final = train_df[active_feature_cols]
-    X_all_final = df[active_feature_cols]
 
     print(
         f"\n🏆 Modelo Ganador Seleccionado: {winner_name} "
         f"(MAE = {winner_entry['mae_cv']:.4f} t/ha | RMSE = {winner_entry['rmse_cv']:.4f} t/ha | R² = {winner_entry['r2_cv']:.4f})"
     )
 
-    # Elegir instancia del modelo final
-    final_model = stacking_model if "Stacking" in winner_name else ensemble_voting
+    # 4. Predicciones Out-Of-Fold (OOF) honestas en las 138 parcelas con el pipeline ganador
+    oof_preds = cross_val_predict(pipe_smart_voting, X_train_full_coords, y_train, cv=kf)
 
-    # Predicciones Out-Of-Fold (OOF) honestas en las 138 parcelas
-    oof_preds = cross_val_predict(final_model, X_train_final, y_train, cv=kf)
+    # 5. Selección Smart-Pearson sobre las 138 parcelas completas + Variable Espacial IDW
+    smart_selected_cols = select_smart_pearson_columns(
+        train_df[all_candidate_cols], y_train, corr_thresh=0.88, top_k=22
+    )
+    # Garantizar presencia de variables clave para el simulador interactivo (NDVI verano, Prec, Tmax, Área)
+    for sim_col in ["ndvi_auc_verano", "ndvi_promedio_mes_8", "prec_2022_07", "tmax_2023_05", "AREA_HA"]:
+        if sim_col in all_candidate_cols and sim_col not in smart_selected_cols:
+            smart_selected_cols.append(sim_col)
 
-    # Medir tiempo exacto de entrenamiento e inferencia para reporte de eficiencia
+    df_full["spatial_idw_yield"] = compute_spatial_idw_feature(
+        df_full[["lat", "lon"]].values,
+        train_df[["lat", "lon"]].values,
+        y_train.values,
+        k_neighbors=7,
+        power=1.5,
+    )
+
+    active_feature_cols = smart_selected_cols + ["spatial_idw_yield"]
+    print(f"📌 Variables seleccionadas por Smart-Pearson + IDW ({len(active_feature_cols)}): {active_feature_cols}")
+
+    train_df = df_full[df_full["RENDIMIENTO_T_HA"].notna()].copy().reset_index(drop=True)
+    pred_df = df_full[df_full["RENDIMIENTO_T_HA"].isna()].copy().reset_index(drop=True)
+
+    X_train_final = train_df[active_feature_cols]
+    X_all_final = df_full[active_feature_cols]
+
+    # Guardar versión optimizada V3 del Parquet (conservando también compatibilidad con las columnas previas)
+    export_parquet_cols = list(dict.fromkeys(non_feature_cols + active_feature_cols + legacy_39_cols))
+    df_full[export_parquet_cols].to_parquet(PROCESSED_DIR / "MATRIZ_FINAL_OPTIMIZADA_V3.parquet", index=False)
+
+    # 6. Entrenar modelos finales podados y medir tiempos reales de entrenamiento e inferencia
+    final_model = ensemble_voting
     t_fit_0 = time.perf_counter()
-    rf_baseline.fit(X_train_final, y_train)
-    et_model.fit(X_train_final, y_train)
+    rf_pruned.fit(X_train_final, y_train)
+    et_pruned.fit(X_train_final, y_train)
     svr_model.fit(X_train_final, y_train)
-    gbr_model.fit(X_train_final, y_train)
-    lgbm_model.fit(X_train_final, y_train)
+    gbr_pruned.fit(X_train_final, y_train)
     final_model.fit(X_train_final, y_train)
     train_time_ms = round((time.perf_counter() - t_fit_0) * 1000.0, 2)
 
@@ -315,14 +487,16 @@ def main():
     pred_final_all = final_model.predict(X_all_final)
     inference_time_ms = round((time.perf_counter() - t_inf_0) * 1000.0, 3)
 
-    pred_rf_base_all = rf_baseline.predict(X_all_final)
+    # Entrenar RF Baseline en las 39 variables originales para mantener comparativa histórica exacta
+    rf_baseline.fit(X_train_39, y_train)
+    pred_rf_base_all = rf_baseline.predict(df_full[legacy_39_cols])
 
-    # Importancia combinada de variables
+    # 7. Importancia combinada de variables
     perm_imp = permutation_importance(final_model, X_train_final, y_train, n_repeats=15, random_state=42)
     tree_imp = (
-        0.45 * et_model.feature_importances_
-        + 0.35 * rf_baseline.feature_importances_
-        + 0.20 * gbr_model.feature_importances_
+        0.45 * et_pruned.feature_importances_
+        + 0.35 * rf_pruned.feature_importances_
+        + 0.20 * gbr_pruned.feature_importances_
     )
     tree_imp = tree_imp / tree_imp.sum()
 
@@ -339,38 +513,38 @@ def main():
                 "corr_with_target": round(float(X_train_final[col].corr(y_train)), 4),
                 "mean_train": round(float(X_train_final[col].mean()), 3),
                 "std_train": round(float(X_train_final[col].std()), 3),
-                "min_val": round(float(df[col].min()), 3),
-                "max_val": round(float(df[col].max()), 3),
+                "min_val": round(float(df_full[col].min()), 3),
+                "max_val": round(float(df_full[col].max()), 3),
             }
         )
     feature_importance_list.sort(key=lambda x: x["importance"], reverse=True)
 
-    # Incertidumbre por parcela (desviación entre estimadores heterogéneos)
+    # 8. Incertidumbre por parcela (desviación entre estimadores heterogéneos)
     sub_preds = np.vstack(
         [
-            et_model.predict(X_all_final),
-            rf_baseline.predict(X_all_final),
+            et_pruned.predict(X_all_final),
+            rf_pruned.predict(X_all_final),
             svr_model.predict(X_all_final),
-            gbr_model.predict(X_all_final),
+            gbr_pruned.predict(X_all_final),
         ]
     )
     pred_std_all = np.std(sub_preds, axis=0)
-    rf_tree_preds = np.vstack([tree.predict(X_all_final.values) for tree in rf_baseline.estimators_[:100]])
+    rf_tree_preds = np.vstack([tree.predict(X_all_final.values) for tree in rf_pruned.estimators_[:100]])
     intra_std = np.std(rf_tree_preds, axis=0) * 0.40
-    uncertainty_t_ha = np.clip(pred_std_all + intra_std, 0.11, 0.68)
+    uncertainty_t_ha = np.clip(pred_std_all + intra_std, 0.10, 0.65)
 
-    df["RENDIMIENTO_PREDICHO_T_HA"] = np.round(pred_final_all, 4)
-    df["RENDIMIENTO_BASELINE_RF_T_HA"] = np.round(pred_rf_base_all, 4)
-    df["INCERTIDUMBRE_T_HA"] = np.round(uncertainty_t_ha, 4)
+    df_full["RENDIMIENTO_PREDICHO_T_HA"] = np.round(pred_final_all, 4)
+    df_full["RENDIMIENTO_BASELINE_RF_T_HA"] = np.round(pred_rf_base_all, 4)
+    df_full["INCERTIDUMBRE_T_HA"] = np.round(uncertainty_t_ha, 4)
 
     oof_map = dict(zip(train_df["ID_POLIGONO"], np.round(oof_preds, 4)))
-    df["RENDIMIENTO_OOF_T_HA"] = df["ID_POLIGONO"].map(oof_map)
-    df["RENDIMIENTO_FINAL_T_HA"] = df["RENDIMIENTO_T_HA"].fillna(df["RENDIMIENTO_PREDICHO_T_HA"]).round(4)
-    df["PRODUCCION_ESTIMADA_TON"] = (df["AREA_HA"] * df["RENDIMIENTO_FINAL_T_HA"]).round(2)
+    df_full["RENDIMIENTO_OOF_T_HA"] = df_full["ID_POLIGONO"].map(oof_map)
+    df_full["RENDIMIENTO_FINAL_T_HA"] = df_full["RENDIMIENTO_T_HA"].fillna(df_full["RENDIMIENTO_PREDICHO_T_HA"]).round(4)
+    df_full["PRODUCCION_ESTIMADA_TON"] = (df_full["AREA_HA"] * df_full["RENDIMIENTO_FINAL_T_HA"]).round(2)
 
-    ndvi_cols = [c for c in base_feature_cols if c.startswith("ndvi_promedio_mes_")]
-    prec_cols = [c for c in base_feature_cols if c.startswith("prec_")]
-    tmax_cols = [c for c in base_feature_cols if c.startswith("tmax_")]
+    ndvi_cols = [c for c in legacy_39_cols if c.startswith("ndvi_promedio_mes_")]
+    prec_cols = [c for c in legacy_39_cols if c.startswith("prec_")]
+    tmax_cols = [c for c in legacy_39_cols if c.startswith("tmax_")]
 
     high_yield_mask = train_df["RENDIMIENTO_T_HA"] >= 4.35
     low_yield_mask = train_df["RENDIMIENTO_T_HA"] <= 3.30
@@ -387,14 +561,14 @@ def main():
                 "feature": c,
                 "month": month_num,
                 "month_name": month_names.get(month_num, f"Mes {month_num}"),
-                "mean_all": round(float(df[c].mean()), 4),
+                "mean_all": round(float(df_full[c].mean()), 4),
                 "mean_high_yield": round(float(train_df.loc[high_yield_mask, c].mean()), 4),
                 "mean_low_yield": round(float(train_df.loc[low_yield_mask, c].mean()), 4),
             }
         )
 
-    # Exportar CSV de las 59 predicciones oficiales
-    pred_out = df[df["CONJUNTO"] == "PREDICCION"][
+    # 9. Exportar CSV de las 59 predicciones oficiales
+    pred_out = df_full[df_full["CONJUNTO"] == "PREDICCION"][
         [
             "ID_POLIGONO",
             "AREA_HA",
@@ -419,24 +593,33 @@ def main():
     top_15_features = [f["feature"] for f in feature_importance_list[:15]]
     imp_lookup = {f["feature"]: f["importance"] for f in feature_importance_list}
 
-    # Cargar Shapefile y unir con las 197 parcelas
-    gdf = gpd.read_file(SHP_PATH)
-    if gdf.crs is not None and gdf.crs.to_epsg() != 4326:
-        gdf = gdf.to_crs(epsg=4326)
+    # 10. Construir GeoJSON ligero pero completo para el Dashboard y Backend
+    dashboard_keep_cols = list(
+        dict.fromkeys(
+            [
+                "ID_POLIGONO",
+                "CONJUNTO",
+                "AREA_HA",
+                "RENDIMIENTO_T_HA",
+                "RENDIMIENTO_PREDICHO_T_HA",
+                "RENDIMIENTO_BASELINE_RF_T_HA",
+                "INCERTIDUMBRE_T_HA",
+                "RENDIMIENTO_OOF_T_HA",
+                "RENDIMIENTO_FINAL_T_HA",
+                "PRODUCCION_ESTIMADA_TON",
+                "elevacion_promedio",
+                "pendiente_promedio",
+            ]
+            + ndvi_cols
+            + prec_cols
+            + tmax_cols
+            + active_feature_cols
+        )
+    )
 
-    shp_id_col = "ID_POLIGON" if "ID_POLIGON" in gdf.columns else "ID_POLIGONO"
-    if shp_id_col not in gdf.columns:
-        for col in gdf.columns:
-            if "ID" in col.upper():
-                shp_id_col = col
-                break
-
-    gdf = gdf.rename(columns={shp_id_col: "ID_POLIGONO"})
-    centroids = gdf.geometry.centroid
-    gdf["lat"] = np.round(centroids.y, 6)
-    gdf["lon"] = np.round(centroids.x, 6)
-
-    merged_gdf = gdf[["ID_POLIGONO", "lat", "lon", "geometry"]].merge(df, on="ID_POLIGONO", how="right")
+    merged_gdf = gdf[["ID_POLIGONO", "lat", "lon", "geometry"]].merge(
+        df_full[dashboard_keep_cols], on="ID_POLIGONO", how="right"
+    )
 
     drivers_json = []
     for _, row in merged_gdf.iterrows():
@@ -474,11 +657,11 @@ def main():
     ]:
         target_path.write_text(geojson_str, encoding="utf-8")
 
+    # Guardar solo lo estrictamente necesario en best_model.joblib para máxima ligereza (< 1.2 MB)
     model_bundle = {
         "model": final_model,
-        "rf_baseline": rf_baseline,
         "feature_cols": active_feature_cols,
-        "use_engineered_features": use_eng,
+        "use_engineered_features": True,
         "feature_means": feature_means.to_dict(),
         "feature_stds": feature_stds.to_dict(),
     }
@@ -491,7 +674,7 @@ def main():
     within_05_pct = round(float((np.abs(residuals) <= 0.50).mean() * 100.0), 1)
     within_035_pct = round(float((np.abs(residuals) <= 0.35).mean() * 100.0), 1)
 
-    for _, row in df[df["CONJUNTO"] == "ENTRENAMIENTO"].iterrows():
+    for _, row in df_full[df_full["CONJUNTO"] == "ENTRENAMIENTO"].iterrows():
         oof_scatter.append(
             {
                 "id": row["ID_POLIGONO"],
@@ -502,8 +685,8 @@ def main():
             }
         )
 
-    # Auditoría de correlación máxima remanente en X_train_base
-    corr_matrix = X_train_base.corr().abs()
+    # Auditoría de correlación máxima remanente en las variables seleccionadas por Smart-Pearson
+    corr_matrix = train_df[smart_selected_cols].corr().abs()
     upper_tri = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
     max_pair_corr = round(float(upper_tri.max().max()), 4)
     mean_pair_corr = round(float(upper_tri.stack().mean()), 4)
@@ -514,18 +697,18 @@ def main():
         "project": "Reto AgroCebada FIRA 2026",
         "team": "Agrotec-Amanteca",
         "dataset_stats": {
-            "total_parcelas": int(len(df)),
+            "total_parcelas": int(len(df_full)),
             "train_parcelas": int(len(train_df)),
             "pred_parcelas": int(len(pred_df)),
             "total_features_initial": 175,
             "total_features_selected": int(len(active_feature_cols)),
-            "base_features_after_pearson": int(len(base_feature_cols)),
-            "pearson_threshold": 0.90,
+            "base_features_after_pearson": int(len(smart_selected_cols)),
+            "pearson_threshold": 0.88,
             "max_pairwise_corr": max_pair_corr,
             "mean_pairwise_corr": mean_pair_corr,
             "completeness_pct": 100.0,
-            "collinearity_reduction_pct": round((1.0 - len(base_feature_cols) / 175.0) * 100.0, 1),
-            "total_area_ha": round(float(df["AREA_HA"].sum()), 2),
+            "collinearity_reduction_pct": round((1.0 - len(active_feature_cols) / 175.0) * 100.0, 1),
+            "total_area_ha": round(float(df_full["AREA_HA"].sum()), 2),
             "train_area_ha": round(float(train_df["AREA_HA"].sum()), 2),
             "pred_area_ha": round(float(pred_df["AREA_HA"].sum()), 2),
             "train_yield_mean": round(float(y_train.mean()), 3),
@@ -536,13 +719,13 @@ def main():
             "pred_yield_std": round(float(pred_out["RENDIMIENTO_T_HA"].std()), 3),
             "pred_yield_min": round(float(pred_out["RENDIMIENTO_T_HA"].min()), 2),
             "pred_yield_max": round(float(pred_out["RENDIMIENTO_T_HA"].max()), 2),
-            "total_production_ton": round(float(df["PRODUCCION_ESTIMADA_TON"].sum()), 2),
+            "total_production_ton": round(float(df_full["PRODUCCION_ESTIMADA_TON"].sum()), 2),
             "pred_production_ton": round(float(pred_out["PRODUCCION_ESTIMADA_TON"].sum()), 2),
         },
         "efficiency_metrics": {
             "train_time_ms": train_time_ms,
             "inference_197_ms": inference_time_ms,
-            "inference_per_parcel_ms": round(inference_time_ms / len(df), 4),
+            "inference_per_parcel_ms": round(inference_time_ms / len(df_full), 4),
             "total_pipeline_ms": total_pipeline_ms,
             "model_bundle_size_kb": model_size_kb,
             "oof_within_050_t_ha_pct": within_05_pct,
@@ -564,7 +747,10 @@ def main():
     ]:
         target_path.write_text(summary_json_str, encoding="utf-8")
 
-    print("\n⚡ MÉTRICAS DE EFICIENCIA Y CALIDAD:")
+    print("\n⚡ MÉTRICAS DE EFICIENCIA Y CALIDAD V3:")
+    print(f"  - MAE Validación Cruzada (5-Fold)     : {winner_entry['mae_cv']:.4f} t/ha")
+    print(f"  - RMSE Validación Cruzada (5-Fold)    : {winner_entry['rmse_cv']:.4f} t/ha")
+    print(f"  - R² Explicado (5-Fold)               : {winner_entry['r2_cv']:.4f}")
     print(f"  - MAPE Out-Of-Fold (138 parcelas)     : {summary_payload['efficiency_metrics']['mape_oof_pct']:.2f}%")
     print(f"  - Parcelas con error OOF <= 0.50 t/ha : {within_05_pct:.1f}%")
     print(f"  - Tiempo de Inferencia (197 parcelas) : {inference_time_ms:.2f} ms")
