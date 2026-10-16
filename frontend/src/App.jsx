@@ -203,8 +203,8 @@ export default function App() {
 
       try {
         const [sumStatic, geoStatic] = await Promise.all([
-          fetch('/data/metrics_summary.json').then((r) => r.json()),
-          fetch('/data/parcelas_197_dashboard.geojson').then((r) => r.json()),
+          fetch('./data/metrics_summary.json').then((r) => r.json()),
+          fetch('./data/parcelas_197_dashboard.geojson').then((r) => r.json()),
         ])
         if (mounted) {
           setSummary(sumStatic)
@@ -457,7 +457,7 @@ export default function App() {
               title="Ver Emblema Oficial Agrotec-Amanteca"
             >
               <img
-                src="/logo_agrotec_amanteca.svg"
+                src="./logo_agrotec_amanteca.svg"
                 alt="Agrotec-Amanteca"
                 className="w-8 h-8"
               />
@@ -1340,11 +1340,11 @@ export default function App() {
               </div>
 
               <img
-                src="/logo_agrotec_amanteca.jpg"
+                src="./logo_agrotec_amanteca.jpg"
                 alt="Emblema Agrotec-Amanteca"
                 className="w-52 h-52 object-cover border border-[var(--rule-strong)] my-5"
                 onError={(e) => {
-                  e.currentTarget.src = '/logo_agrotec_amanteca.svg'
+                  e.currentTarget.src = './logo_agrotec_amanteca.svg'
                 }}
               />
 
