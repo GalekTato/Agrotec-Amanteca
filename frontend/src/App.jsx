@@ -1138,7 +1138,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* NUEVA SECCIÓN SOLICITADA (PUNTO #2): EXPLICACIÓN DETALLADA DE CADA MODELO EVALUADO Y POR QUÉ GANÓ EL ENSEMBLE V3 */}
+            {/* EXPLICACIÓN DETALLADA DE CADA MODELO EVALUADO Y POR QUÉ GANÓ EL ENSEMBLE V3 */}
             <div className="border border-[var(--rule-strong)] bg-[var(--surface-panel)] p-4 sm:p-6">
               <div className="border-b border-[var(--rule-strong)] pb-3 mb-4">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF4F00]">
@@ -1323,7 +1323,7 @@ export default function App() {
           </div>
         )}
 
-        {/* SECCIÓN 04: CALIDAD DEL DATASET, CIFRAS DEMOSTRATIVAS Y RESUMEN DE TECNOLOGÍAS (PUNTOS #1, #3 y #11) */}
+        {/* SECCIÓN 04: CALIDAD DEL DATASET, CIFRAS DEMOSTRATIVAS Y RESUMEN DE TECNOLOGÍAS */}
         {activeTab === 'deploy' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 border border-[var(--rule-strong)] bg-[var(--surface-panel)] divide-y lg:divide-y-0 lg:divide-x divide-[var(--rule-strong)]">
             <div className="lg:col-span-4 p-6 flex flex-col items-start justify-between bg-[var(--surface-subtle)]">
@@ -1348,7 +1348,7 @@ export default function App() {
                 }}
               />
 
-              {/* Integrantes Oficiales del Equipo (Reemplaza la leyenda eliminada en el Punto #1) */}
+              {/* Integrantes Oficiales del Equipo */}
               <div className="w-full border-t border-[var(--rule-strong)] pt-3 text-xs">
                 <div className="text-[10px] font-black uppercase tracking-wider text-[#FF4F00] mb-1.5">
                   Integrantes del Equipo Agrotec-Amanteca
@@ -1367,7 +1367,7 @@ export default function App() {
             <div className="lg:col-span-8 p-6 space-y-6">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF4F00]">
-                  Auditoría Estadística y Computacional (Punto #3)
+                  Auditoría Estadística y Computacional
                 </span>
                 <h3 className="text-xl font-black text-[var(--ink-primary)] mt-0.5">
                   Cifras Demostrativas de Precisión, Calidad de Datos y Eficiencia
@@ -1449,7 +1449,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* RESUMEN DE TECNOLOGÍAS IMPLEMENTADAS (PUNTO #11) */}
+              {/* RESUMEN DE TECNOLOGÍAS IMPLEMENTADAS */}
               <div className="border border-[var(--rule-strong)] p-4 sm:p-5 bg-[var(--surface-subtle)] space-y-3">
                 <div className="flex items-center justify-between border-b border-[var(--rule-hairline)] pb-2">
                   <div className="font-black text-xs sm:text-sm text-[var(--ink-primary)] uppercase">
@@ -1484,14 +1484,17 @@ export default function App() {
         )}
       </main>
 
-      {/* FOOTER INSTITUCIONAL CON DERECHOS RESERVADOS E INTEGRANTES (PUNTO #4) */}
+      {/* FOOTER INSTITUCIONAL CON DERECHOS RESERVADOS E INTEGRANTES */}
       <footer className="border-t border-[var(--rule-strong)] bg-[var(--surface-panel)] text-[var(--ink-secondary)] text-xs">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
           <div className="md:col-span-5 flex items-center gap-3">
             <img
-              src="/logo_agrotec_amanteca.svg"
+              src="./logo_agrotec_amanteca.svg"
               alt="Logo Agrotec-Amanteca"
               className="w-9 h-9 border border-[var(--rule-strong)] bg-[#111111] p-1 shrink-0"
+              onError={(e) => {
+                e.currentTarget.src = './logo_agrotec_amanteca.jpg'
+              }}
             />
             <div>
               <div className="font-black text-[var(--ink-primary)] uppercase tracking-tight">
@@ -1558,9 +1561,12 @@ export default function App() {
             </div>
             <h3 className="text-xl font-black text-[var(--ink-primary)] mb-4">Agrotec-Amanteca</h3>
             <img
-              src="/logo_agrotec_amanteca.jpg"
+              src="./logo_agrotec_amanteca.jpg"
               alt="Logo Agrotec-Amanteca"
               className="w-64 h-64 mx-auto border border-[var(--rule-strong)] object-cover mb-4"
+              onError={(e) => {
+                e.currentTarget.src = './logo_agrotec_amanteca.svg'
+              }}
             />
             <button
               type="button"
